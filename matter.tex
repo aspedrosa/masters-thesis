@@ -38,7 +38,7 @@
 %Portuguese will be the default.
 %Use \setdefaultlanguage to change it
 \usepackage{csquotes}
-\usepackage[english,portuguese]{babel}
+\usepackage[english]{babel}
 
 % For custom date format
 \usepackage{datetime}
@@ -81,7 +81,10 @@
 \usepackage{bookmark} % New Bookmarks
 
 %For Multiple columns in Glossary
-\usepackage{multicol}
+%\usepackage{multicol}
+\usepackage[nonumberlist,acronym]{glossaries}
+\renewcommand{\glossarysection}[2][]{}  % So it doesn't print glossary package titles
+\makeglossaries
 
 %Math symbols
 \usepackage{amsmath}
@@ -117,38 +120,19 @@
 \usepackage{pgf-umlsd}
 \usetikzlibrary{arrows,shadows,trees,shapes,snakes,automata,backgrounds,petri,mindmap} % for pgf-umlsd
 
-%For Electric Circuits
-\usepackage[detect-weight=true, binary-units=true]{siunitx}
-\sisetup{load-configurations = binary}
-
-\usepackage[american,cuteinductors,smartlabels]{circuitikz}
-
-\usetikzlibrary{calc}
-\ctikzset{bipoles/thickness=1}
-\ctikzset{bipoles/length=0.8cm}
-\ctikzset{bipoles/diode/height=.375}
-\ctikzset{bipoles/diode/width=.3}
-\ctikzset{tripoles/thyristor/height=.8}
-\ctikzset{tripoles/thyristor/width=1}
-\ctikzset{bipoles/vsourceam/height/.initial=.7}
-\ctikzset{bipoles/vsourceam/width/.initial=.7}
-\tikzstyle{every node}=[font=\small]
-\tikzstyle{every path}=[line width=0.8pt,line cap=round,line join=round]
-
 % For inline TT text (e.g. code snippets)
 \usepackage{verbatim}
 
  %Frames around figures and allow force placement
 \usepackage{float}
 
+\usepackage{makecell}
+
 %Configure Float style
 %\floatstyle{boxed}
 %\restylefloat{table}
 %\restylefloat{figure}
 %\restylefloat{lstlisting}
-
-%For test purposes
-\usepackage{lipsum}
 
 %Keep floats inside section!
 \usepackage[section]{placeins}
@@ -196,8 +180,8 @@
 \linespread{1.5}
 
 \begin{document}
-\ifthenelse{\equal{\useoverleaf}{0}}{}{\makecoverfile{}}%
-\includepdf[pages=-]{cover.pdf}
+%\ifthenelse{\equal{\useoverleaf}{0}}{}{\makecoverfile{}}%
+%\includepdf[pages=-]{cover.pdf}
 
 %
 %Front matter
@@ -269,19 +253,20 @@
 \cleardoublepage
 
 %Table of contents
-{\small\tableofcontents}
-\cleardoublepage
+%%{\small\tableofcontents}
+%%\cleardoublepage
 
 %List of figures
-{\small\listoffigures}
+%{\small\listoffigures}
 
 
 %List of tables
-\cleardoublepage
-{\small\listoftables}
+%%\cleardoublepage
+%%{\small\listoftables}
 
 %Print Glossary
-{\small\include{glossary}}
+{\small \include{glossary}}
+
 
 %
 %Main document starts here
@@ -294,12 +279,11 @@
 %Line spacing: 1.5 pt
 \OnehalfSpacing
 
-\include{chapters/chapter1}
-%\include{chapter2}
-%\include{chapter3}
-%\include{chapter4}
-
-
+%\include{chapters/01-intro}
+\include{chapters/02-background}
+%\include{chapters/03-proposal}
+%\include{chapters/04-evaluation}
+%\include{chapters/05-conclusion}
 
 % End of Thesis text ---------------------------------------------------------
 % Including files is advised:
@@ -316,7 +300,7 @@
 \renewcommand{\bibfont}{\footnotesize}
 
 %Redefine References name
-\defbibheading{bibliography}[Referências]{
+\defbibheading{bibliography}[References]{
 	\chapter{#1}
 }
 \SingleSpacing
@@ -327,6 +311,7 @@
 
 %Load appendix
 %\include{appendix-a}
+
 
 
 \end{document}
