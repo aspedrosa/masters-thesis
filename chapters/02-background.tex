@@ -1,12 +1,33 @@
 \chapter{Background}
 \label{chapter:background}
 
-Within the scope of the \gls{ehden}
+From a medical standpoint, to perform their studies, researches need to contact data
+owners to have access to relevant data that can help improve their analysis and/or
+findings that can be applied to real cases.
+With this procedure emerges several problems for the researcher such as he has to find
+institutions willing to share data and the process of contacting the data providers can
+be cumbersome.
 
-need to find databases that fufill certain critirea to perform a specific study
+To aid in this whole process, several data hub have been developed with the purpose of
+making the process of data discovery easier.
+One important aspect of such data hubs is that they present to the researcher meta
+data, which is aggregations or summaries of the original data.
+Metadata has the advantage that one doesn't have to deal with the anonymization process
+of medical records, since only summaries of the initial data are retrieved
+\textbf{CHECK CITE}.
+With this dependency on the original data, emerges an important problem of data hubs
+which is, meta data can easily be outdated after a small time window.
+This could not raise a big problem, if the records were updated regularly, however this
+rarely happens, mainly because either the update process is difficult or because has to
+be manually extracted and uploaded to the data hub.
 
-if we use a fingerprint approach we don't need to deal with the annonymization process,
-since the results from these processes only return summaries of orignal data.
+To build a valuable data hub is then important to take into account how to:
+\begin{itemize}
+    \item extract metadata from a data source
+    \item upload and update the metadata on the data hub
+    \item automatize the two processes mentioned before
+    \item receive and display the metadata on the data hub
+\end{itemize}
 
 \section{Metadata visualization tools}
 guidelines for Data Sharing: https://doi.org/10.1177/0002764218784991
