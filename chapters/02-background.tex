@@ -27,21 +27,27 @@ analyse each dataset.
 
 The \gls{ehden} project has affiliations with several institutions, data sources and
 data custodians across the \gls{eu}, which the main goal is to, within a federated
-network, harmonise their data to the \gls{omop} \gls{cdm}. % TODO cite https://www.ehden.eu/datapartners/
-With a \gls{cdm}, the problem of having different representation for the same data
+network, harmonize their data to the \gls{omop} \gls{cdm}\cite{ehden-datapartners}.
+With a \gls{cdm}, the problem of having different representations for the same data
 across distinct data sources is solved.
-Researchers can now develop a single analysis method and then apply to all gathered
-datasets.
-Furthermore, 
+Researchers can now develop a single analysis method and then apply it to all gathered
+datasets and these methods can be optimized for this specific data model, which allows
+large-scale analytics.
+Furthermore, also improves collaborative research \cite{ohdsi-site}.
+Still, within the scope of the \gls{ehden} project, the project has a database catalog,
+built with the Montra framework \cite{montra}, where data owners fill metadata about
+their data source manually, which brings the outdated problem already mentioned before.
+Additionally whenever new metadata fields are introduced, the data owners of all data
+sources have to go manually update their metadata form.
 
 To build a valuable data hub is then important to take into account how to:
 \begin{itemize}
     \item extract metadata from a data source
     \item upload and update the metadata on the data hub
     \item automatize the two processes mentioned before
-    \item receive and display the metadata on the data hub
+    \item receive and display the metadata on the data hub in a way that facilitates
+        readability.
 \end{itemize}
-
 
 \section{Metadata visualization tools}
 guidelines for Data Sharing: https://doi.org/10.1177/0002764218784991
