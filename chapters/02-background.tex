@@ -15,15 +15,15 @@ Metadata has the advantage that one doesn't have to deal with the anonymization 
 of medical records, since only summaries of the initial data are retrieved
 \cite{egenvar, montra}.
 With this dependency on the original data, emerges an important problem of data hubs
-which is, meta data can easily be outdated after a small time window.
+which is, metadata can easily be outdated after a small time window.
 This could not raise a big problem, if the records were updated regularly, however this
 rarely happens, mainly because either the update process is difficult or because
 metadata has to be manually extracted and uploaded to the data hub.
-A problem that still might arise from such platforms, is that different datasets very
+A problem that still might arise from such platforms, is those different datasets very
 often have different representation for the same concept or the data is organized in a
 different layout.
 The research is then hampered since either different approaches have to be taken to
-analyse each dataset.
+analyze each dataset.
 
 The \gls{ehden} project has affiliations with several institutions, data sources and
 data custodians across the \gls{eu}, which the main goal is to, within a federated
@@ -37,7 +37,7 @@ Furthermore, also improves collaborative research \cite{ohdsi-site}.
 Still, within the scope of the \gls{ehden} project, the project has a database catalog,
 built with the Montra framework \cite{montra}, where data owners fill metadata about
 their data source manually, which brings the outdated problem already mentioned before.
-Additionally whenever new metadata fields are introduced, the data owners of all data
+Additionally, whenever new metadata fields are introduced, the data owners of all data
 sources have to go manually update their metadata form.
 
 To build a valuable data hub is then important to take into account how to:
@@ -50,9 +50,23 @@ To build a valuable data hub is then important to take into account how to:
 \end{itemize}
 
 \section{Metadata visualization tools}
-guidelines for Data Sharing: https://doi.org/10.1177/0002764218784991
+It will then be explored existing visualization platforms that enhance data discovery
+by presenting summaries or metadata of records (data sources, datasets).
 
-tools shold respect fair principles \cite{fair}.
+In some cases data can't be publicly available because it contains sensitive data or
+simply the data owner might not want to share some portions of the data, for that the
+tools analyzed should have privacy protection mechanisms, allowing to customize the
+access and manipulation of data stored.
+
+Furthermore, considering we want to improve and assist data discovery and reuse it is
+important to have good data management to simplify such processes.
+However, humans fail to achieve the necessary processing levels with present-day
+scientific data.
+It is then important that data is provided in such a way that machines can fetch,
+understand, analyze and act on data.
+For that the \gls{fair} Guiding Principles were established which contain a series of
+considerations for data publishing to supports both human and machine operations such
+as deposition, exploration, sharing and reuse \cite{fair}.
 
 \subsection{Search Method}
 
@@ -109,6 +123,9 @@ Open PHACTS \cite{phacts} & -- & -- & -- & -- \\
 \end{tabular}
 
 \section{Fingerprinting Tools}
+
+OMOP CDM
+OHDSI TOOLS 
 
 ACHILLES
 
