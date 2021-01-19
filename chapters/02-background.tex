@@ -13,7 +13,7 @@ One important aspect of such data hubs is that they present to the researcher me
 data, which is aggregations or summaries of the original data.
 Metadata has the advantage that one doesn't have to deal with the anonymization process
 of medical records, since only summaries of the initial data are retrieved
-\cite{egenvar, montra}.
+~\cite{egenvar, montra}.
 With this dependency on the original data, emerges an important problem of data hubs
 which is, metadata can easily be outdated after a small time window.
 This could not raise a big problem, if the records were updated regularly, however this
@@ -27,15 +27,15 @@ analyze each dataset.
 
 The \gls{ehden} project has affiliations with several institutions, data sources and
 data custodians across the \gls{eu}, which the main goal is to, within a federated
-network, harmonize their data to the \gls{omop} \gls{cdm}\cite{ehden-datapartners}.
+network, harmonize their data to the \gls{omop} \gls{cdm}~\cite{ehden-datapartners}.
 With a \gls{cdm}, the problem of having different representations for the same data
 across distinct data sources is solved.
 Researchers can now develop a single analysis method and then apply it to all gathered
 datasets and these methods can be optimized for this specific data model, which allows
 large-scale analytics.
-Furthermore, also improves collaborative research \cite{ohdsi-site}.
+Furthermore, also improves collaborative research~\cite{ohdsi-site}.
 Still, within the scope of the \gls{ehden} project, the project has a database catalog,
-built with the Montra framework \cite{montra}, where data owners fill metadata about
+built with the Montra framework~\cite{montra}, where data owners fill metadata about
 their data source manually, which brings the outdated problem already mentioned before.
 Additionally, whenever new metadata fields are introduced, the data owners of all data
 sources have to go manually update their metadata form.
@@ -66,7 +66,7 @@ It is then important that data is provided in such a way that machines can fetch
 understand, analyze and act on data.
 For that the \gls{fair} Guiding Principles were established which contain a series of
 considerations for data publishing to supports both human and machine operations such
-as deposition, exploration, sharing and reuse \cite{fair}.
+as deposition, exploration, sharing and reuse~\cite{fair}.
 
 Finally, it is preferential for such a tool to be open source since the available
 solution might need some changes to solve our specific problem, and also it makes it
@@ -76,9 +76,9 @@ possible to receive contributions from the community.
 
 Regarding this subject, there was already done a systematic review of several tools
 that fit within the current search pool.
-Its objective was to "identify projects and software solutions that promote patient
+Its objective was to ``identify projects and software solutions that promote patient
 electronic health data discovery, as enablers for data reuse and advancement of
-biomedical and translational research" \cite{systematic_review}.
+biomedical and translational research''~\cite{systematic_review}.
 From the final 20 systems, they captured their interoperability, what type of data they
 were providing and their after effect related to scientific results and improvements to
 better healthcare.
@@ -91,10 +91,10 @@ framework\footnote{https://biopython.org/} where all search queries were limited
 time windows between January 2014 to September 2018.
 
 A softer version of the previous systematic review was done now within November 2018
-and December 2020.
+and January 2021.
 Also, instead of doing a query to PubMed and then find related publications, the
 process taken here was to skip the first step and find related publications of the
-final 20 selected on the systematic review and then try to find some software solutions
+final 16 selected on the systematic review and then try to find some software solutions
 of interest.
 
 \subsection{Findings}
@@ -103,42 +103,42 @@ From the systematic review mentioned before, only software solutions were consid
 and projects were excluded.
 
 \begin{tabular}{ | c | c | c | c | c | }
+%\hline
+%EHR4CR \cite{ehr4cr} & -- & -- & -- & -- \\
+%\hline
+%Vanderbilt \cite{vanderbilt} & -- & Warehouse & -- & -- \\
+%\hline
+%Brain-CODE \cite{braincode} & Yes & Warehouse & -- & -- \\
+%\hline
+%B-CAN \cite{bcan} & -- & Warehouse & -- & -- \\
+%\hline
+%CoMetaR \cite{cometar} & -- & Warehouse & -- & -- \\
 \hline 
 Tool Name & Open Source & \makecell{Warehouse \\ vs \\ Owner's site}  & Data & FAIR\\
 \hline
-REDCap \cite{redcap} & No & Warehouse & -- & -- \\
-\hline
-Vanderbilt \cite{vanderbilt} & -- & Warehouse & -- & -- \\
-\hline
-Data Sphere \cite{datasphere} & -- & Warehouse & -- & -- \\
-\hline
-BBMRI-ERIC \cite{bbmrieric} & -- & Warehouse & -- & -- \\
-\hline
-Brain-CODE \cite{braincode} & Yes & Warehouse & -- & -- \\
-\hline
-B-CAN \cite{bcan} & -- & Warehouse & -- & -- \\
-\hline
-RD-Connect \cite{rdconnect} & -- & Warehouse & -- & Yes \\
-%\hline
-%CoMetaR \cite{cometar} & -- & Warehouse & -- & -- \\
-\hline
-\makecell{Global Alzheimer's \\Association Interactive\\ Network} \cite{gaain} & -- & Warehouse & -- & -- \\
-\hline
-Cafe Variome \cite{cafevariome} & No & Both & -- & -- \\
+eGenVar \cite{egenvar} & -- & Warehouse & -- & -- \\
 \hline
 MONTRA \cite{montra} & Yes & Warehouse & -- & -- \\
 \hline
-Harvest \cite{harvest} & Yes & Warehouse & -- & -- \\
+REDCap \cite{redcap} & No & Warehouse & -- & -- \\
 \hline
-eGenVar \cite{egenvar} & -- & Warehouse & -- & -- \\
+Data Sphere \cite{datasphere} & No & Warehouse & -- & No \\
+\hline
+MOLGENIS \cite{molgenis} & No & -- & -- & Yes \\
+\hline
+RD-Connect \cite{rdconnect} & -- & Warehouse & -- & Yes \\
+\hline
+\makecell{Global Alzheimer's \\Association Interactive\\ Network}~\cite{gaain} & -- & Warehouse & -- & -- \\
+\hline
+Cafe Variome \cite{cafevariome} & No & Both & -- & -- \\
+\hline
+Harvest \cite{harvest} & Yes & Warehouse & -- & -- \\
 \hline
 PopMedNet \cite{popmednet} & -- & Warehouse & -- & -- \\
 \hline
 Cataloguing toolkit by Maelstrom \cite{maelstrom} & Yes & Warehouse & -- & -- \\
 \hline
 DataMed \cite{datamed} & Yes & -- & -- & -- \\
-\hline
-EHR4CR \cite{ehr4cr} & -- & -- & -- & -- \\
 \hline
 YummyData \cite{yummydata} & Yes & Warehouse & -- & Yes \\
 \hline
@@ -148,13 +148,79 @@ Open PHACTS \cite{phacts} & -- & -- & -- & -- \\
 \hline
 \end{tabular}
 
+\textbf{eGenVar}
+
+
+\textbf{Data esphere:}
+The Data sphere project provides a platform on which industry and academia can share
+raw data from late-phase oncology clinical trials.
+Provides of data to this project sign a data sharing agreement were contains some
+metadata about the data that is being proposed to upload, which then they have to
+follow instructions to upload the given data to the platform.
+On approval of the data application, authorized users can access and download all
+datasets on the platform.
+To get be authorized, the project only requires an application with information about
+the background of the individual requesting access and an agreement to the terms of
+use.
+This level of openness avoids having to apply for a single data set at a time and
+allows researchers to pool data from several different sponsors to develop a better
+cohort for analysis.
+Patient privacy is in the responsibility of the data providers, where they have to
+deidentify data according to standards set forth by the Privacy Rule of the U.S. Health
+Insurance Portability and Accountability Act of 1996.
+
+33334310,Menoci: lightweight extensible web portal enhancing data management for biomedical research projects.
+
+30424756,X-search: an open access interface for cross-cohort exploration of the National Sleep Research Resource.
+
+32047873,ClinEpiDB: an open-access clinical epidemiology database resource encouraging online exploration of complex studies.
+
+30876434,Evaluation of repositories for sharing individual-participant data from clinical studies.
+
+32821064,ACTION-EHR: Patient-Centric Blockchain-Based Electronic Health Record Data Management for Cancer Care.
+
+31862012,The Systematic Review Data Repository (SRDR): descriptive characteristics of publicly available data and opportunities for research.
+
 \section{Fingerprinting Tools}
 
+https://bmcsystbiol.biomedcentral.com/articles/10.1186/s12918-015-0174-y
+
+\cite{maelstrom}
+
+profilling
+
 OMOP CDM
+
 OHDSI TOOLS 
 
 ACHILLES
 
 https://github.com/EHDEN/CatalogueExport
 
+31853911,One Step Away from Technology but One Step Towards Domain Experts-MDRBridge: A Template-Based ISO 11179-Compliant Metadata Processing Pipeline.
+
+32620019,From Raw Data to FAIR Data: The FAIRification Workflow for Health Research.
+
+33267792,LabPipe: an extensible bioinformatics toolkit to manage experimental data and metadata.
+
+30395166,ukbREST: efficient and streamlined data access for reproducible research in large biobanks.
+
+31675914,Annot: a Django-based sample, reagent, and experiment metadata tracking system.
+
+interesting - 30382537,Automated Metadata Suggestion During Repository Submission.
+
+33451426,MARMoSET - Extracting Publication-ready Mass Spectrometry Metadata from RAW Files.
+
+https://github.com/nextgenhealthcare/connect
+
+https://ckan.org/
+
 \section{Network of Fingerprinting agents}
+\cite{datasphere}
+\cite{ehr4cr}
+\cite{popmed}
+\cite{gaain}
+
+\cite{bbmieric} Since the existing biobanks have a strong national character and background, BBMRI-ERIC has chosen for itself a distributed hub and-spoke structure. This structure provides great flexibility so that new Member States and Observers can be connected at any time, and so that it is easy to respond to the emerging needs of biomedical research. It aims to facilitate fair access to quality-defined human disease-relevant biological resources including associated data in an efficient as well as ethically and legally compliant manner to reduce the fragmentation of the biomedical research landscape through harmonization of procedures and implementation of common standards to support high-level collaboration, especially through its Common Service IT and Common Service ELSI, which provide a new service model for Pan-European collaboration
+
+31245605,Cross-Network Directory Service: Infrastructure to enable collaborations across distributed research networks.
