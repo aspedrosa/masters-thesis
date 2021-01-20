@@ -30,11 +30,6 @@ different layout.
 The research is then hampered since either different approaches have to be taken to
 analyze each dataset.
 
-%EMIF 
-%EHR4CR 
-%EHDEN 
-%exploração de dados
-
 The \gls{ehden} project has affiliations with several institutions, data sources and
 data custodians across the \gls{eu}, which the main goal is to, within a federated
 network, harmonize their data to the \gls{omop} \gls{cdm}~\cite{ehden-datapartners}.
@@ -122,13 +117,11 @@ MONTRA \cite{montra} & {\color{green} \cmark} \footnotemark & {\color{green} \cm
 \hline
 REDCap \cite{redcap} & {\color{red} \xmark} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} \\
 \hline
-Data Sphere \cite{datasphere} & {\color{red} \xmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
+Data Sphere \cite{datasphere} & {\color{red} \xmark} & {\color{green} \cmark} (Authorized Users Only) & {\color{red} \xmark} \\
 \hline
-MOLGENIS \cite{molgenis} & {\color{red} \xmark} & -- & {\color{green} \cmark} \\
+MOLGENIS \cite{molgenis} & {\color{green} \cmark} \footnotemark & {\color{green} \cmark} (Role based) & {\color{red} \xmark} \\
 \hline
-RD-Connect \cite{rdconnect} & -- & -- & {\color{green} \cmark} \\
-\hline
-GAIN\cite{gaain} & -- & -- & -- \\
+GAAIN\cite{gaain} & -- & -- & -- \\
 \hline
 Cafe Variome \cite{cafevariome} & {\color{red} \xmark} & -- & -- \\
 \hline
@@ -149,7 +142,8 @@ Open PHACTS \cite{phacts} & -- & -- & -- \\
 \end{tabular}
 
 \footnotetext{https://github.com/Sabryr/EGDMS} % egenvar
-\footnotetext{https://github.com/bioinformatics-ua/montra} % montra
+\footnotetext{https://github.com/bioinformatics-ua/montra}
+\footnotetext{https://github.com/molgenis/molgenis}
 
 \textbf{eGenVar \cite{egenvar}:}
 
@@ -158,8 +152,9 @@ report, track, and share metadata on data content, origin and history of files, 
 compromising privacy or security, since could be used to search data while the original
 files remain in a secure location.
 Users need to have an account to access the system and once created can immediately
-start using the system for search operations. However, a personal profile needs to be
-created before adding, deleting or updating content.
+start using the system for search operations.
+However, a personal profile needs to be created before adding, deleting or updating
+content.
 It is designed to connect current Laboratory Information Management Systems (LIMS) and
 workflow processing systems and to keep origin information for data being processed
 through distinct systems at different locations.
@@ -172,30 +167,35 @@ developed in several programming languages and a web portal interface.
 
 \textbf{MONTRA \cite{montra}:}
 A base architecture for designing data integration platforms, with emphasis on
-biomedical data. It has a flexible architecture for centralizing and sharing such data
-coming from multiple, heterogeneous sources. The data sources that are cataloged within
-the system contain the full data, while the views available through MONTRA provide a
-skeleton of these underlying sources. The use of a dynamic data skeleton for data
-characterization and integration represents a layer of abstraction that does not depend
-on data models or physical data supports. The skeleton definition is a straightforward
-operation that can be done by any data custodian and can be saved as a spreadsheet file
-and submitted through the web interface. Furthermore, the user interface allows
-viewing, searching, modifying and deleting information through simple forms. Also, a
-RESTful API is available which provides a set of programmatic endpoints that can be
-consulted by third-party applications. The main idea behind the Web API is that other
-applications can send data to MONTRA containing extra metadata of the registry. Access
-is controlled via a Role-Based Access Control (RBAC) system to guarantee that proper
-constraints are imposed. Different data sources following the same skeleton template
-will have a common representation within the platform. By using a common structure as a
-metadata skeleton, distinct data sources converge to a homogeneous representation of
-their metadata.
+biomedical data.
+It has a flexible architecture for centralizing and sharing such data coming from
+multiple, heterogeneous sources.
+The data sources that are cataloged within the system contain the full data, while the
+views available through MONTRA provide a skeleton of these underlying sources.
+The use of a dynamic data skeleton for data characterization and integration represents
+a layer of abstraction that does not depend on data models or physical data supports.
+The skeleton definition is a straightforward operation that can be done by any data
+custodian and can be saved as a spreadsheet file and submitted through the web
+interface.
+Furthermore, the user interface allows viewing, searching, modifying and deleting
+information through simple forms.
+Also, a RESTful API is available which provides a set of programmatic endpoints that
+can be consulted by third-party applications.
+The main idea behind the Web API is that other applications can send data to MONTRA
+containing extra metadata of the registry.
+Access is controlled via a Role-Based Access Control (RBAC) system to guarantee that
+proper constraints are imposed.
+Different data sources following the same skeleton template will have a common
+representation within the platform.
+By using a common structure as a metadata skeleton, distinct data sources converge to a
+homogeneous representation of their metadata.
 
 This framework is in used to deploy the EMIF Catalogue, a platform that aims to be a
 marketplace where data custodians can publish and share information about their
 clinical databases, while biomedical researchers can search for databases that fulfill
-their particular study requirements. Currently, the EMIF Catalogue supports several
-distinct projects, combining, for instance, data available in pan-European EHR and
-Alzheimer cohorts.
+their particular study requirements.
+Currently, the EMIF Catalogue supports several distinct projects, combining, for
+instance, data available in pan-European EHR and Alzheimer cohorts.
 
 \textbf{\gls{redcap} \cite{redcap}:}
 Recognizing the need of those participating in research to be able to securely collect
@@ -228,14 +228,12 @@ built on top of the data layer to assist researchers across the enterprise, bein
 of them \gls{redcap}.
 Providing resources dedicated to research initiatives benefits not only the research
 community but also clinicians, patients and institutional leadership.
-Finally in \cite{brain-code}, the Ontario Brain Institute’s ''Brain-CODE`` is
+Finally in \cite{braincode}, the Ontario Brain Institute’s ''Brain-CODE`` is
 presented, which is a neuroinformatics platform designed to support the collection,
 storage, sharing and analysis of different data types across several brain disorders,
 as a means to understand common underlying causes of brain dysfunction and develop new
 approaches to treatment.
 In here \gls{redcap} is used to collect demographic and clinical data.
-
-Vanderbilt, brain code
 
 \textbf{Data Sphere \cite{datasphere}}
 The Data sphere project provides a platform on which industry and academia can share
@@ -255,12 +253,44 @@ Patient privacy is in the responsibility of the data providers, where they have 
 deidentify data according to standards set forth by the Privacy Rule of the U.S. Health
 Insurance Portability and Accountability Act of 1996.
 
+As of January 2020, the PDS website had available cancer trial data from 150 trials
+including 100,000 subjects \cite{datasphere-site}.
+
 \textbf{Molgenis \cite{molgenis}}
-bbmri-eric
+MOLGENIS is a generic, model-driven toolkit for the rapid generation of custom-made,
+data-intensive biosoftware applications.
+Bioinformaticians can use a domain-specific language to efficiently model the
+biological details of their particular biological system, which enables compact
+specification of what experiment database is needed.
+The level of abstraction is raised, so no lengthy, technical or redundant details on
+how each feature should be implemented in general programming languages have to be
+given. The domain-specific language was implemented using XML.
+Bioinformaticinas can also use MOLGENIS software generation tools to automatically
+generate a web application tailored to the experiments of their biologists, building on
+reusable components.
+The authors found up to 30 times efficiency improvement compared to hand-writing
+software, while providing a richness of features practically unfeasible to produce by
+hand but not yet provided by related projects.
 
-\textbf{RD-Connect \cite{rdconnect}}
+The \gls{bbmri-eric} project~\cite{bbmrieric} provides fair access to quality-controlled human
+biological samples and associated biomedical and biomolecular data, enabling the
+investigation of basic mechanisms underlying diseases, indispensable for the
+development of new biomarkers and drugs.
+Here Molgenis is used to develop their Directory 1.0 which provides an overview of the
+BBMRI-ERIC ecosystem with its distributed structure of National Nodes, and even more
+importantly to help users identify biobanks of interest to them.
+RD-Connect~\cite{rdconnect} is a global infrastructure project initiated that links
+genomic data with patient registries, biobanks, and clinical bioinformatics tools to
+create a central research resource for \gls{rd}s.
+Its composed by the RD-Connect Registry \& Biobank Finder, a tool that helps \gls{rd}
+researchers to find \gls{rd} biobanks and registries and provide information on the
+availability and accessibility of content in each database.
+The finder is also a portal to other RD-Connect tools, providing a link to the
+RD-Connect Sample Catalogue, which was developed using MOLGENIS, a large inventory of
+RD biological samples available in participating biobanks for RD research. 
 
-\textbf{Global Alzheimer's Association Interactive Network \cite{gaain}}
+
+\textbf{GAAIN}
 
 \textbf{Cafe Variome \cite{cafevariome}}
 
