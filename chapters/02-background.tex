@@ -1,11 +1,10 @@
 \chapter{Background}
 \label{chapter:background}
 
-From a medical standpoint, to perform their studies, researches need to contact data
-owners to have access to relevant data that can help improve their analysis and/or
-findings that can be applied to real cases.
+From a medical standpoint, to perform their studies, biomedical researches need to
+contact data owners to have access to relevant data that can help improve their
+analysis and/or findings that can be applied to real cases.
 
-% investigadores clinicos
 % estudam doenças
 % percisam de fazer analyses
 % isto percisa de dados
@@ -117,9 +116,9 @@ and projects were excluded.
 \hline 
 Tool Name & Open Source & Data protection  & FAIR\\
 \hline
-eGenVar \cite{egenvar} & {\color{green} \cmark} \footnotemark & -- & {\color{red} \xmark} \\
+eGenVar \cite{egenvar} & {\color{green} \cmark} \footnotemark & {\color{green} \cmark} (Users + Permissions)& {\color{green} \cmark} \\
 \hline
-MONTRA \cite{montra} & {\color{red} \xmark} & -- & -- \\
+MONTRA \cite{montra} & {\color{green} \cmark} \footnotemark & {\color{green} \cmark} (Role based) & {\color{green} \cmark} \\
 \hline
 REDCap \cite{redcap} & {\color{red} \xmark} & -- & -- \\
 \hline
@@ -150,6 +149,7 @@ Open PHACTS \cite{phacts} & -- & -- & -- \\
 \end{tabular}
 
 \footnotetext{https://github.com/Sabryr/EGDMS} % egenvar
+\footnotetext{https://github.com/bioinformatics-ua/montra} % montra
 
 \textbf{eGenVar \cite{egenvar}}
 
@@ -157,25 +157,45 @@ A software suite called the eGenVar data-management system (EGDMS), allows users
 report, track, and share metadata on data content, origin and history of files, without
 compromising privacy or security, since could be used to search data while the original
 files remain in a secure location.
-
 Users need to have an account to access the system and once created can immediately
 start using the system for search operations. However, a personal profile needs to be
 created before adding, deleting or updating content.
-
 It is designed to connect current Laboratory Information Management Systems (LIMS) and
 workflow processing systems and to keep origin information for data being processed
 through distinct systems at different locations.
-
 Central to the system is a tagging process that allows users to tag data with new or
 pre-existing information, such as ontology terms or controlled vocabularies, at their
 convenience.
-
 The system includes a server, a command-line client, other clients that can be
 developed in several programming languages and a web portal interface.
 
 
 \textbf{MONTRA \cite{montra}}
-Mention that is used by the EMIF and EHDEN project
+A base architecture for designing data integration platforms, with emphasis on
+biomedical data. It has a flexible architecture for centralizing and sharing such data
+coming from multiple, heterogeneous sources. The data sources that are catalogued
+within the system contain the full data, while the views available through MONTRA
+provide a skeleton of these underlying sources. The use of a dynamic data skeleton for
+data characterization and integration represents a layer of abstraction that does not
+depend on data models or physical data supports. The skeleton definition is a
+straightforward operation that can be done by any data custodian and can be saved as a
+spreadsheet file and submitted through the web interface. Furthermore, the user
+interface allows viewing, searching, modifying and deleting information through simple
+forms. Also a RESTful API is available which provides a set of programmatic endpoints
+that can be consulted by third party applications. The main idea behind the Web API is
+that other applications can send data to MONTRA containing extra metadata of the
+registry. Access is controlled via a Role-Based Access Control (RBAC) system to
+guarantee that proper constraints are imposed. Different data sources following to the
+same skeleton template will have a common representation within the platform. By using
+a common structure as a metadata skeleton, distinct data sources converge to a
+homogeneous representation of their metadata.
+
+This framework is in used to deploy the EMIF Catalogue, a platform that aims to be a
+marketplace where data custodians can publish and share information about their
+clinical databases, while biomedical researchers can search for databases that fulfill
+their particular study requirements. Currently, the EMIF Catalogue supports several
+distinct projects, combining, for instance, data available in pan-European EHR and
+Alzheimer cohorts.
 
 \textbf{RedCap \cite{redcap}}
 Vanderbilt, brain code
