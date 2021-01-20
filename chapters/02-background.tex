@@ -4,6 +4,12 @@
 From a medical standpoint, to perform their studies, researches need to contact data
 owners to have access to relevant data that can help improve their analysis and/or
 findings that can be applied to real cases.
+
+% investigadores clinicos
+% estudam doenças
+% percisam de fazer analyses
+% isto percisa de dados
+
 With this procedure emerges several problems for the researcher such as he has to find
 institutions willing to share data and the process of contacting the data providers can
 be cumbersome.
@@ -24,6 +30,11 @@ often have different representation for the same concept or the data is organize
 different layout.
 The research is then hampered since either different approaches have to be taken to
 analyze each dataset.
+
+%EMIF 
+%EHR4CR 
+%EHDEN 
+%exploração de dados
 
 The \gls{ehden} project has affiliations with several institutions, data sources and
 data custodians across the \gls{eu}, which the main goal is to, within a federated
@@ -103,55 +114,73 @@ From the systematic review mentioned before, only software solutions were consid
 and projects were excluded.
 
 \begin{tabular}{ | c | c | c | c | c | }
-%\hline
-%EHR4CR \cite{ehr4cr} & -- & -- & -- & -- \\
-%\hline
-%Vanderbilt \cite{vanderbilt} & -- & Warehouse & -- & -- \\
-%\hline
-%Brain-CODE \cite{braincode} & Yes & Warehouse & -- & -- \\
-%\hline
-%B-CAN \cite{bcan} & -- & Warehouse & -- & -- \\
-%\hline
-%CoMetaR \cite{cometar} & -- & Warehouse & -- & -- \\
 \hline 
-Tool Name & Open Source & \makecell{Warehouse \\ vs \\ Owner's site}  & Data & FAIR\\
+Tool Name & Open Source & Data protection  & FAIR\\
 \hline
-eGenVar \cite{egenvar} & -- & Warehouse & -- & -- \\
+eGenVar \cite{egenvar} & {\color{green} \cmark} \footnotemark & -- & {\color{red} \xmark} \\
 \hline
-MONTRA \cite{montra} & Yes & Warehouse & -- & -- \\
+MONTRA \cite{montra} & {\color{red} \xmark} & -- & -- \\
 \hline
-REDCap \cite{redcap} & No & Warehouse & -- & -- \\
+REDCap \cite{redcap} & {\color{red} \xmark} & -- & -- \\
 \hline
-Data Sphere \cite{datasphere} & No & Warehouse & -- & No \\
+Data Sphere \cite{datasphere} & {\color{red} \xmark} & -- & {\color{red} \xmark} \\
 \hline
-MOLGENIS \cite{molgenis} & No & -- & -- & Yes \\
+MOLGENIS \cite{molgenis} & {\color{red} \xmark} & -- & {\color{green} \cmark} \\
 \hline
-RD-Connect \cite{rdconnect} & -- & Warehouse & -- & Yes \\
+RD-Connect \cite{rdconnect} & -- & -- & {\color{green} \cmark} \\
 \hline
-\makecell{Global Alzheimer's \\Association Interactive\\ Network}~\cite{gaain} & -- & Warehouse & -- & -- \\
+\makecell{Global Alzheimer's \\Association Interactive\\ Network}~\cite{gaain} & -- & -- & -- \\
 \hline
-Cafe Variome \cite{cafevariome} & No & Both & -- & -- \\
+Cafe Variome \cite{cafevariome} & {\color{red} \xmark} & -- & -- \\
 \hline
-Harvest \cite{harvest} & Yes & Warehouse & -- & -- \\
+Harvest \cite{harvest} & {\color{green} \cmark} & -- & -- \\
 \hline
-PopMedNet \cite{popmednet} & -- & Warehouse & -- & -- \\
+PopMedNet \cite{popmednet} & -- & -- & -- \\
 \hline
-Cataloguing toolkit by Maelstrom \cite{maelstrom} & Yes & Warehouse & -- & -- \\
+Cataloguing toolkit by Maelstrom \cite{maelstrom} & {\color{green} \cmark} & -- & -- \\
 \hline
-DataMed \cite{datamed} & Yes & -- & -- & -- \\
+DataMed \cite{datamed} & {\color{green} \cmark} & -- & -- \\
 \hline
-YummyData \cite{yummydata} & Yes & Warehouse & -- & Yes \\
+YummyData \cite{yummydata} & {\color{green} \cmark} & -- & {\color{green} \cmark} \\
 \hline
-BioSharing \cite{biosharing} & -- & -- & -- & -- \\
+BioSharing \cite{biosharing} & -- & -- & -- \\
 \hline
-Open PHACTS \cite{phacts} & -- & -- & -- & -- \\
+Open PHACTS \cite{phacts} & -- & -- & -- \\
 \hline
 \end{tabular}
 
-\textbf{eGenVar}
+\footnotetext{https://github.com/Sabryr/EGDMS} % egenvar
+
+\textbf{eGenVar \cite{egenvar}}
+
+A software suite called the eGenVar data-management system (EGDMS), allows users to
+report, track, and share metadata on data content, origin and history of files, without
+compromising privacy or security, since could be used to search data while the original
+files remain in a secure location.
+
+Users need to have an account to access the system and once created can immediately
+start using the system for search operations. However, a personal profile needs to be
+created before adding, deleting or updating content.
+
+It is designed to connect current Laboratory Information Management Systems (LIMS) and
+workflow processing systems and to keep origin information for data being processed
+through distinct systems at different locations.
+
+Central to the system is a tagging process that allows users to tag data with new or
+pre-existing information, such as ontology terms or controlled vocabularies, at their
+convenience.
+
+The system includes a server, a command-line client, other clients that can be
+developed in several programming languages and a web portal interface.
 
 
-\textbf{Data esphere:}
+\textbf{MONTRA \cite{montra}}
+Mention that is used by the EMIF and EHDEN project
+
+\textbf{RedCap \cite{redcap}}
+Vanderbilt, brain code
+
+\textbf{Data Sphere \cite{datasphere}}
 The Data sphere project provides a platform on which industry and academia can share
 raw data from late-phase oncology clinical trials.
 Provides of data to this project sign a data sharing agreement were contains some
@@ -168,6 +197,29 @@ cohort for analysis.
 Patient privacy is in the responsibility of the data providers, where they have to
 deidentify data according to standards set forth by the Privacy Rule of the U.S. Health
 Insurance Portability and Accountability Act of 1996.
+
+\textbf{Molgenis \cite{molgenis}}
+bbmri-eric
+
+\textbf{RD-Connect \cite{rdconnect}}
+
+\textbf{Global Alzheimer's Association Interactive Network \cite{gaain}}
+
+\textbf{Cafe Variome \cite{cafevariome}}
+
+\textbf{Harvest \cite{harvest}}
+
+\textbf{PopMedNet \cite{popmednet}}
+
+\textbf{Maelstrom \cite{maelstrom}}
+
+\textbf{DataMed \cite{datamed}}
+
+\textbf{YummyData \cite{yummydata}}
+
+\textbf{BioSharing \cite{biosharing}}
+
+\textbf{Open PHACTS \cite{phacts}}
 
 33334310,Menoci: lightweight extensible web portal enhancing data management for biomedical research projects.
 
@@ -216,6 +268,9 @@ https://github.com/nextgenhealthcare/connect
 https://ckan.org/
 
 \section{Network of Fingerprinting agents}
+\cite{egenvar}
+add file and metada thourgh client
+
 \cite{datasphere}
 \cite{ehr4cr}
 \cite{popmed}
