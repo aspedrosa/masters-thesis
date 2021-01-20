@@ -120,15 +120,15 @@ eGenVar \cite{egenvar} & {\color{green} \cmark} \footnotemark & {\color{green} \
 \hline
 MONTRA \cite{montra} & {\color{green} \cmark} \footnotemark & {\color{green} \cmark} (Role based) & {\color{green} \cmark} \\
 \hline
-REDCap \cite{redcap} & {\color{red} \xmark} & -- & -- \\
+REDCap \cite{redcap} & {\color{red} \xmark} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} \\
 \hline
-Data Sphere \cite{datasphere} & {\color{red} \xmark} & -- & {\color{red} \xmark} \\
+Data Sphere \cite{datasphere} & {\color{red} \xmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
 \hline
 MOLGENIS \cite{molgenis} & {\color{red} \xmark} & -- & {\color{green} \cmark} \\
 \hline
 RD-Connect \cite{rdconnect} & -- & -- & {\color{green} \cmark} \\
 \hline
-\makecell{Global Alzheimer's \\Association Interactive\\ Network}~\cite{gaain} & -- & -- & -- \\
+GAIN\cite{gaain} & -- & -- & -- \\
 \hline
 Cafe Variome \cite{cafevariome} & {\color{red} \xmark} & -- & -- \\
 \hline
@@ -151,7 +151,7 @@ Open PHACTS \cite{phacts} & -- & -- & -- \\
 \footnotetext{https://github.com/Sabryr/EGDMS} % egenvar
 \footnotetext{https://github.com/bioinformatics-ua/montra} % montra
 
-\textbf{eGenVar \cite{egenvar}}
+\textbf{eGenVar \cite{egenvar}:}
 
 A software suite called the eGenVar data-management system (EGDMS), allows users to
 report, track, and share metadata on data content, origin and history of files, without
@@ -170,25 +170,25 @@ The system includes a server, a command-line client, other clients that can be
 developed in several programming languages and a web portal interface.
 
 
-\textbf{MONTRA \cite{montra}}
+\textbf{MONTRA \cite{montra}:}
 A base architecture for designing data integration platforms, with emphasis on
 biomedical data. It has a flexible architecture for centralizing and sharing such data
-coming from multiple, heterogeneous sources. The data sources that are catalogued
-within the system contain the full data, while the views available through MONTRA
-provide a skeleton of these underlying sources. The use of a dynamic data skeleton for
-data characterization and integration represents a layer of abstraction that does not
-depend on data models or physical data supports. The skeleton definition is a
-straightforward operation that can be done by any data custodian and can be saved as a
-spreadsheet file and submitted through the web interface. Furthermore, the user
-interface allows viewing, searching, modifying and deleting information through simple
-forms. Also a RESTful API is available which provides a set of programmatic endpoints
-that can be consulted by third party applications. The main idea behind the Web API is
-that other applications can send data to MONTRA containing extra metadata of the
-registry. Access is controlled via a Role-Based Access Control (RBAC) system to
-guarantee that proper constraints are imposed. Different data sources following to the
-same skeleton template will have a common representation within the platform. By using
-a common structure as a metadata skeleton, distinct data sources converge to a
-homogeneous representation of their metadata.
+coming from multiple, heterogeneous sources. The data sources that are cataloged within
+the system contain the full data, while the views available through MONTRA provide a
+skeleton of these underlying sources. The use of a dynamic data skeleton for data
+characterization and integration represents a layer of abstraction that does not depend
+on data models or physical data supports. The skeleton definition is a straightforward
+operation that can be done by any data custodian and can be saved as a spreadsheet file
+and submitted through the web interface. Furthermore, the user interface allows
+viewing, searching, modifying and deleting information through simple forms. Also, a
+RESTful API is available which provides a set of programmatic endpoints that can be
+consulted by third-party applications. The main idea behind the Web API is that other
+applications can send data to MONTRA containing extra metadata of the registry. Access
+is controlled via a Role-Based Access Control (RBAC) system to guarantee that proper
+constraints are imposed. Different data sources following the same skeleton template
+will have a common representation within the platform. By using a common structure as a
+metadata skeleton, distinct data sources converge to a homogeneous representation of
+their metadata.
 
 This framework is in used to deploy the EMIF Catalogue, a platform that aims to be a
 marketplace where data custodians can publish and share information about their
@@ -197,7 +197,44 @@ their particular study requirements. Currently, the EMIF Catalogue supports seve
 distinct projects, combining, for instance, data available in pan-European EHR and
 Alzheimer cohorts.
 
-\textbf{RedCap \cite{redcap}}
+\textbf{\gls{redcap} \cite{redcap}:}
+Recognizing the need of those participating in research to be able to securely collect
+and share data, a team at Vanderbilt University developed \gls{redcap}, a data and
+metadata gathering tool.
+\gls{redcap} data capture tools can either be structured to function as a series of
+forms that investigators fill out as they advance through a project or as a survey
+designed to be completed by subjects.
+Building these instruments with the Online Designer tool is similar to the experience
+of building online surveys through web survey tools.
+With \gls{redcap}'s collaboration functionality, investigators after adding team
+members to a project can assign abilities and access to each, based on their roles and
+data needs.
+One can choose to create custom roles for groups of members or assign permissions
+individually.  \gls{redcap} includes several features to help assure data quality.
+The Data Quality reports not only identify missing values and outliers, validation
+errors, and incorrect values for calculated fields but also allow users to create their
+own custom rules to assess data correctness.
+Collected data can be observed within \gls{redcap}, which provides views with basic
+statistical measures.
+The software supports data export to Excel, SPSS, SAS, R, and Stata.
+Users may import previously collected data using the Data Import tool.
+Finally, \gls{redcap} offers an API to support remote entry and retrieval of data.
+There are also many features that enable support for various types of clinical and
+basic science research.
+
+In \cite{vanderbilt} the Vanderbilt research data warehouse framework is explained,
+which consists of identified and de-identified clinical data repositories and tools
+built on top of the data layer to assist researchers across the enterprise, being one
+of them \gls{redcap}.
+Providing resources dedicated to research initiatives benefits not only the research
+community but also clinicians, patients and institutional leadership.
+Finally in \cite{brain-code}, the Ontario Brain Institute’s ''Brain-CODE`` is
+presented, which is a neuroinformatics platform designed to support the collection,
+storage, sharing and analysis of different data types across several brain disorders,
+as a means to understand common underlying causes of brain dysfunction and develop new
+approaches to treatment.
+In here \gls{redcap} is used to collect demographic and clinical data.
+
 Vanderbilt, brain code
 
 \textbf{Data Sphere \cite{datasphere}}
