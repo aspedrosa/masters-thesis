@@ -172,8 +172,6 @@ It has a flexible architecture for centralizing and sharing such data coming fro
 multiple, heterogeneous sources.
 The data sources that are cataloged within the system contain the full data, while the
 views available through MONTRA provide a skeleton of these underlying sources.
-The use of a dynamic data skeleton for data characterization and integration represents
-a layer of abstraction that does not depend on data models or physical data supports.
 The skeleton definition is a straightforward operation that can be done by any data
 custodian and can be saved as a spreadsheet file and submitted through the web
 interface.
@@ -181,8 +179,6 @@ Furthermore, the user interface allows viewing, searching, modifying and deletin
 information through simple forms.
 Also, a RESTful API is available which provides a set of programmatic endpoints that
 can be consulted by third-party applications.
-The main idea behind the Web API is that other applications can send data to MONTRA
-containing extra metadata of the registry.
 Access is controlled via a Role-Based Access Control (RBAC) system to guarantee that
 proper constraints are imposed.
 Different data sources following the same skeleton template will have a common
@@ -204,35 +200,29 @@ metadata gathering tool.
 \gls{redcap} data capture tools can either be structured to function as a series of
 forms that investigators fill out as they advance through a project or as a survey
 designed to be completed by subjects.
-Building these instruments with the Online Designer tool is similar to the experience
-of building online surveys through web survey tools.
 With \gls{redcap}'s collaboration functionality, investigators after adding team
 members to a project can assign abilities and access to each, based on their roles and
 data needs.
-One can choose to create custom roles for groups of members or assign permissions
-individually.  \gls{redcap} includes several features to help assure data quality.
+\gls{redcap} includes several features to help assure data quality.
 The Data Quality reports not only identify missing values and outliers, validation
 errors, and incorrect values for calculated fields but also allow users to create their
 own custom rules to assess data correctness.
 Collected data can be observed within \gls{redcap}, which provides views with basic
-statistical measures.
-The software supports data export to Excel, SPSS, SAS, R, and Stata.
+statistical measures, but also supports exportation for several common formats.
 Users may import previously collected data using the Data Import tool.
-Finally, \gls{redcap} offers an API to support remote entry and retrieval of data.
-There are also many features that enable support for various types of clinical and
+Furthermore, offers an API to support remote entry and retrieval of data.
+Finally, there are also many features that enable support for various types of clinical and
 basic science research.
 
 In \cite{vanderbilt} the Vanderbilt research data warehouse framework is explained,
 which consists of identified and de-identified clinical data repositories and tools
 built on top of the data layer to assist researchers across the enterprise, being one
 of them \gls{redcap}.
-Providing resources dedicated to research initiatives benefits not only the research
-community but also clinicians, patients and institutional leadership.
-Finally in \cite{braincode}, the Ontario Brain Institute’s ''Brain-CODE`` is
-presented, which is a neuroinformatics platform designed to support the collection,
-storage, sharing and analysis of different data types across several brain disorders,
-as a means to understand common underlying causes of brain dysfunction and develop new
-approaches to treatment.
+Finally the Ontario Brain Institute’s ''Brain-CODE``~\cite{braincode} is a
+neuroinformatics platform designed to support the collection, storage, sharing and
+analysis of different data types across several brain disorders, as a means to
+understand common underlying causes of brain dysfunction and develop new approaches to
+treatment.
 In here \gls{redcap} is used to collect demographic and clinical data.
 
 \textbf{Data Sphere \cite{datasphere}}
@@ -253,18 +243,18 @@ Patient privacy is in the responsibility of the data providers, where they have 
 deidentify data according to standards set forth by the Privacy Rule of the U.S. Health
 Insurance Portability and Accountability Act of 1996.
 
-As of January 2020, the PDS website had available cancer trial data from 150 trials
-including 100,000 subjects \cite{datasphere-site}.
+As of January 2021, the PDS website had available cancer trial data from over 150
+trials including over 100,000 subjects \cite{datasphere-site}.
 
 \textbf{Molgenis \cite{molgenis}}
 MOLGENIS is a generic, model-driven toolkit for the rapid generation of custom-made,
 data-intensive biosoftware applications.
-Bioinformaticians can use a domain-specific language to efficiently model the
-biological details of their particular biological system, which enables compact
-specification of what experiment database is needed.
+Bioinformaticians can use a domain-specific language, implemented using XML, to
+efficiently model the biological details of their particular biological system, which
+enables compact specification of what experiment database is needed.
 The level of abstraction is raised, so no lengthy, technical or redundant details on
 how each feature should be implemented in general programming languages have to be
-given. The domain-specific language was implemented using XML.
+given.
 Bioinformaticinas can also use MOLGENIS software generation tools to automatically
 generate a web application tailored to the experiments of their biologists, building on
 reusable components.
@@ -272,10 +262,10 @@ The authors found up to 30 times efficiency improvement compared to hand-writing
 software, while providing a richness of features practically unfeasible to produce by
 hand but not yet provided by related projects.
 
-The \gls{bbmri-eric} project~\cite{bbmrieric} provides fair access to quality-controlled human
-biological samples and associated biomedical and biomolecular data, enabling the
-investigation of basic mechanisms underlying diseases, indispensable for the
-development of new biomarkers and drugs.
+The \gls{bbmri-eric} project~\cite{bbmrieric} provides fair access to
+quality-controlled human biological samples and associated biomedical and biomolecular
+data, enabling the investigation of basic mechanisms underlying diseases, indispensable
+for the development of new biomarkers and drugs.
 Here Molgenis is used to develop their Directory 1.0 which provides an overview of the
 BBMRI-ERIC ecosystem with its distributed structure of National Nodes, and even more
 importantly to help users identify biobanks of interest to them.
@@ -290,7 +280,7 @@ RD-Connect Sample Catalogue, which was developed using MOLGENIS, a large invento
 RD biological samples available in participating biobanks for RD research. 
 
 
-\textbf{GAAIN}
+\textbf{GAAIN \cite{gaain}}
 
 \textbf{Cafe Variome \cite{cafevariome}}
 
