@@ -107,39 +107,36 @@ of interest.
 From the systematic review mentioned before, only software solutions were considered
 and projects were excluded.
 
+\begin{table}[h]
+    \center
 \begin{tabular}{ | c | c | c | c | c | }
 \hline 
 Tool Name & Open Source & Data protection  & FAIR\\
 \hline
-eGenVar \cite{egenvar} & {\color{green} \cmark} \footnotemark & {\color{green} \cmark} (Users + Permissions)& {\color{green} \cmark} \\
+eGenVar \cite{egenvar} & {\color{green} \cmark} \tablefootnote{https://github.com/Sabryr/EGDMS} & {\color{green} \cmark} (Users + Permissions)& {\color{green} \cmark} \\
 \hline
-MONTRA \cite{montra} & {\color{green} \cmark} \footnotemark & {\color{green} \cmark} (Role based) & {\color{green} \cmark} \\
+MONTRA \cite{montra} & {\color{green} \cmark} \tablefootnote{https://github.com/bioinformatics-ua/montra} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} \\
 \hline
 REDCap \cite{redcap} & {\color{red} \xmark} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} \\
 \hline
 Data Sphere \cite{datasphere} & {\color{red} \xmark} & {\color{green} \cmark} (Authorized Users Only) & {\color{red} \xmark} \\
 \hline
-MOLGENIS \cite{molgenis} & {\color{green} \cmark} \footnotemark & {\color{green} \cmark} (Role based) & {\color{red} \xmark} \\
-%\hline
-%GAAIN\cite{gaain} & {\color{red} \xmark} & {\color{red} \xmark} (Any registered user) & {\color{red} \xmark} \\
+MOLGENIS \cite{molgenis} & {\color{green} \cmark} \tablefootnote{https://github.com/molgenis/molgenis} & {\color{green} \cmark} (Role based) & {\color{red} \xmark} \\
 \hline
 Cafe Variome \cite{cafevariome} & {\color{red} \xmark} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} \\
 \hline
-Maelstrom \cite{maelstrom} & {\color{green} \cmark} & -- & -- \\
-\hline
-DataMed \cite{datamed} & {\color{green} \cmark} & -- & -- \\
-\hline
-YummyData \cite{yummydata} & {\color{green} \cmark} & -- & {\color{green} \cmark} \\
-\hline
-BioSharing \cite{biosharing} & -- & -- & -- \\
-\hline
-Open PHACTS \cite{phacts} & -- & -- & -- \\
+Mica \cite{maelstrom} & {\color{green} \cmark} \tablefootnote{https://github.com/obiba/mica2} & {\color{red} \xmark} & {\color{green} \cmark} \\
+%\hline
+%DataMed \cite{datamed} & {\color{green} \cmark} & -- & -- \\
+%\hline
+%YummyData \cite{yummydata} & {\color{green} \cmark} & -- & {\color{green} \cmark} \\
+%\hline
+%BioSharing \cite{biosharing} & -- & -- & -- \\
+%\hline
+%Open PHACTS \cite{phacts} & -- & -- & -- \\
 \hline
 \end{tabular}
-
-\footnotetext{https://github.com/Sabryr/EGDMS} % egenvar
-\footnotetext{https://github.com/bioinformatics-ua/montra}
-\footnotetext{https://github.com/molgenis/molgenis}
+\end{table}
 
 \textbf{eGenVar \cite{egenvar}:}
 
@@ -335,39 +332,67 @@ split by data source and also split into three results categories as follows:
         submit to the data owner a data access request.
 \end{itemize}
 
-\textbf{Maelstrom \cite{maelstrom}:}
+\textbf{Mica \cite{mica}:}
+Mica is used to create websites and metadata portals for individual epidemiological
+studies or multi-study consortia, with a specific focus on supporting observational
+cohort studies.
+The Mica application helps data custodians and study or network coordinators to
+efficiently organize and disseminate information about their studies and networks
+without significant technical effort.
+Mica is made up of a number of different modules developed to add and edit descriptive
+information pertaining to epidemiological research networks, studies and datasets.
+The network description module allows Mica users to disseminate information such as
+network description and the number, design and geographical coverage of participating
+studies.
+A study description module is used to assemble and publish information on
+epidemiological studies such as participant selection criteria, sample size and data
+collection timelines.
+A dataset module supports the display and dynamic search of study data dictionaries.
+For a consortium of studies, a special dataset module also allows documenting and
+presenting variables targeted for harmonization and harmonization results.
+Once populated with study and variable metadata, Mica includes a powerful search engine
+which allows investigators to quickly find the information they need for their research
+projects.
+In a Mica instance with multiple studies, users can quickly identify a list of studies
+with a given profile, which collect data on a specific health outcome, risk factors of
+interest and confounding factors.
+Connecting Mica to one or more Opal database(s), which will be mentioned on the next
+section, allows users to search beyond the metadata by securely querying the actual
+study data hosted on remote servers.
 
-\textbf{DataMed \cite{datamed}:}
-
-\textbf{YummyData \cite{yummydata}:}
-
-\textbf{BioSharing \cite{biosharing}:}
-
-\textbf{Open PHACTS \cite{phacts}:}
-
-33334310,Menoci: lightweight extensible web portal enhancing data management for biomedical research projects.
-
-30424756,X-search: an open access interface for cross-cohort exploration of the National Sleep Research Resource.
-
-32047873,ClinEpiDB: an open-access clinical epidemiology database resource encouraging online exploration of complex studies.
-
-30876434,Evaluation of repositories for sharing individual-participant data from clinical studies.
-
-32821064,ACTION-EHR: Patient-Centric Blockchain-Based Electronic Health Record Data Management for Cancer Care.
-
-31862012,The Systematic Review Data Repository (SRDR): descriptive characteristics of publicly available data and opportunities for research.
-
-https://github.com/ihsn/nada
-https://github.com/IQSS/dataverse
+%\textbf{DataMed \cite{datamed}:}
+%
+%\textbf{YummyData \cite{yummydata}:}
+%
+%\textbf{BioSharing \cite{biosharing}:}
+%
+%\textbf{Open PHACTS \cite{phacts}:}
+%
+%33334310,Menoci: lightweight extensible web portal enhancing data management for biomedical research projects.
+%
+%30424756,X-search: an open access interface for cross-cohort exploration of the National Sleep Research Resource.
+%
+%32047873,ClinEpiDB: an open-access clinical epidemiology database resource encouraging online exploration of complex studies.
+%
+%30876434,Evaluation of repositories for sharing individual-participant data from clinical studies.
+%
+%32821064,ACTION-EHR: Patient-Centric Blockchain-Based Electronic Health Record Data Management for Cancer Care.
+%
+%31862012,The Systematic Review Data Repository (SRDR): descriptive characteristics of publicly available data and opportunities for research.
+%
+%https://github.com/ihsn/nada
+%https://github.com/IQSS/dataverse
 
 \section{Fingerprinting Tools}
 
-https://bmcsystbiol.biomedcentral.com/articles/10.1186/s12918-015-0174-y
+Associated with some projects mentioned in the previous section, several tools and
+processes are relevant for the task of extracting/profiling datasets.
+Next are presented such tools/processes.
 
-\cite{maelstrom}
-\cite{gaain}
+\textbf{Opal \cite{mica}:}
+\cite{mica}
 
-profilling
+\textbf{ACHILLES \cite{mica}:}
 
 OMOP CDM
 
@@ -377,23 +402,25 @@ ACHILLES
 
 https://github.com/EHDEN/CatalogueExport
 
-31853911,One Step Away from Technology but One Step Towards Domain Experts-MDRBridge: A Template-Based ISO 11179-Compliant Metadata Processing Pipeline.
-
-32620019,From Raw Data to FAIR Data: The FAIRification Workflow for Health Research.
-
-33267792,LabPipe: an extensible bioinformatics toolkit to manage experimental data and metadata.
-
-30395166,ukbREST: efficient and streamlined data access for reproducible research in large biobanks.
-
-31675914,Annot: a Django-based sample, reagent, and experiment metadata tracking system.
-
-interesting - 30382537,Automated Metadata Suggestion During Repository Submission.
-
-33451426,MARMoSET - Extracting Publication-ready Mass Spectrometry Metadata from RAW Files.
-
-https://github.com/nextgenhealthcare/connect
-
-https://ckan.org/
+%31853911,One Step Away from Technology but One Step Towards Domain Experts-MDRBridge: A Template-Based ISO 11179-Compliant Metadata Processing Pipeline.
+%
+%32620019,From Raw Data to FAIR Data: The FAIRification Workflow for Health Research.
+%
+%33267792,LabPipe: an extensible bioinformatics toolkit to manage experimental data and metadata.
+%
+%30395166,ukbREST: efficient and streamlined data access for reproducible research in large biobanks.
+%
+%31675914,Annot: a Django-based sample, reagent, and experiment metadata tracking system.
+%
+%interesting - 30382537,Automated Metadata Suggestion During Repository Submission.
+%
+%33451426,MARMoSET - Extracting Publication-ready Mass Spectrometry Metadata from RAW Files.
+%
+%https://bmcsystbiol.biomedcentral.com/articles/10.1186/s12918-015-0174-y
+%
+%https://github.com/nextgenhealthcare/connect
+%
+%https://ckan.org/
 
 \section{Network of Fingerprinting agents}
 \cite{cafevariome}
@@ -465,4 +492,4 @@ the DPC cannot disrupt the normal operations of the production system.
 
 \cite{bbmieric} Since the existing biobanks have a strong national character and background, BBMRI-ERIC has chosen for itself a distributed hub and-spoke structure. This structure provides great flexibility so that new Member States and Observers can be connected at any time, and so that it is easy to respond to the emerging needs of biomedical research. It aims to facilitate fair access to quality-defined human disease-relevant biological resources including associated data in an efficient as well as ethically and legally compliant manner to reduce the fragmentation of the biomedical research landscape through harmonization of procedures and implementation of common standards to support high-level collaboration, especially through its Common Service IT and Common Service ELSI, which provide a new service model for Pan-European collaboration
 
-31245605,Cross-Network Directory Service: Infrastructure to enable collaborations across distributed research networks.
+%31245605,Cross-Network Directory Service: Infrastructure to enable collaborations across distributed research networks.
