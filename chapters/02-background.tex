@@ -140,15 +140,15 @@ Mica \cite{maelstrom} & {\color{green} \cmark} \tablefootnote{https://github.com
 
 \textbf{eGenVar \cite{egenvar}:}
 
-A software suite called the eGenVar data-management system (EGDMS), allows users to
-report, track, and share metadata on data content, origin and history of files, without
+A software suite called the eGenVar data-management system, allows users to report,
+track, and share metadata on data content, origin and history of files, without
 compromising privacy or security, since could be used to search data while the original
 files remain in a secure location.
 Users need to have an account to access the system and once created can immediately
 start using the system for search operations.
 However, a personal profile needs to be created before adding, deleting or updating
 content.
-It is designed to connect current Laboratory Information Management Systems (LIMS) and
+It is designed to connect current Laboratory Information Management Systems and
 workflow processing systems and to keep origin information for data being processed
 through distinct systems at different locations.
 Central to the system is a tagging process that allows users to tag data with new or
@@ -172,19 +172,20 @@ Furthermore, the user interface allows viewing, searching, modifying and deletin
 information through simple forms.
 Also, a RESTful API is available which provides a set of programmatic endpoints that
 can be consulted by third-party applications.
-Access is controlled via a Role-Based Access Control (RBAC) system to guarantee that
-proper constraints are imposed.
+Access is controlled via a Role-Based Access Control system to guarantee that proper
+constraints are imposed.
 Different data sources following the same skeleton template will have a common
 representation within the platform.
 By using a common structure as a metadata skeleton, distinct data sources converge to a
 homogeneous representation of their metadata.
 
-This framework is in used to deploy the EMIF Catalogue, a platform that aims to be a
-marketplace where data custodians can publish and share information about their
+This framework is in used to deploy the \gls{emif} Catalogue, a platform that aims to
+be a marketplace where data custodians can publish and share information about their
 clinical databases, while biomedical researchers can search for databases that fulfill
 their particular study requirements.
-Currently, the EMIF Catalogue supports several distinct projects, combining, for
-instance, data available in pan-European EHR and Alzheimer cohorts.
+Currently, the \gls{emif} Catalogue supports several distinct projects, combining, for
+instance, data available in pan-European Electronic health record and Alzheimer
+cohorts.
 
 \textbf{\gls{redcap} \cite{redcap}:}
 Recognizing the need of those participating in research to be able to securely collect
@@ -219,7 +220,7 @@ treatment.
 In here \gls{redcap} is used to collect demographic and clinical data.
 
 \textbf{Data Sphere \cite{datasphere}:}
-The Data sphere project provides a platform on which industry and academia can share
+The \gls{pds} provides a platform on which industry and academia can share
 raw data from late-phase oncology clinical trials.
 Provides of data to this project sign a data sharing agreement were contains some
 metadata about the data that is being proposed to upload, which then they have to
@@ -236,7 +237,7 @@ Patient privacy is in the responsibility of the data providers, where they have 
 deidentify data according to standards set forth by the Privacy Rule of the U.S. Health
 Insurance Portability and Accountability Act of 1996.
 
-As of January 2021, the PDS website had available cancer trial data from over 150
+As of January 2021, the \gls{pds} website had available cancer trial data from over 150
 trials including over 100,000 subjects \cite{datasphere-site}.
 
 \textbf{Molgenis \cite{molgenis}:}
@@ -259,8 +260,8 @@ The \gls{bbmri-eric} project~\cite{bbmrieric} provides fair access to
 quality-controlled human biological samples and associated biomedical and biomolecular
 data, enabling the investigation of basic mechanisms underlying diseases, indispensable
 for the development of new biomarkers and drugs.
-Here Molgenis is used to develop their Directory 1.0 which provides an overview of the
-BBMRI-ERIC ecosystem with its distributed structure of National Nodes, and even more
+Here MOLGENIS is used to develop their Directory 1.0 which provides an overview of the
+\gls{bbmri-eric} ecosystem with its distributed structure of National Nodes, and even more
 importantly to help users identify biobanks of interest to them.
 RD-Connect~\cite{rdconnect} is a global infrastructure project initiated that links
 genomic data with patient registries, biobanks, and clinical bioinformatics tools to
@@ -382,25 +383,49 @@ study data hosted on remote servers.
 %
 %https://github.com/ihsn/nada
 %https://github.com/IQSS/dataverse
+%
+% TODO
+% - remove related to maelstrom e outros eventualmente excluidos
+% - related to mica
 
 \section{Fingerprinting Tools}
 
 Associated with some projects mentioned in the previous section, several tools and
 processes are relevant for the task of extracting/profiling datasets.
-Next are presented such tools/processes.
+Next are presented such tools:
 
 \textbf{Opal \cite{mica}:}
-\cite{mica}
+Opal provides a centralized web-based data management system allowing study
+coordinators and data managers to securely import/export a variety of data types and
+formats using a point-and-click interface.
+Opal then converts, stores and displays these data under a standardized model.  Opal
+can also read data directly from other data source engines.
+Once data have been imported, the Opal web application facilitates data curation and
+quality control procedures and allows automated descriptive statistics computation with
+graphical displays such as bar charts and scatter plots.
+This then facilitates metadata browsing and data discoverability using the Mica web
+portal, mentioned in the previous section.
+Thanks to its To ensure privacy, Opal stores participant identifiers in a distinct and
+secure database and provides administrators with tools to manage them.
+When used across multiple studies, Opal is a powerful tool to harmonize epidemiological
+study data.
 
-\textbf{ACHILLES \cite{mica}:}
+\textbf{\gls{achilles} \cite{achilles-github}:}
+The \gls{ohdsi} project offers a wide range of open-source tools\cite{ohdsi-tools} to support various data-analytics use cases on observational patient-level data.
+What these tools have in common is that they can all interact with one or more
+databases using the \gls{cdm}.
+Furthermore, these tools standardize the analytics for various use cases.
 
-OMOP CDM
-
-OHDSI TOOLS 
-
-ACHILLES
-
-https://github.com/EHDEN/CatalogueExport
+\gls{achilles} is a software tool that provides summaries and metadata of a database
+conforming to the \gls{cdm}.
+As such, it can be used by researchers to evaluate which databases conform better to
+their needs.
+However, certain summaries might reveal some information of the original data that the
+data owner is not willing to share or because is sensitive patient information.
+With this, variations of these tools are creates where only certain summaries are
+extracted from the data source, removing the process of having to filter the output of
+the \gls{achilles}.
+Such a tool was developed associated with the \gls{ehden} project \cite{peters-tool}.
 
 %31853911,One Step Away from Technology but One Step Towards Domain Experts-MDRBridge: A Template-Based ISO 11179-Compliant Metadata Processing Pipeline.
 %
@@ -421,75 +446,68 @@ https://github.com/EHDEN/CatalogueExport
 %https://github.com/nextgenhealthcare/connect
 %
 %https://ckan.org/
+%
+%\cite{egenvar}
+
+%\subsection{Implementation languages}
+%Rust
+%Go
 
 \section{Network of Fingerprinting agents}
-\cite{cafevariome}
-Each Cafe Variome installation or network is focused on a specific type of entity that
-is to be made discoverable, as represented by distinct records. Data of
-any type or size that reside in a database or file store external to Cafe Variome can
-also be used to drive record discovery, by placing a compatible Web service on top of
-that content so that it can receive and respond to JSON queries sent from Cafe Variome.
-Each group can add to or replace its discoverable content at whatever frequency it
-wishes. Data sets for import can be provided as Excel spreadsheets or tab-delimited text files.
 
+Considering that we have an agent that extracts or gathers metadata from a data source,
+it is also important to think on how they will transfer or communicate data with the
+interface that clinical researchers use.
+Next it is presented some projects that design some sort of network architecture to
+retrieve data from the data owners site:
 
-\cite{egenvar}
-add file and metada thourgh client
+\textbf{CafeVariome\cite{cafevariome}: }
+Cafe Variome was designed to be used with safe or sensitive datasets.
+In the latter case, there is often a need to limit which persons might access the
+system to undertake data discovery.
+This implies laboratories connecting together in closed or semiclosed discovery
+networks.
+These could be all-to-all networks (where each group places a discovery interface over
+their own data, for use by other network members) or a hub and spokes arrangement
+(where the network establishes just one discovery portal that federates searches across
+all the partner sites), or a combination of these architectures.
+Regardless of the preferred arrangement, each group might wish to fine-tune which
+records or fields are made available for discovery by (and potentially then shared
+with) each other group or individual in the network.
 
-\cite{gaain}
-The system architecture of GAAIN contains a central server that communicates with
-multiple client applications that are installed at the
-data partner sites. Data is locally exported into CSV
-files and loaded into the DPC's. When GAAIN investigators
-query the network through its web interfaces, search requests are sent to the central
-server.  The central server in turn sends requests to the DPC's that are ''online``.
-The database in each online DPC is queried and the results are
-sent back to the central server where they are aggregated into the response passed on
-to the web interfaces.  The DPC is a Java jar file that contains both a light-weight
-web server3 and database.4 While the jar file is running, the DPC can be configured
-using its administrative web pages and its online/offline status can be changed. It
-uses a single directory for file storage and two userconfigurable ports for
-administration and secure communications to the GAAIN central server. The data stored
-in the DPC may be updated at the convenience of the data partner, and the only
-institutional requirement is to change local firewall configurations to allow HTTPS
-traffic from the central server into the data partner's network. Prospective data
-partners can apply to join GAAIN from the GAAIN website.5 We ask that each data partner
-agrees to and signs a Memorandum of Understanding (MOU) that explicitly states that the
-data shared by the data partner will be de-identified and that the data partner will
-receive recognition on the GAAIN website and in all GAAIN-related presentations.
-Investigators can join GAAIN if they have a valid email address and they agree to
-acknowledge GAAIN and its data partners in all related publications.
+\textbf{\gls{gaain}\cite{gaain}:}
+The primary objective of the \gls{gaain}
+is to establish a virtual community for sharing Alzheimer's-related data stored in
+independently-operated repositories around the world.
+Neuroimaging, demographic, genetic, and biologic data are integrated together while
+respecting the boundaries of existing repositories and protecting the ownership of
+shared data.
+The system architecture of \gls{gaain} contains a central server that communicates with
+multiple client applications that are installed at the data partner sites (\gls{dpc}).
+The \gls{gaain} \gls{dpc}s at each data partner site does not interfere with or consume
+resources of the local production system.
+Since it does not have direct access to the production database, since data is locally
+exported into CSV files and loaded into the \gls{dpc}', it cannot disrupt
+the normal operations of the production system.
+The data stored in the \gls{dpc} may be updated at the convenience of the data partner,
+and the only institutional requirement is to change local firewall configurations to
+allow HTTPS traffic from the central server into the data partner's network.
+\gls{gaain} data partners retain complete control over their data.
+Every \gls{dpc} has an “on/off switch” which provides the freedom to immediately
+disconnect data from the network at any time for any reason.
 
-No copy policy. At no time will GAAIN store data from any data partner on any GAAIN
-central server computer disk, unless requested by the data partner. GAAIN will manage a
-DPC on its computers if a data partner does not wish to do so. GAAIN central servers do
-not save and manage copies of the data. However, data fulfilling investigator searches
-may be cached in server memory to optimize search performance but are never copied or
-written to disk. Whenever a partner goes offline, all data cached from the partner is
-erased.
+When \gls{gaain} investigators query the network through its web interfaces, search
+requests are sent to the central server.
+The database in each \gls{dpc} is queried and the results are sent back to the
+central server where they are aggregated into the response passed on to the web
+interfaces.
 
-Control. GAAIN data partners retain complete control over their data.  GAAIN
-investigators are directed to the data use application pages of its data partners where
-they follow existing application processes.  GAAIN does not grant access to partner
-data nor has access to the user authentication methods and access controls of its data
-partners. Every DPC has an “on/off switch” which provides the freedom to immediately
-disconnect data from the network (“go offline”) at any time for any reason.
+%\cite{datasphere}
 
-Light footprint. The GAAIN DPC at each data partner site does not interfere with or
-consume resources of the local production system.  The DPC is typically installed on a
-computer system separate from the production system. This is possible because data is
-imported into the DPC from a CSV file that is created by exporting data from the
-production database. Since it does not have direct access to the production database,
-the DPC cannot disrupt the normal operations of the production system.
-
-
-
-
-\cite{datasphere}
-\cite{ehr4cr}
-\cite{popmednet}
-\cite{gaain}
-
-\cite{bbmieric} Since the existing biobanks have a strong national character and background, BBMRI-ERIC has chosen for itself a distributed hub and-spoke structure. This structure provides great flexibility so that new Member States and Observers can be connected at any time, and so that it is easy to respond to the emerging needs of biomedical research. It aims to facilitate fair access to quality-defined human disease-relevant biological resources including associated data in an efficient as well as ethically and legally compliant manner to reduce the fragmentation of the biomedical research landscape through harmonization of procedures and implementation of common standards to support high-level collaboration, especially through its Common Service IT and Common Service ELSI, which provide a new service model for Pan-European collaboration
+%\cite{ehr4cr}
+%\cite{popmednet}
+%\cite{egenvar}
+%add file and metada thourgh client
 
 %31245605,Cross-Network Directory Service: Infrastructure to enable collaborations across distributed research networks.
+
