@@ -55,6 +55,12 @@ To build a valuable data hub is then important to take into account how to:
 \end{itemize}
 
 \section{Metadata visualization tools}
+%
+%30876434,Evaluation of repositories for sharing individual-participant data from clinical studies.
+%31862012,The Systematic Review Data Repository (SRDR): descriptive characteristics of publicly available data and opportunities for research.
+%
+
+
 It will then be explored existing visualization platforms that enhance data discovery
 by presenting summaries or metadata of records (data sources, datasets).
 
@@ -128,8 +134,10 @@ Cafe Variome \cite{cafevariome} & {\color{red} \xmark} & {\color{green} \cmark} 
 Mica \cite{maelstrom} & {\color{green} \cmark} \tablefootnote{https://github.com/obiba/mica2} & {\color{red} \xmark} & {\color{green} \cmark} \\
 \hline
 BioSharing \cite{biosharing} & {\color{green} \cmark} \tablefootnote{https://github.com/FAIRsharing/fairsharing.github.io/} & {\color{red} \xmark} & {\color{green} \cmark} \\
-%\hline
-%Open PHACTS \cite{phacts} & -- & -- & -- \\
+\hline
+Dataverse \cite{dataverse} & {\color{green} \cmark} \tablefootnote{https://github.com/IQSS/dataverse} & {\color{green} \cmark} (Role Based) & {\color{green} \cmark} \\
+\hline
+NADA \cite{nada} & {\color{green} \cmark} \tablefootnote{https://github.com/ihsn/nada} & {\color{green} \cmark} (Access Request) & {\color{red} \xmark} \\
 \hline
 \end{tabular}
 \end{table}
@@ -384,21 +392,33 @@ in the life sciences.
 
 Recently the project changed name to FAIRSharing \cite{fairsharing}.
 
+\textbf{Dataverse\cite{dataverse}:}
+The Dataverse Project is an open source web application to share, preserve, cite, explore, and analyze research data.
+Before the Dataverse Project, researchers were forced to choose between receiving credit for their data, by controlling distribution themselves but without long term preservation guarantees, or having long term preservation guarantees, by sending it to a professional archive but without receiving much credit.
+The Dataverse Project breaks this bad choice: it facilitates making data available to others, and allows to replicate others' work more easily, giving the deserved credit and web visibility to the data creators.
 
-%\textbf{Open PHACTS \cite{phacts}:}
-%
-delete ? %30424756,X-search: an open access interface for cross-cohort exploration of the National Sleep Research Resource.
-%
-%
-%32821064,ACTION-EHR: Patient-Centric Blockchain-Based Electronic Health Record Data Management for Cancer Care.
-%
-%https://github.com/ihsn/nada
-%https://github.com/IQSS/dataverse
-%
-%
-%30876434,Evaluation of repositories for sharing individual-participant data from clinical studies.
-%31862012,The Systematic Review Data Repository (SRDR): descriptive characteristics of publicly available data and opportunities for research.
-%
+A Dataverse repository is an installation of Dataverse, which hosts multiple virtual archives called Dataverse collections.
+Each Dataverse collection contains datasets, and each dataset contains descriptive metadata and data files.
+
+
+\textbf{\gls{nada}\cite{data}:}
+\gls{nada} is a web-based cataloging application that allows for the creation of portals that allows users to browse, search, compare, apply for access, and download relevant census or survey information.
+
+It was originally developed to support the establishment of national survey data archives.
+The application is used by a diverse and growing number of national, regional, and international organizations.
+
+By default, when a \gls{nada} instance is installed, the catalog created is the Central Data Catalog.
+All studies uploaded to it are visible, searchable and accessible.
+Studies are carried out to gather more knowledge about a subject.
+The \gls{nada} uses the Data Documentation Initiative (DDI) standard for the presentation of metadata for each study, where such documents are prepared outside the \gls{nada} application.
+The detailed information about the survey is searchable down to the variable level for each survey in the catalog.
+
+The \gls{nada} allows for the level of access to datasets for studies to be controlled at the study level.
+In other words the level of restriction can differ from study to study: data not available, direct access data files, public use data files, authorized access to data files, data available in an enclave and data available from external repository.
+
+Citations are references that can be included at the study level which point to published works that have used the data from a particular study.
+Such resources are useful to researchers who are interested in seeing how the data have been used before.
+They are also a good way of showing the funders of surveys that the data are being used for policy and research purposes and thus are an indicator of some of the impact a study has had.
 
 \section{Fingerprinting Tools}
 
@@ -512,6 +532,8 @@ The database in each \gls{dpc} is queried and the results are sent back to the
 central server where they are aggregated into the response passed on to the web
 interfaces.
 
+%32821064,ACTION-EHR: Patient-Centric Blockchain-Based Electronic Health Record Data Management for Cancer Care.
+%
 %\cite{datasphere}
 
 %\cite{ehr4cr}
