@@ -126,8 +126,8 @@ MOLGENIS \cite{molgenis} & {\color{green} \cmark} \tablefootnote{https://github.
 Cafe Variome \cite{cafevariome} & {\color{red} \xmark} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} \\
 \hline
 Mica \cite{maelstrom} & {\color{green} \cmark} \tablefootnote{https://github.com/obiba/mica2} & {\color{red} \xmark} & {\color{green} \cmark} \\
-%\hline
-%BioSharing \cite{biosharing} & -- & -- & -- \\
+\hline
+BioSharing \cite{biosharing} & {\color{green} \cmark} \tablefootnote{https://github.com/FAIRsharing/fairsharing.github.io/} & {\color{red} \xmark} & {\color{green} \cmark} \\
 %\hline
 %Open PHACTS \cite{phacts} & -- & -- & -- \\
 \hline
@@ -357,20 +357,48 @@ Connecting Mica to one or more Opal database(s), which will be mentioned on the 
 section, allows users to search beyond the metadata by securely querying the actual
 study data hosted on remote servers.
 
-%\textbf{BioSharing \cite{biosharing}:}
-%
+\textbf{BioSharing \cite{biosharing}:}
+BioSharing is a curated, searchable portal of linked information on content standards,
+databases, and journal and funder data policies in the life sciences, ensuring that
+they are registered, informative and discoverable.
+As a one-stop shop for three types of dat mentioned in the life sciences, BioSharing
+not only links these resources, but also details the relationships between them,
+providing context and metrics, as standards evolve and are implemented in databases,
+and both standards and databases are recommended by journal or funding body data
+policies.
+
+BioSharing also provides a historical perspective on these standards and databases,
+detailing when different versions of a standard are created or deprecated, and when
+updates to a database or policy appear, so enabling users to assess the maturity and
+evolution of each resource.
+
+Although all records in BioSharing are manually curated, many have been added and
+edited by the community themselves, rather than BioSharing curators.
+Users are able to claim the record(s) for the resource(s) they maintain.
+This allows them to not only gain personal recognition for their work, but also ensures
+that the data on their resource is accurate and completely up-to-date.
+This community curation aspect of BioSharing, along with the linking and embedding of
+each record into the landscape of standards and databases, helps make BioSharing an
+accurate and comprehensive representation of metadata standards, databases and policies
+in the life sciences.
+
+Recently the project changed name to FAIRSharing \cite{fairsharing}.
+
+
 %\textbf{Open PHACTS \cite{phacts}:}
 %
-%30424756,X-search: an open access interface for cross-cohort exploration of the National Sleep Research Resource.
+delete ? %30424756,X-search: an open access interface for cross-cohort exploration of the National Sleep Research Resource.
 %
-%30876434,Evaluation of repositories for sharing individual-participant data from clinical studies.
 %
 %32821064,ACTION-EHR: Patient-Centric Blockchain-Based Electronic Health Record Data Management for Cancer Care.
 %
-%31862012,The Systematic Review Data Repository (SRDR): descriptive characteristics of publicly available data and opportunities for research.
-%
 %https://github.com/ihsn/nada
 %https://github.com/IQSS/dataverse
+%
+%
+%30876434,Evaluation of repositories for sharing individual-participant data from clinical studies.
+%31862012,The Systematic Review Data Repository (SRDR): descriptive characteristics of publicly available data and opportunities for research.
+%
 
 \section{Fingerprinting Tools}
 
@@ -384,8 +412,8 @@ Next are presented such tools:
 Opal provides a centralized web-based data management system allowing study
 coordinators and data managers to securely import/export a variety of data types and
 formats using a point-and-click interface.
-Opal then converts, stores and displays these data under a standardized model.  Opal
-can also read data directly from other data source engines.
+Opal then converts, stores and displays these data under a standardized model.
+Opal can also read data directly from other data source engines.
 Once data have been imported, the Opal web application facilitates data curation and
 quality control procedures and allows automated descriptive statistics computation with
 graphical displays such as bar charts and scatter plots.
@@ -417,15 +445,9 @@ Such a tool was developed associated with the \gls{ehden} project \cite{peters-t
 
 %31853911,One Step Away from Technology but One Step Towards Domain Experts-MDRBridge: A Template-Based ISO 11179-Compliant Metadata Processing Pipeline.
 %
-%32620019,From Raw Data to FAIR Data: The FAIRification Workflow for Health Research.
-%
 delete ? 33267792,LabPipe: an extensible bioinformatics toolkit to manage experimental data and metadata.
 %
 delete ? 30395166,ukbREST: efficient and streamlined data access for reproducible research in large biobanks.
-%
-%31675914,Annot: a Django-based sample, reagent, and experiment metadata tracking system.
-%
-%interesting - 30382537,Automated Metadata Suggestion During Repository Submission.
 %
 %33451426,MARMoSET - Extracting Publication-ready Mass Spectrometry Metadata from RAW Files.
 %
@@ -436,10 +458,10 @@ delete ? 30395166,ukbREST: efficient and streamlined data access for reproducibl
 %https://ckan.org/
 %
 %\cite{egenvar}
+%
+%32620019,From Raw Data to FAIR Data: The FAIRification Workflow for Health Research.
+%
 
-%\subsection{Implementation languages}
-%Rust
-%Go
 
 \section{Network of Fingerprinting agents}
 
