@@ -54,7 +54,7 @@ To build a valuable data hub is then important to take into account how to:
         readability.
 \end{itemize}
 
-\section{Metadata visualization tools}
+\section{Metadata visualization tools} \label{sec:viz-tools}
 %
 %30876434,Evaluation of repositories for sharing individual-participant data from clinical studies.
 %31862012,The Systematic Review Data Repository (SRDR): descriptive characteristics of publicly available data and opportunities for research.
@@ -428,21 +428,21 @@ Associated with some projects mentioned in the previous section, several tools a
 processes are relevant for the task of extracting/profiling datasets.
 Next are presented such tools:
 
-\textbf{Opal \cite{mica}:}
-Opal provides a centralized web-based data management system allowing study
-coordinators and data managers to securely import/export a variety of data types and
-formats using a point-and-click interface.
-Opal then converts, stores and displays these data under a standardized model.
-Opal can also read data directly from other data source engines.
-Once data have been imported, the Opal web application facilitates data curation and
-quality control procedures and allows automated descriptive statistics computation with
-graphical displays such as bar charts and scatter plots.
-This then facilitates metadata browsing and data discoverability using the Mica web
-portal, mentioned in the previous section.
-Thanks to its To ensure privacy, Opal stores participant identifiers in a distinct and
-secure database and provides administrators with tools to manage them.
-When used across multiple studies, Opal is a powerful tool to harmonize epidemiological
-study data.
+%\textbf{Opal \cite{mica}:}
+%Opal provides a centralized web-based data management system allowing study
+%coordinators and data managers to securely import/export a variety of data types and
+%formats using a point-and-click interface.
+%Opal then converts, stores and displays these data under a standardized model.
+%Opal can also read data directly from other data source engines.
+%Once data have been imported, the Opal web application facilitates data curation and
+%quality control procedures and allows automated descriptive statistics computation with
+%graphical displays such as bar charts and scatter plots.
+%This then facilitates metadata browsing and data discoverability using the Mica web
+%portal, mentioned in the previous section.
+%To ensure privacy, Opal stores participant identifiers in a distinct and
+%secure database and provides administrators with tools to manage them.
+%When used across multiple studies, Opal is a powerful tool to harmonize epidemiological
+%study data.
 
 \textbf{\gls{achilles} \cite{achilles-github}:}
 The \gls{ohdsi} project offers a wide range of open-source tools\cite{ohdsi-tools} to support various data-analytics use cases on observational patient-level data.
@@ -459,15 +459,33 @@ data owner is not willing to share or because is sensitive patient information.
 With this, variations of these tools are creates where only certain summaries are
 extracted from the data source, removing the process of having to filter the output of
 the \gls{achilles}.
-Such a tool was developed associated with the \gls{ehden} project \cite{peters-tool}.
+Such a tool was developed associated with the \gls{ehden} project~\cite{peters-tool}.
 
-%\textbf{DataMed \cite{datamed}:}
+% TODO a series of sql queries over the original data
+
+\textbf{DataMed \cite{datamed}:}
+The mission of DataMed is to provide a data discovery index to help users efficiently find and access existing datasets that are distributed across a wide range of repositories in the biomedical domain.
+DataMed developed a metadata ingestion pipeline which extracts, maps, and indexes by following the \gls{dats}, that describes the metadata elements and the structure for datasets \cite{dats}, based on input from the community and a thorough analysis of existing metadata from popular repositories.
+
+It uses a horizontally scalable message oriented extract-transform-load system.
+The pipeline is a loosely coupled distributed system consisting of a message dispatcher and one or more data processing components.
+The dispatcher acts as a hub, orchestrating the data ingestion and processing pipeline using persistent queues.
+Each consumer does operations such as a transformation, cleanup, and/or enhancement on the document, saves the updated document to a document database, and then places a message in the message queue for the dispatcher.
+The dispatcher uses the pipeline specification to decide the next step and places a message in the corresponding consumer’s input message queue.
+
+To handle heterogeneity in the data availability from multiple sources, the pipeline abstracts retrieval modes and data formats.
+Different ingestors for retrieval mode and data format combinations are developed as specific consumers using a specialized plug-in interface.
+Each specific ingestor uses data iterator(s), which allow streaming to retrieve data only when needed, facilitating the processing of datasets much larger than the system memory.
+The ingested raw data is transformed into the \gls{dats}.
+There was already some work on mapping datasets represented in with the \gls{omop} \gls{cdm} in \cite{cdm-dats}
+
+\textbf{eGenVar\cite{egenvar}:}
 
 %31853911,One Step Away from Technology but One Step Towards Domain Experts-MDRBridge: A Template-Based ISO 11179-Compliant Metadata Processing Pipeline.
 %
-delete ? 33267792,LabPipe: an extensible bioinformatics toolkit to manage experimental data and metadata.
+%delete ? 33267792,LabPipe: an extensible bioinformatics toolkit to manage experimental data and metadata.
 %
-delete ? 30395166,ukbREST: efficient and streamlined data access for reproducible research in large biobanks.
+%delete ? 30395166,ukbREST: efficient and streamlined data access for reproducible research in large biobanks.
 %
 %33451426,MARMoSET - Extracting Publication-ready Mass Spectrometry Metadata from RAW Files.
 %
@@ -476,8 +494,6 @@ delete ? 30395166,ukbREST: efficient and streamlined data access for reproducibl
 %https://github.com/nextgenhealthcare/connect
 %
 %https://ckan.org/
-%
-%\cite{egenvar}
 %
 %32620019,From Raw Data to FAIR Data: The FAIRification Workflow for Health Research.
 %
