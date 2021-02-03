@@ -67,6 +67,8 @@
 %\usepackage[breaklinks=true,colorlinks=false,linkcolor=blue]{hyperref}
 % Or use the default
 \usepackage{hyperref}
+\newcommand{\repo}[1]{\tablefootnote{\url{#1}}}
+\newcommand{\link}[1]{\footnote{\url{#1}}}
 
 %Optional: Redefine section names
 %\def\sectionautorefname{Section}
@@ -132,6 +134,7 @@
 \usepackage{float}
 
 \usepackage{tablefootnote}
+\usepackage{multirow}
 
 %Configure Float style
 %\floatstyle{boxed}
@@ -140,27 +143,27 @@
 %\restylefloat{lstlisting}
 
 %Keep floats inside section!
-\usepackage[section]{placeins}
-\let \oldsubsubsection \subsubsection
-\renewcommand{\subsubsection}[2][]{
-  \FloatBarrier
-  \oldsubsubsection#1{#2}
-}
-\let \oldsubsection \subsection
-\renewcommand{\subsection}[2][]{
-  \FloatBarrier
-  \oldsubsection#1{#2}
-}
-\let \oldsection \section
-\renewcommand{\section}[2][]{
-  \FloatBarrier
-  \oldsection#1{#2}
-}
-\let \oldchapter \chapter
-\renewcommand{\chapter}[2][]{
-  \FloatBarrier
-  \oldchapter#1{#2}
-}
+%\usepackage[section]{placeins}
+%\let \oldsubsubsection \subsubsection
+%\renewcommand{\subsubsection}[2][]{
+%  \FloatBarrier
+%  \oldsubsubsection#1{#2}
+%}
+%\let \oldsubsection \subsection
+%\renewcommand{\subsection}[2][]{
+%  \FloatBarrier
+%  \oldsubsection#1{#2}
+%}
+%\let \oldsection \section
+%\renewcommand{\section}[2][]{
+%  \FloatBarrier
+%  \oldsection#1{#2}
+%}
+%\let \oldchapter \chapter
+%\renewcommand{\chapter}[2][]{
+%  \FloatBarrier
+%  \oldchapter#1{#2}
+%}
 
 
 %%%% Use the built-in division styling

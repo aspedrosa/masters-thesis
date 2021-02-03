@@ -1,7 +1,8 @@
 \chapter{Background}
 \label{chapter:background}
 
-From a medical standpoint, to perform their studies, biomedical researches need to
+%Several biomedical researchers perform studies to know the effect of certain drugs
+From a medical standpoint, to perform their studies, biomedical researchers need to
 contact data owners to have access to relevant data that can help improve their
 analysis and/or findings that can be applied to real cases.
 
@@ -54,7 +55,7 @@ To build a valuable data hub is then important to take into account how to:
         readability.
 \end{itemize}
 
-\section{Metadata visualization tools} \label{sec:viz-tools}
+\section{Metadata Visualization Tools} \label{sec:viz-tools}
 %
 %30876434,Evaluation of repositories for sharing individual-participant data from clinical studies.
 %31862012,The Systematic Review Data Repository (SRDR): descriptive characteristics of publicly available data and opportunities for research.
@@ -79,6 +80,8 @@ For that the \gls{fair} Guiding Principles were established which contain a seri
 considerations for data publishing to supports both human and machine operations such
 as deposition, exploration, sharing and reuse~\cite{fair}.
 
+%32620019,From Raw Data to FAIR Data: The FAIRification Workflow for Health Research.
+
 Finally, it is preferential for such a tool to be open source since the available
 solution might need some changes to solve our specific problem, and also it makes it
 possible to receive contributions from the community.
@@ -94,11 +97,11 @@ From the final 20 systems, they captured their interoperability, what type of da
 were providing and their after effect related to scientific results and improvements to
 better healthcare.
 To perform their search they only used PubMed
-\footnote{https://pubmed.ncbi.nlm.nih.gov/} considering it indexes a substantially
+\link{https://pubmed.ncbi.nlm.nih.gov/} considering it indexes a substantially
 amount of health-care related work and provides a public \gls{api} which allows
 automation of the retrieval process.
 The programmatic retrieval was done using the Biopython
-framework\footnote{https://biopython.org/} where all search queries were limited to the
+framework\link{https://biopython.org/} where all search queries were limited to the
 time windows between January 2014 to September 2018.
 
 A softer version of the previous systematic review was done now within November 2018
@@ -108,43 +111,9 @@ process taken here was to skip the first step and find related publications of t
 final 16 selected on the systematic review and then try to find some software solutions
 of interest.
 
-\subsection{Findings}
+\subsection*{eGenVar}
 
-From the systematic review mentioned before, only software solutions were considered
-and projects were excluded.
-
-\begin{table}[h]
-    \center
-\begin{tabular}{ | c | c | c | c | c | }
-\hline 
-Tool Name & Open Source & Data protection  & FAIR\\
-\hline
-eGenVar \cite{egenvar} & {\color{green} \cmark} \tablefootnote{https://github.com/Sabryr/EGDMS} & {\color{green} \cmark} (Users + Permissions)& {\color{green} \cmark} \\
-\hline
-MONTRA \cite{montra} & {\color{green} \cmark} \tablefootnote{https://github.com/bioinformatics-ua/montra} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} \\
-\hline
-REDCap \cite{redcap} & {\color{red} \xmark} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} \\
-\hline
-Data Sphere \cite{datasphere} & {\color{red} \xmark} & {\color{green} \cmark} (Authorized Users Only) & {\color{red} \xmark} \\
-\hline
-MOLGENIS \cite{molgenis} & {\color{green} \cmark} \tablefootnote{https://github.com/molgenis/molgenis} & {\color{green} \cmark} (Role based) & {\color{red} \xmark} \\
-\hline
-Cafe Variome \cite{cafevariome} & {\color{red} \xmark} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} \\
-\hline
-Mica \cite{maelstrom} & {\color{green} \cmark} \tablefootnote{https://github.com/obiba/mica2} & {\color{red} \xmark} & {\color{green} \cmark} \\
-\hline
-BioSharing \cite{biosharing} & {\color{green} \cmark} \tablefootnote{https://github.com/FAIRsharing/fairsharing.github.io/} & {\color{red} \xmark} & {\color{green} \cmark} \\
-\hline
-Dataverse \cite{dataverse} & {\color{green} \cmark} \tablefootnote{https://github.com/IQSS/dataverse} & {\color{green} \cmark} (Role Based) & {\color{green} \cmark} \\
-\hline
-NADA \cite{nada} & {\color{green} \cmark} \tablefootnote{https://github.com/ihsn/nada} & {\color{green} \cmark} (Access Request) & {\color{red} \xmark} \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{eGenVar \cite{egenvar}:}
-
-A software suite called the eGenVar data-management system, allows users to report,
+A software suite called the eGenVar\cite{egenvar} data-management system, allows users to report,
 track, and share metadata on data content, origin and history of files, without
 compromising privacy or security, since could be used to search data while the original
 files remain in a secure location.
@@ -162,13 +131,13 @@ The system includes a server, a command-line client, other clients that can be
 developed in several programming languages and a web portal interface.
 
 
-\textbf{MONTRA \cite{montra}:}
+\subsection*{MONTRA}
 A base architecture for designing data integration platforms, with emphasis on
 biomedical data.
 It has a flexible architecture for centralizing and sharing such data coming from
 multiple, heterogeneous sources.
 The data sources that are cataloged within the system contain the full data, while the
-views available through MONTRA provide a skeleton of these underlying sources.
+views available through MONTRA\cite{montra} provide a skeleton of these underlying sources.
 The skeleton definition is a straightforward operation that can be done by any data
 custodian and can be saved as a spreadsheet file and submitted through the web
 interface.
@@ -191,9 +160,9 @@ Currently, the \gls{emif} Catalogue supports several distinct projects, combinin
 instance, data available in pan-European Electronic health record and Alzheimer
 cohorts.
 
-\textbf{\gls{redcap} \cite{redcap}:}
+\subsection*{\gls{redcap}}
 Recognizing the need of those participating in research to be able to securely collect
-and share data, a team at Vanderbilt University developed \gls{redcap}, a data and
+and share data, a team at Vanderbilt University developed \gls{redcap}~\cite{redcap}, a data and
 metadata gathering tool.
 \gls{redcap} data capture tools can either be structured to function as a series of
 forms that investigators fill out as they advance through a project or as a survey
@@ -223,8 +192,8 @@ understand common underlying causes of brain dysfunction and develop new approac
 treatment.
 In here \gls{redcap} is used to collect demographic and clinical data.
 
-\textbf{Data Sphere \cite{datasphere}:}
-The \gls{pds} provides a platform on which industry and academia can share
+\subsection*{Data Sphere}
+The \gls{pds}~\cite{datasphere} provides a platform on which industry and academia can share
 raw data from late-phase oncology clinical trials.
 Provides of data to this project sign a data sharing agreement were contains some
 metadata about the data that is being proposed to upload, which then they have to
@@ -244,8 +213,8 @@ Insurance Portability and Accountability Act of 1996.
 As of January 2021, the \gls{pds} website had available cancer trial data from over 150
 trials including over 100,000 subjects \cite{datasphere-site}.
 
-\textbf{Molgenis \cite{molgenis}:}
-MOLGENIS is a generic, model-driven toolkit for the rapid generation of custom-made,
+\subsection*{Molgenis}
+MOLGENIS~\cite{molgenis} is a generic, model-driven toolkit for the rapid generation of custom-made,
 data-intensive biosoftware applications.
 Bioinformaticians can use a domain-specific language, implemented using XML, to
 efficiently model the biological details of their particular biological system, which
@@ -304,7 +273,7 @@ RD biological samples available in participating biobanks for RD research.
 %The GAAIN Interrogator allows investigators to view data trends and relationships
 %before being shown where to obtain the actual data.
 
-\textbf{Cafe Variome \cite{cafevariome}}
+\subsection*{Cafe Variome}
 Is a general purpose data discovery platform, using design principles that stress
 compliance with relevant and emerging standards, ease of use for system operators and
 discovery users, with extensive options for customized installation to suit many
@@ -312,7 +281,7 @@ different areas of need.
 
 This particular ''genotype-to-phenotype`` application is of broad current interest,
 though the technology is equally applicable to other areas.
-Cafe Variome comprises a single, lightweight software package, which can be easily
+Cafe Variome~\cite{cafevariome} comprises a single, lightweight software package, which can be easily
 installed and configured locally.
 The system acts to provide a ''shop window`` into extant data, and is explicitly not
 intended as a ''database`` for storing, curating, or integrating information.
@@ -337,8 +306,9 @@ split by data source and also split into three results categories as follows:
         submit to the data owner a data access request.
 \end{itemize}
 
-\textbf{Mica \cite{mica}:}
-Mica is used to create websites and metadata portals for individual epidemiological
+\subsection*{Mica}
+% TODO cite maelstrom
+Mica~\cite{mica} is used to create websites and metadata portals for individual epidemiological
 studies or multi-study consortia, with a specific focus on supporting observational
 cohort studies.
 The Mica application helps data custodians and study or network coordinators to
@@ -365,8 +335,8 @@ Connecting Mica to one or more Opal database(s), which will be mentioned on the 
 section, allows users to search beyond the metadata by securely querying the actual
 study data hosted on remote servers.
 
-\textbf{BioSharing \cite{biosharing}:}
-BioSharing is a curated, searchable portal of linked information on content standards,
+\subsection*{BioSharing}
+BioSharing~\cite{biosharing} is a curated, searchable portal of linked information on content standards,
 databases, and journal and funder data policies in the life sciences, ensuring that
 they are registered, informative and discoverable.
 As a one-stop shop for three types of dat mentioned in the life sciences, BioSharing
@@ -392,8 +362,8 @@ in the life sciences.
 
 Recently the project changed name to FAIRSharing \cite{fairsharing}.
 
-\textbf{Dataverse\cite{dataverse}:}
-The Dataverse Project is an open source web application to share, preserve, cite, explore, and analyze research data.
+\subsection*{Dataverse}
+The Dataverse Project~\cite{dataverse} is an open source web application to share, preserve, cite, explore, and analyze research data.
 Before the Dataverse Project, researchers were forced to choose between receiving credit for their data, by controlling distribution themselves but without long term preservation guarantees, or having long term preservation guarantees, by sending it to a professional archive but without receiving much credit.
 The Dataverse Project breaks this bad choice: it facilitates making data available to others, and allows to replicate others' work more easily, giving the deserved credit and web visibility to the data creators.
 
@@ -401,8 +371,8 @@ A Dataverse repository is an installation of Dataverse, which hosts multiple vir
 Each Dataverse collection contains datasets, and each dataset contains descriptive metadata and data files.
 
 
-\textbf{\gls{nada}\cite{data}:}
-\gls{nada} is a web-based cataloging application that allows for the creation of portals that allows users to browse, search, compare, apply for access, and download relevant census or survey information.
+\subsection*{\gls{nada}}
+\gls{nada}~\cite{nada} is a web-based cataloging application that allows for the creation of portals that allows users to browse, search, compare, apply for access, and download relevant census or survey information.
 
 It was originally developed to support the establishment of national survey data archives.
 The application is used by a diverse and growing number of national, regional, and international organizations.
@@ -420,7 +390,9 @@ Citations are references that can be included at the study level which point to 
 Such resources are useful to researchers who are interested in seeing how the data have been used before.
 They are also a good way of showing the funders of surveys that the data are being used for policy and research purposes and thus are an indicator of some of the impact a study has had.
 
-\section{Fingerprinting Tools}
+% TODO https://ckan.org/
+
+\section{Metadata Extraction Tools}
 
 % Similarity between tools -> all converge different data model to a comon one
 
@@ -444,27 +416,21 @@ Next are presented such tools:
 %When used across multiple studies, Opal is a powerful tool to harmonize epidemiological
 %study data.
 
-\textbf{\gls{achilles} \cite{achilles-github}:}
+\subsection*{\gls{achilles}}
 The \gls{ohdsi} project offers a wide range of open-source tools\cite{ohdsi-tools} to support various data-analytics use cases on observational patient-level data.
-What these tools have in common is that they can all interact with one or more
-databases using the \gls{cdm}.
+What these tools have in common is that they can all interact with one or more databases using the \gls{cdm}.
 Furthermore, these tools standardize the analytics for various use cases.
 
-\gls{achilles} is a software tool that provides summaries and metadata of a database
-conforming to the \gls{cdm}.
-As such, it can be used by researchers to evaluate which databases conform better to
-their needs.
-However, certain summaries might reveal some information of the original data that the
-data owner is not willing to share or because is sensitive patient information.
-With this, variations of these tools are creates where only certain summaries are
-extracted from the data source, removing the process of having to filter the output of
-the \gls{achilles}.
+\gls{achilles}~\cite{achilles-github} is a software tool that provides summaries and metadata of a database conforming to the \gls{cdm}.
+As such, it can be used by researchers to evaluate which databases conform better to their needs.
+However, certain summaries might reveal some information of the original data that the data owner is not willing to share or because is sensitive patient information.
+With this, variations of these tools are creates where only certain summaries are extracted from the data source, removing the process of having to filter the output of the \gls{achilles}.
 Such a tool was developed associated with the \gls{ehden} project~\cite{peters-tool}.
 
-% TODO a series of sql queries over the original data
+% TODO its implemented by a series of sql queries over the original data in R
 
-\textbf{DataMed \cite{datamed}:}
-The mission of DataMed is to provide a data discovery index to help users efficiently find and access existing datasets that are distributed across a wide range of repositories in the biomedical domain.
+\subsection*{DataMed}
+The mission of DataMed~\cite{datamed} is to provide a data discovery index to help users efficiently find and access existing datasets that are distributed across a wide range of repositories in the biomedical domain.
 DataMed developed a metadata ingestion pipeline which extracts, maps, and indexes by following the \gls{dats}, that describes the metadata elements and the structure for datasets \cite{dats}, based on input from the community and a thorough analysis of existing metadata from popular repositories.
 
 It uses a horizontally scalable message oriented extract-transform-load system.
@@ -477,27 +443,12 @@ To handle heterogeneity in the data availability from multiple sources, the pipe
 Different ingestors for retrieval mode and data format combinations are developed as specific consumers using a specialized plug-in interface.
 Each specific ingestor uses data iterator(s), which allow streaming to retrieve data only when needed, facilitating the processing of datasets much larger than the system memory.
 The ingested raw data is transformed into the \gls{dats}.
+
 There was already some work on mapping datasets represented in with the \gls{omop} \gls{cdm} in \cite{cdm-dats}
 
-\textbf{eGenVar\cite{egenvar}:}
+%add this ? 33451426,MARMoSET - Extracting Publication-ready Mass Spectrometry Metadata from RAW Files.
 
 %31853911,One Step Away from Technology but One Step Towards Domain Experts-MDRBridge: A Template-Based ISO 11179-Compliant Metadata Processing Pipeline.
-%
-%delete ? 33267792,LabPipe: an extensible bioinformatics toolkit to manage experimental data and metadata.
-%
-%delete ? 30395166,ukbREST: efficient and streamlined data access for reproducible research in large biobanks.
-%
-%33451426,MARMoSET - Extracting Publication-ready Mass Spectrometry Metadata from RAW Files.
-%
-%https://bmcsystbiol.biomedcentral.com/articles/10.1186/s12918-015-0174-y
-%
-%https://github.com/nextgenhealthcare/connect
-%
-%https://ckan.org/
-%
-%32620019,From Raw Data to FAIR Data: The FAIRification Workflow for Health Research.
-%
-
 
 \section{Network of Fingerprinting agents}
 
@@ -507,55 +458,108 @@ interface that clinical researchers use.
 Next it is presented some projects that design some sort of network architecture to
 retrieve data from the data owners site:
 
-\textbf{CafeVariome\cite{cafevariome}: }
-Cafe Variome was designed to be used with safe or sensitive datasets.
-In the latter case, there is often a need to limit which persons might access the
-system to undertake data discovery.
-This implies laboratories connecting together in closed or semiclosed discovery
-networks.
-These could be all-to-all networks (where each group places a discovery interface over
-their own data, for use by other network members) or a hub and spokes arrangement
-(where the network establishes just one discovery portal that federates searches across
-all the partner sites), or a combination of these architectures.
-Regardless of the preferred arrangement, each group might wish to fine-tune which
-records or fields are made available for discovery by (and potentially then shared
-with) each other group or individual in the network.
+\subsection*{CafeVariome}
+Cafe Variome~\cite{cafevariome} was designed to be used with safe or sensitive datasets.
+In the latter case, there is often a need to limit which persons might access the system to undertake data discovery.
+This implies laboratories connecting together in closed or semiclosed discovery networks.
+These could be all-to-all networks (where each group places a discovery interface over their own data, for use by other network members) or a hub and spokes arrangement (where the network establishes just one discovery portal that federates searches across all the partner sites), or a combination of these architectures.
+Regardless of the preferred arrangement, each group might wish to fine-tune which records or fields are made available for discovery by (and potentially then shared with) each other group or individual in the network.
 
-\textbf{\gls{gaain}\cite{gaain}:}
-The primary objective of the \gls{gaain}
-is to establish a virtual community for sharing Alzheimer's-related data stored in
-independently-operated repositories around the world.
-Neuroimaging, demographic, genetic, and biologic data are integrated together while
-respecting the boundaries of existing repositories and protecting the ownership of
-shared data.
-The system architecture of \gls{gaain} contains a central server that communicates with
-multiple client applications that are installed at the data partner sites (\gls{dpc}).
-The \gls{gaain} \gls{dpc}s at each data partner site does not interfere with or consume
-resources of the local production system.
-Since it does not have direct access to the production database, since data is locally
-exported into CSV files and loaded into the \gls{dpc}', it cannot disrupt
-the normal operations of the production system.
-The data stored in the \gls{dpc} may be updated at the convenience of the data partner,
-and the only institutional requirement is to change local firewall configurations to
-allow HTTPS traffic from the central server into the data partner's network.
+\subsection*{\gls{gaain}}
+The primary objective of the \gls{gaain}~\cite{gaain} is to establish a virtual community for sharing Alzheimer's-related data stored in independently-operated repositories around the world.
+Neuroimaging, demographic, genetic, and biologic data are integrated together while respecting the boundaries of existing repositories and protecting the ownership of shared data.
+The system architecture of \gls{gaain} contains a central server that communicates with multiple client applications that are installed at the data partner sites (\gls{dpc}).
+The \gls{gaain} \gls{dpc}s at each data partner site does not interfere with or consume resources of the local production system.
+Since it does not have direct access to the production database, since data is locally exported into CSV files and loaded into the \gls{dpc}', it cannot disrupt the normal operations of the production system.
+The data stored in the \gls{dpc} may be updated at the convenience of the data partner, and the only institutional requirement is to change local firewall configurations to allow HTTPS traffic from the central server into the data partner's network.
 \gls{gaain} data partners retain complete control over their data.
-Every \gls{dpc} has an “on/off switch” which provides the freedom to immediately
-disconnect data from the network at any time for any reason.
+Every \gls{dpc} has an “on/off switch” which provides the freedom to immediately disconnect data from the network at any time for any reason.
 
-When \gls{gaain} investigators query the network through its web interfaces, search
-requests are sent to the central server.
-The database in each \gls{dpc} is queried and the results are sent back to the
-central server where they are aggregated into the response passed on to the web
-interfaces.
+When \gls{gaain} investigators query the network through its web interfaces, search requests are sent to the central server.
+The database in each \gls{dpc} is queried and the results are sent back to the central server where they are aggregated into the response passed on to the web interfaces.
 
-%32821064,ACTION-EHR: Patient-Centric Blockchain-Based Electronic Health Record Data Management for Cancer Care.
+\subsection*{PopMedNet}
+Popmednet is a software platform designed to facilitate the creation and operation of distributed health data networks.
+the software platform was designed to meet the needs of disparate data partners, coordinating center models, and researchers.
+research data networks exist only if the data partners are willing to participate, so meeting their needs is critical.
+the popmednet platform’s flexible architecture and governance models enable network designs that meet the critical needs of data partners within distributed networks, including data privacy and security requirements, system security requirements, governance and operational requirements, regulatory and workflow requirements, and monitoring of network functions.
+In networks with 50 or 100 institutions, developing an approach that meets the security needs of every individual institution is a substantial undertaking.
+Additionally, PopMedNet includes a number of features designed to facilitate research and network learning more broadly than simply distributing queries.
+These features aid researchers in identifying potential collaborators, discovering prior research conducted within their network, and understanding more about the data available within their network.
+Some of the key PopMedNet platform capabilities designed to meet the needs of stakeholders are described below and summarized in Table 2.
+The PopMedNet platform consists of two interrelated components: a web-based portal for distributing requests and administering the network, and the DataMart Client (see DataMart Client section, below).
+These are illustrated in Figure 1, which represents an implementation of PopMedNet within a secure architecture.
+Other implementation options are possible.
+
+DataMart Client
+
+PopMedNet was designed to overcome data partners’ security, operational, confidentiality, and privacy concerns.
+PopMedNet uses a publish- and-subscribe approach that does not require any open ports or Virtual Private Networks (VPNs), eliminating a critical security concern for data partners.
+It is installed on a data partner end user’s local machine, behind the data partner firewall.
+There is no direct external access to local data and all queries from the network portal are pulled into the local environment rather than being pushed through an open port.
+The system ensures that all communications between the DataMart Client application and network portals use HTTP/SSL/ TLS connections to securely transfer requests and results.
+The PopMedNet architecture allows data partners to use their existing internal workflows related to use and release of data.
+The DataMart Client acts as an inbox for data partners to receive, review, and respond to queries distributed from a network portal.
+This enables data partners to review the details of all requests, including request metadata such as the name and email address of the requester, a description of the request, the purpose of the request, and the request parameters.
+After review, the data partner may choose to execute the query, hold it for further review, or reject it.
+After execution, the data partner may review the results and then decide whether to return them.
+Additional review or workflows consistent with local policies can also be implemented.
+This asynchronous approach to querying is a feature of the system that provides the data partners with complete control over their data and all its uses.
+Data partners can choose to automate many of the query processing steps, or choose to use the manual process to ensure compliance with local requirements.
+This level of data partner control creates the governance necessary to encourage data partner participation in research networks.
+
+%31245605,Cross-Network Directory Service: Infrastructure to enable collaborations across distributed research networks.
+%
+%https://github.com/nextgenhealthcare/connect
 %
 %\cite{datasphere}
-
+%
 %\cite{ehr4cr}
+%
 %\cite{popmednet}
+%
 %\cite{egenvar}
 %add file and metada thourgh client
 
-%31245605,Cross-Network Directory Service: Infrastructure to enable collaborations across distributed research networks.
+% last resort ? 32821064,ACTION-EHR: Patient-Centric Blockchain-Based Electronic Health Record Data Management for Cancer Care.
 
+\section{Findings}
+
+\begin{table}[h]
+    \center
+    \begin{tabular}{|*{6}{c |}}
+\hline 
+        \multirow{2}{*}{Tool Name} & \multirow{2}{*}{Open Source} & \multicolumn{2}{c|}{Visualization/Interation} & \multirow{2}{*}{Extraction} & \multirow{2}{*}{Network} \\
+\cline{3-4}
+        & & Data protection  & FAIR & &   \\
+\hline
+        eGenVar \cite{egenvar} & {\color{green} \cmark} \repo{https://github.com/Sabryr/EGDMS} & {\color{green} \cmark} (Users + Permissions)& {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
+\hline
+        MONTRA \cite{montra} & {\color{green} \cmark} \repo{https://github.com/bioinformatics-ua/montra} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} & {\color{red} \xmark} &  {\color{red} \xmark} \\
+\hline
+        REDCap \cite{redcap} & {\color{red} \xmark} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark}  \\
+\hline
+Data Sphere \cite{datasphere} & {\color{red} \xmark} & {\color{green} \cmark} (Authorized Users Only) & {\color{red} \xmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
+\hline
+MOLGENIS \cite{molgenis} & {\color{green} \cmark} \repo{https://github.com/molgenis/molgenis} & {\color{green} \cmark} (Role based) & {\color{red} \xmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
+\hline
+Cafe Variome \cite{cafevariome} & {\color{red} \xmark} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
+\hline
+Mica \cite{mica} & {\color{green} \cmark} \repo{https://github.com/obiba/mica2} & {\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
+\hline
+BioSharing \cite{biosharing} & {\color{green} \cmark} \repo{https://github.com/FAIRsharing/fairsharing.github.io/} & {\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
+\hline
+Dataverse \cite{dataverse} & {\color{green} \cmark} \repo{https://github.com/IQSS/dataverse} & {\color{green} \cmark} (Role Based) & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
+\hline
+NADA \cite{nada} & {\color{green} \cmark} \repo{https://github.com/ihsn/nada} & {\color{green} \cmark} (Access Request) & {\color{red} \xmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
+\hline
+        ACHILLES \cite{achilles-github} & {\color{green} \cmark} \repo{https://github.com/OHDSI/Achilles/} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} \\
+\hline
+        DataMed \cite{datamed} & {\color{green} \cmark} \repo{https://github.com/biocaddie} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} \\
+\hline
+        GAAIN \cite{gaain} & {\color{red} \xmark} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
+\hline
+        PopMedNet \cite{popmednet} & {\color{red} \xmark} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
+\hline
+\end{tabular}
+\end{table}
