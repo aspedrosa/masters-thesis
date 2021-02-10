@@ -56,11 +56,9 @@ To build a valuable data hub is then important to take into account how to:
 \end{itemize}
 
 \section{Metadata Visualization Tools} \label{sec:viz-tools}
-%
+
 %30876434,Evaluation of repositories for sharing individual-participant data from clinical studies.
 %31862012,The Systematic Review Data Repository (SRDR): descriptive characteristics of publicly available data and opportunities for research.
-%
-
 
 It will then be explored existing visualization platforms that enhance data discovery
 by presenting summaries or metadata of records (data sources, datasets).
@@ -195,7 +193,7 @@ In here \gls{redcap} is used to collect demographic and clinical data.
 \subsection*{Data Sphere}
 The \gls{pds}~\cite{datasphere} provides a platform on which industry and academia can share
 raw data from late-phase oncology clinical trials.
-Provides of data to this project sign a data sharing agreement were contains some
+Providers of data to this project sign a data sharing agreement were contains some
 metadata about the data that is being proposed to upload, which then they have to
 follow instructions to upload the given data to the platform.
 On approval of the data application, authorized users can access and download all
@@ -335,15 +333,28 @@ Connecting Mica to one or more Opal database(s), which will be mentioned on the 
 section, allows users to search beyond the metadata by securely querying the actual
 study data hosted on remote servers.
 
+%\textbf{Opal \cite{mica}:}
+%Opal provides a centralized web-based data management system allowing study
+%coordinators and data managers to securely import/export a variety of data types and
+%formats using a point-and-click interface.
+%Opal then converts, stores and displays these data under a standardized model.
+%Opal can also read data directly from other data source engines.
+%Once data have been imported, the Opal web application facilitates data curation and
+%quality control procedures and allows automated descriptive statistics computation with
+%graphical displays such as bar charts and scatter plots.
+%This then facilitates metadata browsing and data discoverability using the Mica web
+%portal, mentioned in the previous section.
+%To ensure privacy, Opal stores participant identifiers in a distinct and
+%secure database and provides administrators with tools to manage them.
+%When used across multiple studies, Opal is a powerful tool to harmonize epidemiological
+%study data.
+
+
 \subsection*{BioSharing}
 BioSharing~\cite{biosharing} is a curated, searchable portal of linked information on content standards,
 databases, and journal and funder data policies in the life sciences, ensuring that
 they are registered, informative and discoverable.
-As a one-stop shop for three types of dat mentioned in the life sciences, BioSharing
-not only links these resources, but also details the relationships between them,
-providing context and metrics, as standards evolve and are implemented in databases,
-and both standards and databases are recommended by journal or funding body data
-policies.
+As a one-stop shop for three types of data mentioned in the life sciences, BioSharing not only links these resources, but also details the relationships between them, providing context and metrics, as standards evolve and are implemented in databases, and both standards and databases are recommended by journal or funding body data policies.
 
 BioSharing also provides a historical perspective on these standards and databases,
 detailing when different versions of a standard are created or deprecated, and when
@@ -390,31 +401,11 @@ Citations are references that can be included at the study level which point to 
 Such resources are useful to researchers who are interested in seeing how the data have been used before.
 They are also a good way of showing the funders of surveys that the data are being used for policy and research purposes and thus are an indicator of some of the impact a study has had.
 
-% TODO https://ckan.org/
-
 \section{Metadata Extraction Tools}
-
-% Similarity between tools -> all converge different data model to a comon one
 
 Associated with some projects mentioned in the previous section, several tools and
 processes are relevant for the task of extracting/profiling datasets.
 Next are presented such tools:
-
-%\textbf{Opal \cite{mica}:}
-%Opal provides a centralized web-based data management system allowing study
-%coordinators and data managers to securely import/export a variety of data types and
-%formats using a point-and-click interface.
-%Opal then converts, stores and displays these data under a standardized model.
-%Opal can also read data directly from other data source engines.
-%Once data have been imported, the Opal web application facilitates data curation and
-%quality control procedures and allows automated descriptive statistics computation with
-%graphical displays such as bar charts and scatter plots.
-%This then facilitates metadata browsing and data discoverability using the Mica web
-%portal, mentioned in the previous section.
-%To ensure privacy, Opal stores participant identifiers in a distinct and
-%secure database and provides administrators with tools to manage them.
-%When used across multiple studies, Opal is a powerful tool to harmonize epidemiological
-%study data.
 
 \subsection*{\gls{achilles}}
 The \gls{ohdsi} project offers a wide range of open-source tools\cite{ohdsi-tools} to support various data-analytics use cases on observational patient-level data.
@@ -448,9 +439,7 @@ There was already some work on mapping datasets represented in with the \gls{omo
 
 %add this ? 33451426,MARMoSET - Extracting Publication-ready Mass Spectrometry Metadata from RAW Files.
 
-%31853911,One Step Away from Technology but One Step Towards Domain Experts-MDRBridge: A Template-Based ISO 11179-Compliant Metadata Processing Pipeline.
-
-\section{Network of Fingerprinting agents}
+\section{Metadata Network Architectures}  % TODO discuss
 
 Considering that we have an agent that extracts or gathers metadata from a data source,
 it is also important to think on how they will transfer or communicate data with the
@@ -479,57 +468,37 @@ When \gls{gaain} investigators query the network through its web interfaces, sea
 The database in each \gls{dpc} is queried and the results are sent back to the central server where they are aggregated into the response passed on to the web interfaces.
 
 \subsection*{PopMedNet}
-Popmednet is a software platform designed to facilitate the creation and operation of distributed health data networks.
-the software platform was designed to meet the needs of disparate data partners, coordinating center models, and researchers.
-research data networks exist only if the data partners are willing to participate, so meeting their needs is critical.
-the popmednet platform’s flexible architecture and governance models enable network designs that meet the critical needs of data partners within distributed networks, including data privacy and security requirements, system security requirements, governance and operational requirements, regulatory and workflow requirements, and monitoring of network functions.
-In networks with 50 or 100 institutions, developing an approach that meets the security needs of every individual institution is a substantial undertaking.
-Additionally, PopMedNet includes a number of features designed to facilitate research and network learning more broadly than simply distributing queries.
+Popmednet~\cite{popmednet} is a software platform designed to facilitate the creation and operation of distributed health data networks and to meet the needs of disparate data partners, coordinating center models, and researchers.
+The platform is a flexible architecture and governance models enable network designs that meet the critical needs of data partners within distributed networks, including data privacy and security requirements, system security requirements, governance and operational requirements, regulatory and workflow requirements, and monitoring of network functions.
+PopMedNet includes a number of features designed to facilitate research and network learning more broadly than simply distributing queries.
 These features aid researchers in identifying potential collaborators, discovering prior research conducted within their network, and understanding more about the data available within their network.
-Some of the key PopMedNet platform capabilities designed to meet the needs of stakeholders are described below and summarized in Table 2.
-The PopMedNet platform consists of two interrelated components: a web-based portal for distributing requests and administering the network, and the DataMart Client (see DataMart Client section, below).
-These are illustrated in Figure 1, which represents an implementation of PopMedNet within a secure architecture.
-Other implementation options are possible.
 
-DataMart Client
-
-PopMedNet was designed to overcome data partners’ security, operational, confidentiality, and privacy concerns.
-PopMedNet uses a publish- and-subscribe approach that does not require any open ports or Virtual Private Networks (VPNs), eliminating a critical security concern for data partners.
-It is installed on a data partner end user’s local machine, behind the data partner firewall.
+The PopMedNet platform consists of two interrelated components: a web-based portal for distributing requests and administering the network, and the DataMart Client.
+Both components are combined together through a publish-and-subscribe approach, that does not require any open ports, eliminating a critical security concern for data partners.
+The DataMart Client is installed on a data partner end user’s local machine, behind the data partner firewall.
 There is no direct external access to local data and all queries from the network portal are pulled into the local environment rather than being pushed through an open port.
-The system ensures that all communications between the DataMart Client application and network portals use HTTP/SSL/ TLS connections to securely transfer requests and results.
-The PopMedNet architecture allows data partners to use their existing internal workflows related to use and release of data.
 The DataMart Client acts as an inbox for data partners to receive, review, and respond to queries distributed from a network portal.
 This enables data partners to review the details of all requests, including request metadata such as the name and email address of the requester, a description of the request, the purpose of the request, and the request parameters.
 After review, the data partner may choose to execute the query, hold it for further review, or reject it.
-After execution, the data partner may review the results and then decide whether to return them.
-Additional review or workflows consistent with local policies can also be implemented.
 This asynchronous approach to querying is a feature of the system that provides the data partners with complete control over their data and all its uses.
 Data partners can choose to automate many of the query processing steps, or choose to use the manual process to ensure compliance with local requirements.
-This level of data partner control creates the governance necessary to encourage data partner participation in research networks.
 
-%31245605,Cross-Network Directory Service: Infrastructure to enable collaborations across distributed research networks.
-%
+\subsection*{EHR4CR}
+
+The EHR4CR~\cite{ehr4cr} project aims to build a robust and scalable platform that will unlock data from hospital EHR systems, in full compliance with the ethical, regulatory and data protection policies and requirements of each participating country.
+The EHR4CR platform supports distributed querying to assist in clinical trials feasibility assessment and patient recruitment.
+
+\subsection*{Mirth Connect}
 %https://github.com/nextgenhealthcare/connect
-%
-%\cite{datasphere}
-%
-%\cite{ehr4cr}
-%
-%\cite{popmednet}
-%
-%\cite{egenvar}
-%add file and metada thourgh client
 
-% last resort ? 32821064,ACTION-EHR: Patient-Centric Blockchain-Based Electronic Health Record Data Management for Cancer Care.
 
 \section{Findings}
 
-\begin{table}[h]
+\begin{table}[H]
     \center
     \begin{tabular}{|*{6}{c |}}
 \hline 
-        \multirow{2}{*}{Tool Name} & \multirow{2}{*}{Open Source} & \multicolumn{2}{c|}{Visualization/Interation} & \multirow{2}{*}{Extraction} & \multirow{2}{*}{Network} \\
+        \multirow{2}{*}{Tool Name} & \multirow{2}{*}{Open Source} & \multicolumn{2}{c|}{Visualization/Interaction} & \multirow{2}{*}{Extraction} & \multirow{2}{*}{Network} \\
 \cline{3-4}
         & & Data protection  & FAIR & &   \\
 \hline
@@ -539,27 +508,36 @@ This level of data partner control creates the governance necessary to encourage
 \hline
         REDCap \cite{redcap} & {\color{red} \xmark} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark}  \\
 \hline
-Data Sphere \cite{datasphere} & {\color{red} \xmark} & {\color{green} \cmark} (Authorized Users Only) & {\color{red} \xmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
+        Data Sphere \cite{datasphere} & {\color{red} \xmark} & {\color{green} \cmark} (Authorized Users Only) & {\color{red} \xmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
 \hline
-MOLGENIS \cite{molgenis} & {\color{green} \cmark} \repo{https://github.com/molgenis/molgenis} & {\color{green} \cmark} (Role based) & {\color{red} \xmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
+        MOLGENIS \cite{molgenis} & {\color{green} \cmark} \repo{https://github.com/molgenis/molgenis} & {\color{green} \cmark} (Role based) & {\color{red} \xmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
 \hline
-Cafe Variome \cite{cafevariome} & {\color{red} \xmark} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
+        Cafe Variome \cite{cafevariome} & {\color{red} \xmark} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
 \hline
-Mica \cite{mica} & {\color{green} \cmark} \repo{https://github.com/obiba/mica2} & {\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
+        Mica \cite{mica} & {\color{green} \cmark} \repo{https://github.com/obiba/mica2} & {\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
 \hline
-BioSharing \cite{biosharing} & {\color{green} \cmark} \repo{https://github.com/FAIRsharing/fairsharing.github.io/} & {\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
+        BioSharing \cite{biosharing} & {\color{green} \cmark} \repo{https://github.com/FAIRsharing/fairsharing.github.io/} & {\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
 \hline
-Dataverse \cite{dataverse} & {\color{green} \cmark} \repo{https://github.com/IQSS/dataverse} & {\color{green} \cmark} (Role Based) & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
+        Dataverse \cite{dataverse} & {\color{green} \cmark} \repo{https://github.com/IQSS/dataverse} & {\color{green} \cmark} (Role Based) & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
 \hline
-NADA \cite{nada} & {\color{green} \cmark} \repo{https://github.com/ihsn/nada} & {\color{green} \cmark} (Access Request) & {\color{red} \xmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
+        NADA \cite{nada} & {\color{green} \cmark} \repo{https://github.com/ihsn/nada} & {\color{green} \cmark} (Access Request) & {\color{red} \xmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
+\hline
 \hline
         ACHILLES \cite{achilles-github} & {\color{green} \cmark} \repo{https://github.com/OHDSI/Achilles/} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} \\
 \hline
         DataMed \cite{datamed} & {\color{green} \cmark} \repo{https://github.com/biocaddie} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} \\
 \hline
+\hline
         GAAIN \cite{gaain} & {\color{red} \xmark} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
 \hline
         PopMedNet \cite{popmednet} & {\color{red} \xmark} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
 \hline
+        EHR4CR \cite{ehr4cr} & {\color{red} \xmark} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
+\hline
+        Mirth Connect & {\color{green} \cmark} \repo{https://github.com/nextgenhealthcare/connect} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
+\hline
 \end{tabular}
 \end{table}
+
+% Similarity between extraction tools -> all converge different data model to a comon one
+
