@@ -158,7 +158,7 @@ Currently, the \gls{emif} Catalogue supports several distinct projects, combinin
 instance, data available in pan-European Electronic health record and Alzheimer
 cohorts.
 
-\subsection*{\gls{redcap}}
+\subsection*{REDCap}
 Recognizing the need of those participating in research to be able to securely collect
 and share data, a team at Vanderbilt University developed \gls{redcap}~\cite{redcap}, a data and
 metadata gathering tool.
@@ -382,7 +382,7 @@ A Dataverse repository is an installation of Dataverse, which hosts multiple vir
 Each Dataverse collection contains datasets, and each dataset contains descriptive metadata and data files.
 
 
-\subsection*{\gls{nada}}
+\subsection*{NADA}
 \gls{nada}~\cite{nada} is a web-based cataloging application that allows for the creation of portals that allows users to browse, search, compare, apply for access, and download relevant census or survey information.
 
 It was originally developed to support the establishment of national survey data archives.
@@ -407,7 +407,7 @@ Associated with some projects mentioned in the previous section, several tools a
 processes are relevant for the task of extracting/profiling datasets.
 Next are presented such tools:
 
-\subsection*{\gls{achilles}}
+\subsection*{ACHILLES}
 The \gls{ohdsi} project offers a wide range of open-source tools\cite{ohdsi-tools} to support various data-analytics use cases on observational patient-level data.
 What these tools have in common is that they can all interact with one or more databases using the \gls{cdm}.
 Furthermore, these tools standardize the analytics for various use cases.
@@ -454,7 +454,7 @@ This implies laboratories connecting together in closed or semiclosed discovery 
 These could be all-to-all networks (where each group places a discovery interface over their own data, for use by other network members) or a hub and spokes arrangement (where the network establishes just one discovery portal that federates searches across all the partner sites), or a combination of these architectures.
 Regardless of the preferred arrangement, each group might wish to fine-tune which records or fields are made available for discovery by (and potentially then shared with) each other group or individual in the network.
 
-\subsection*{\gls{gaain}}
+\subsection*{GAAIN}
 The primary objective of the \gls{gaain}~\cite{gaain} is to establish a virtual community for sharing Alzheimer's-related data stored in independently-operated repositories around the world.
 Neuroimaging, demographic, genetic, and biologic data are integrated together while respecting the boundaries of existing repositories and protecting the ownership of shared data.
 The system architecture of \gls{gaain} contains a central server that communicates with multiple client applications that are installed at the data partner sites (\gls{dpc}).
@@ -486,7 +486,32 @@ Data partners can choose to automate many of the query processing steps, or choo
 \subsection*{EHR4CR}
 
 The EHR4CR~\cite{ehr4cr} project aims to build a robust and scalable platform that will unlock data from hospital EHR systems, in full compliance with the ethical, regulatory and data protection policies and requirements of each participating country.
-The EHR4CR platform supports distributed querying to assist in clinical trials feasibility assessment and patient recruitment.
+
+%Information representation
+The developed solutions allow identifying patient cohorts and extracting patient-centric data using distributed EHRs/Clinical data warehouses (CDWs).
+
+%Platform services
+The access to the clinical data locally at the data endpoints consists of three logical layers: the legacy system layer (specific to the type of CDW or EHR used by the local site), the Legacy Interface layer and the EHR4CR Data source Endpoint layer.
+The Legacy Interface layer deals with the complexity involved when accessing the various types of CDW and EHR systems used and the adopted strategy for translating queries against the EHR4CR information model and pivot terminology into queries that can be executed locally against the CDW or EHR system.
+The EHR4CR Data source Endpoint layer is a generic layer that exposes uniform EHR4CR endpoint interfaces to other EHR4CR services and components.
+Once approved, the service provider metadata is added to the central registry and exposed services and applications can be published so that platform users can discover them.
+
+% merge the two following paragraphs into one
+The current architecture description focuses on the Protocol Feasibility Scenario (PFS) and Patient identification and Recruitment Scenario (PRS).
+The most intersting scenario is PFS where The main components involved are:
+• Protocol feasibility tools in the form of a workbench for studying non-identifiable distributed patient data.
+• An orchestration module allowing distributed execution of eligibility criteria queries.
+• Endpoint (data access) services allowing eligibility criteria query execution on local clinical data warehouse facilities.
+
+The process of querying individual data endpoints for protocol feasibility is initiated by the workbench instance on behalf of an end-user.
+The workbench then submits a series of Eligibility Criteria (EC) queries to an orchestrator service instance.
+The orchestrator instance identifies and invokes the data endpoints to which the EC queries are targeted.
+Finally after receiving the individual EC query results, the orchestrator service instance provides a consolidated result to the workbench instance which will eventually be displayed to the end-user.
+
+security
+In order to encompass existing local data provider security policies and firewall rules, the platform supports the invocation of web services using dynamically configurable transport bindings.
+Examples include asynchronous web service invocation by employing message-oriented middleware to provide the ability (from an endpoint provider perspective) to retrieve (pull) incoming queries rather than receiving these directly (push), thus avoiding the need for endpoint providers to accept incoming connections from the Internet into their local network.
+This feature ensures compliance with local data provider policies, thus facilitating platform adoption, while at the same time allowing for standards-based authentication and authorisation of end-users and web service clients operating on their behalf.
 
 \subsection*{Mirth Connect}
 %https://github.com/nextgenhealthcare/connect
