@@ -81,28 +81,28 @@ possible to receive contributions from the community.
 
 \subsection{Search Method}
 
-Regarding this subject, there was already done a systematic review of several tools
-that fit within the current search pool.
-Its objective was to ``identify projects and software solutions that promote patient
-electronic health data discovery, as enablers for data reuse and advancement of
-biomedical and translational research''~\cite{systematic_review}.
-From the final 20 systems, they captured their interoperability, what type of data they
-were providing and their after effect related to scientific results and improvements to
-better healthcare.
-To perform their search they only used PubMed
-\link{https://pubmed.ncbi.nlm.nih.gov/} considering it indexes a substantially
-amount of health-care related work and provides a public \gls{api} which allows
-automation of the retrieval process.
-The programmatic retrieval was done using the Biopython
-framework\link{https://biopython.org/} where all search queries were limited to the
-time windows between January 2014 to September 2018.
+Regarding this subject, there was already done a systematic review of several tools that fit within the current search pool.
+Its objective was to ``identify projects and software solutions that promote patient electronic health data discovery, as enablers for data reuse and advancement of biomedical and translational research''~\cite{systematic_review}.
+From the final 20 systems, they captured their interoperability, what type of data they were providing and their after effect related to scientific results and improvements to better healthcare.
+To perform their search they only used PubMed \link{https://pubmed.ncbi.nlm.nih.gov/} considering it indexes a substantially amount of health-care related work and provides a public \gls{api} which allows automation of the retrieval process.
+The programmatic retrieval was done using the Biopython framework\link{https://biopython.org/} to query PubMed and consisted of eight steps.
+First, a set of publications was retrieved using the search query (``data'' AND ``discovery'') OR ``discovery platform'' applied to the publications' titles.
+From the results set a filtering process was done based on their title, excluding irrelevant publications from the following steps.
+From each of the remaining publications, the 20 most similar publications were retrieved.
+The same title filtering process mentioned before was applied again to the new result set.
+The 5 most similar publications of each remaining publication were fetched.
+The title filtering process was executed, then an abstract filtering process and finally a full-text assessment.
+On all searches done the time window was set from January 2014 to September 2018.
+Moreover, publications associated with molecular biology were excluded.
 
-A softer version of the previous systematic review was done now within November 2018
-and January 2021.
-Also, instead of doing a query to PubMed and then find related publications, the
-process taken here was to skip the first step and find related publications of the
-final 16 selected on the systematic review and then try to find some software solutions
-of interest.
+Initially, the same approach was taken, now considering a time window starting in November 2018.
+However, after the second step, no new platforms were found.
+Because of that, a variation of the search method mentioned before was undertaken.
+The first step was skipped and some of the final tools presented on the systematic review were considered as a base set for the next steps.
+From the 20 presented, only 8 were used on this initial set, since some tools weren't active or didn't have any feature mentioned in the previous section (FAIR and data protection).
+Nonetheless, besides being discarded in terms of their metadata visualization features, 1 of these tools was analyzed for its metadata extraction features and 3 of them were analyzed for their metadata sharing network architecture, which will be detailed in the next sections.
+Coming back to the search method, the 20 similar publications for each of the 8 papers considered were fetched, and the title filtering process was done, followed by an abstract filtering process and finally a full-text evaluation.
+With this search method, 2 additional tools were considered, making a total of 10 tools to analyze on the section of metadata visualization tools.
 
 \subsection*{eGenVar}
 
