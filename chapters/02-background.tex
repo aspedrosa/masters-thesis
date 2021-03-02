@@ -304,9 +304,28 @@ split by data source and also split into three results categories as follows:
         submit to the data owner a data access request.
 \end{itemize}
 
-\subsection*{Mica}
-% TODO cite maelstrom
-Mica~\cite{mica} is used to create websites and metadata portals for individual epidemiological
+\subsection*{Mica \& Opal}
+Maelstrom Research team developed a software to answer the need for a general and customizable solution to support the creation of comprehensive and user-friendly study and network-specific catalogues used to leverage epidemiological research making use of cohort data.
+
+The lack of accessible and structured documentation creates major barriers for investigators interested in understanding, properly interpreting and analyzing cohort data and biological samples.
+Providing the scientific community with open information is essential to optimize usage of these resources.
+A cataloguing toolkit is proposed by Maelstrom Research to answer these needs and support the creation of comprehensive and user-friendly studyand network-specific web-based metadata catalogues.
+
+
+Maelstrom Research~\cite{maelstrom} and its partner networks have put this software to use by developing the Maelstrom Research Catalogue, a dynamic compendium of epidemiological studies worldwide that provides researchers with a free, user-friendly, web-based solution for data discovery.
+
+
+Two interoperable open source software applications were developed to provide study managers with easy-to-use tools to implement the conceptual model described above and create fully operational web-based metadata platforms (Mica and Opal~\cite{mica}):
+
+Opal provides a centralized web-based data management system allowing study coordinators and data managers to securely import/export a variety of data types and formats using a point-and-click interface.
+Opal then converts, stores and displays these data under a standardized model.
+Opal can also read data directly from other data source engines.
+Once data have been imported, the Opal web application facilitates data curation and quality control procedures and allows automated descriptive statistics computation with graphical displays such as bar charts and scatter plots.
+This then facilitates metadata browsing and data discoverability using the Mica web portal, mentioned in the previous section.
+To ensure privacy, Opal stores participant identifiers in a distinct and secure database and provides administrators with tools to manage them.
+When used across multiple studies, Opal is a powerful tool to harmonize epidemiological study data.
+
+Mica is used to create websites and metadata portals for individual epidemiological
 studies or multi-study consortia, with a specific focus on supporting observational
 cohort studies.
 The Mica application helps data custodians and study or network coordinators to
@@ -329,25 +348,8 @@ projects.
 In a Mica instance with multiple studies, users can quickly identify a list of studies
 with a given profile, which collect data on a specific health outcome, risk factors of
 interest and confounding factors.
-Connecting Mica to one or more Opal database(s), which will be mentioned on the next
-section, allows users to search beyond the metadata by securely querying the actual
+Connecting Mica to one or more Opal database(s) allows users to search beyond the metadata by securely querying the actual
 study data hosted on remote servers.
-
-%\textbf{Opal \cite{mica}:}
-%Opal provides a centralized web-based data management system allowing study
-%coordinators and data managers to securely import/export a variety of data types and
-%formats using a point-and-click interface.
-%Opal then converts, stores and displays these data under a standardized model.
-%Opal can also read data directly from other data source engines.
-%Once data have been imported, the Opal web application facilitates data curation and
-%quality control procedures and allows automated descriptive statistics computation with
-%graphical displays such as bar charts and scatter plots.
-%This then facilitates metadata browsing and data discoverability using the Mica web
-%portal, mentioned in the previous section.
-%To ensure privacy, Opal stores participant identifiers in a distinct and
-%secure database and provides administrators with tools to manage them.
-%When used across multiple studies, Opal is a powerful tool to harmonize epidemiological
-%study data.
 
 
 \subsection*{BioSharing}
@@ -561,7 +563,7 @@ For example you may receive data over HTTP, then write the data out to a file so
 \hline
         Cafe Variome \cite{cafevariome} & {\color{red} \xmark} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
 \hline
-        Mica \cite{mica} & {\color{green} \cmark} \repo{https://github.com/obiba/mica2} & {\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
+        Mica & Opal \cite{mica} & {\color{green} \cmark} \repo{https://github.com/obiba/mica2} & {\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
 \hline
         BioSharing \cite{biosharing} & {\color{green} \cmark} \repo{https://github.com/FAIRsharing/fairsharing.github.io/} & {\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
 \hline
