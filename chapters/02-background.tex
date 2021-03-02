@@ -415,12 +415,12 @@ What these tools have in common is that they can all interact with one or more d
 Furthermore, these tools standardize the analytics for various use cases.
 
 \gls{achilles}~\cite{achilles-github} is a software tool that provides summaries and metadata of a database conforming to the \gls{cdm}.
-As such, it can be used by researchers to evaluate which databases conform better to their needs.
+It is implemented as a package written in R~\footnote{https://www.r-project.org/}, that executes a series of SQL queries over the original \gls{cdm} database to calculate all the specific summaries, which in the context of \gls{achilles}, are called analyses.
+The result of these queries is then placed on a target database schema chosen by the user.
+The resulting sumaries can be used by researchers to evaluate which databases conform better to their needs.
 However, certain summaries might reveal some information of the original data that the data owner is not willing to share or because is sensitive patient information.
 With this, variations of these tools are creates where only certain summaries are extracted from the data source, removing the process of having to filter the output of the \gls{achilles}.
 Such a tool was developed associated with the \gls{ehden} project~\cite{peters-tool}.
-
-% TODO its implemented by a series of sql queries over the original data in R
 
 \subsection*{DataMed}
 The mission of DataMed~\cite{datamed} is to provide a data discovery index to help users efficiently find and access existing datasets that are distributed across a wide range of repositories in the biomedical domain.
@@ -563,7 +563,7 @@ For example you may receive data over HTTP, then write the data out to a file so
 \hline
         Cafe Variome \cite{cafevariome} & {\color{red} \xmark} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
 \hline
-        Mica & Opal \cite{mica} & {\color{green} \cmark} \repo{https://github.com/obiba/mica2} & {\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
+        Mica \& Opal \cite{mica} & {\color{green} \cmark} \repo{https://github.com/obiba/mica2} & {\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
 \hline
         BioSharing \cite{biosharing} & {\color{green} \cmark} \repo{https://github.com/FAIRsharing/fairsharing.github.io/} & {\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
 \hline
