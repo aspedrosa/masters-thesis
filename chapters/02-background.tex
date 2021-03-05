@@ -35,8 +35,8 @@ Researchers can now develop a single analysis method and then apply it to all ga
 datasets and these methods can be optimized for this specific data model, which allows
 large-scale analytics.
 Furthermore, also improves collaborative research~\cite{ohdsi-site}.
-Still, within the scope of the \gls{ehden} project, the project has a database catalog,
-built with the Montra framework~\cite{montra}, where data owners fill metadata about
+Still, within the scope of the \gls{ehden} project, the project has a database catalog~\cite{ehden-portal},
+built with the MONTRA framework~\cite{montra}, where data owners fill metadata about
 their data source manually, which brings the outdated problem already mentioned before.
 Additionally, whenever new metadata fields are introduced, the data owners of all data
 sources have to go manually update their metadata form.
@@ -118,33 +118,18 @@ Central to the system is a tagging process that allows users to tag data with ne
 The system includes a server, a command-line client, other clients that can be developed in several programming languages and a web portal interface.
 
 \subsection*{MONTRA}
-A base architecture for designing data integration platforms, with emphasis on
-biomedical data.
-It has a flexible architecture for centralizing and sharing such data coming from
-multiple, heterogeneous sources.
-The data sources that are cataloged within the system contain the full data, while the
-views available through MONTRA\cite{montra} provide a skeleton of these underlying sources.
-The skeleton definition is a straightforward operation that can be done by any data
-custodian and can be saved as a spreadsheet file and submitted through the web
-interface.
-Furthermore, the user interface allows viewing, searching, modifying and deleting
-information through simple forms.
-Also, a RESTful API is available which provides a set of programmatic endpoints that
-can be consulted by third-party applications.
-Access is controlled via a Role-Based Access Control system to guarantee that proper
-constraints are imposed.
-Different data sources following the same skeleton template will have a common
-representation within the platform.
-By using a common structure as a metadata skeleton, distinct data sources converge to a
-homogeneous representation of their metadata.
+Data catalogs are a good way to gather and present information of different areas, however, having to build a different web-based application for each distinct situation is not feasible.
 
-This framework is in used to deploy the \gls{emif} Catalogue, a platform that aims to
-be a marketplace where data custodians can publish and share information about their
-clinical databases, while biomedical researchers can search for databases that fulfill
-their particular study requirements.
-Currently, the \gls{emif} Catalogue supports several distinct projects, combining, for
-instance, data available in pan-European Electronic health record and Alzheimer
-cohorts.
+To aid this creation, MONTRA~\cite{montra} was proposed as a flexible base architecture for composing data integration platforms, mainly associated with the biomedical field, allowing to centralize and share data originating from several and heterogeneous sources.
+MONTRA can achieve this last point, by requiring the definition of a metadata skeleton within a community of data sources, which describes the original data, so different data sources following the same skeleton template will have a common representation, leading to a homogeneous representation of their metadata.
+Yet, it is important to salient that the system only contains a skeleton of the underlying data sources, the original data is still stored in the cataloged sources' system.
+The skeleton definition is an easy process any data custodian can do by saving it as a spreadsheet file and then submitting it through the application's web interface.
+Then, the framework allows users to view, search, modify and delete information through simple forms, where access is controlled via a Role-Based Access Control system to ensure that proper access restrictions are imposed.
+Also, a RESTful API is available which provides a set of programmatic endpoints which allows the creation of third-party applications on top of the framework.
+
+This framework is in used to deploy the \gls{emif} Catalogue~\cite{emif}, a platform with the goal to be a marketplace where data owners can publish and share information about their clinical databases, allowing biomedical researchers to search for databases that meet their research needs.
+Currently, the \gls{emif} Catalogue holds many distinct projects, combining, for example, data available in pan-European Electronic Health Records and Alzheimer cohorts.
+Also, as mentioned at the beginning of this chapter, this framework was as well used to develop the EHDEN portal~\cite{ehden-portal}, which beyond allowing the search of databases over the EHNDEN network, makes available all tools and services built under the EHDEN project.
 
 \subsection*{REDCap}
 Recognizing the need of those participating in research to be able to securely collect
@@ -231,33 +216,6 @@ availability and accessibility of content in each database.
 The finder is also a portal to other RD-Connect tools, providing a link to the
 RD-Connect Sample Catalogue, which was developed using MOLGENIS, a large inventory of
 RD biological samples available in participating biobanks for RD research. 
-
-
-%\textbf{GAAIN \cite{gaain}}
-%The primary objective of the Global Alzheimer's Association Interactive Network (GAAIN)
-%is to establish a virtual community for sharing Alzheimer's-related data stored in
-%independently-operated repositories around the world.
-%Neuroimaging, demographic, genetic, and biologic data are integrated together while
-%respecting the boundaries of existing repositories and protecting the ownership of
-%shared data. 
-%The prominence of a data sharing network depends upon providing search functionality to
-%those looking for data while addressing the concerns of those sharing data.
-%As such, GAAIN aims to help scientists find Alzheimer's data for their research while
-%protecting the data ownership rights of each of its data partners.
-%The system architecture of GAAIN contains a central server that com- municates with
-%multiple client applications (Data Partner Clients or DPC's) that are installed at the
-%data partner sites.
-%Data is locally exported into CSV files and loaded into the DPC's.
-%The search interfaces in GAAIN are designed to meet the different needs of GAAIN
-%investigators.
-%The GAAIN Scoreboard helps investigators quickly determine if data exists in sufficient
-%numbers to meet study objectives.
-%Periodically, the GAAIN central server will check the online status of each DPC and
-%will record when it is offline.
-%Whenever a DPC is offline, the Scoreboard displays red “X”s instead of subject counts
-%for the data partner.
-%The GAAIN Interrogator allows investigators to view data trends and relationships
-%before being shown where to obtain the actual data.
 
 \subsection*{Cafe Variome}
 Is a general purpose data discovery platform, using design principles that stress
