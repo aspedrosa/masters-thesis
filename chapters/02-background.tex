@@ -109,7 +109,6 @@ With this search method, 2 additional tools were considered, making a total of 1
 Good data management and an organized data sharing can improve work effectiveness, and increase data analysis.
 One method to accomplish this is by having the data at a central repository and then provide clear and strong interfaces to interact with the data.
 However, because of legal and privacy rules, not all data can be stored on a public central repository.
-
 The software suite called the eGenVar~\cite{egenvar} data-management system, allows users to report, track, and share metadata on content, origin and history of files, without compromising privacy or security.
 The tool can be seen as a metadata portfolio since it could be used to search data while the original files remain in a protected location.
 Users need to have an account to access the system and once created can immediately start using the system for search operations, however, addition, deletion and update operations over content require a personal profile.
@@ -119,7 +118,6 @@ The system includes a server, a command-line client, other clients that can be d
 
 \subsection*{MONTRA}
 Data catalogs are a good way to gather and present information of different areas, however, having to build a different web-based application for each distinct situation is not feasible.
-
 To aid this creation, MONTRA~\cite{montra} was proposed as a flexible base architecture for composing data integration platforms, mainly associated with the biomedical field, allowing to centralize and share data originating from several and heterogeneous sources.
 MONTRA can achieve this last point, by requiring the definition of a metadata skeleton within a community of data sources, which describes the original data, so different data sources following the same skeleton template will have a common representation, leading to a homogeneous representation of their metadata.
 Yet, it is important to salient that the system only contains a skeleton of the underlying data sources, the original data is still stored in the cataloged sources' system.
@@ -149,7 +147,6 @@ collect demographic and clinical data.
 In the late phases of a clinical trial, scientists could retrieve a great amount of usable data about the effectiveness of certain therapeutic approaches for oncologic diseases.
 With the decrease of cancer deaths over the years, another research paradigm is needed to find new or improve these therapeutic approaches.
 This lead to promote data-sharing attempts to make clinical trial data accessible to the scientific research community.
-
 The \gls{pds}~\cite{datasphere} provides a platform that meets these data-sharing needs, giving the possibility to share raw data from late-phase oncology clinical trials.
 To share their data, data owners have to sign a data-sharing agreement that contains some extra data about the data they want to upload.
 If this data application gets accepts, the responsibility of patient privacy is on the data providers.
@@ -160,37 +157,17 @@ Having these processes of sharing and getting data, prevents researchers from ma
 As of January 2021, the \gls{pds} website had available cancer trial data from over 150 trials including over 100,000 subjects \cite{datasphere-site}.
 
 \subsection*{Molgenis}
-MOLGENIS~\cite{molgenis} is a generic, model-driven toolkit for the rapid generation of custom-made,
-data-intensive biosoftware applications.
-Bioinformaticians can use a domain-specific language, implemented using XML, to
-efficiently model the biological details of their particular biological system, which
-enables compact specification of what experiment database is needed.
-The level of abstraction is raised, so no lengthy, technical or redundant details on
-how each feature should be implemented in general programming languages have to be
-given.
-Bioinformaticinas can also use MOLGENIS software generation tools to automatically
-generate a web application tailored to the experiments of their biologists, building on
-reusable components.
-The authors found up to 30 times efficiency improvement compared to hand-writing
-software, while providing a richness of features practically unfeasible to produce by
-hand but not yet provided by related projects.
+For biologists to efficiently capture, exchange and exploit big amounts of molecular data, user-friendly and scalable software infrastructures are needed.
+For that MOLGENIS~\cite{molgenis} was developed as a generic, model-driven toolkit to speed the development of custom big-data biosoftware applications.
+Biological details of each biological system can be modeled using a domain-specific language, developed using XML, not requiring extensive, technical or repetitive details on how each feature should be executed, but enabling to compactly specify what kind of experiment database is desired.
+MOLGENIS can also be used to create web applications to be used by biologists, tailored to their experiments, using reusable components.
+The creators of MOLGENIS saw an improvement of up to 30 times in terms of efficiency when comparing to hand-writing software, besides providing several features hard to achieve by hand that were not made available by similar projects.
 
-The \gls{bbmri-eric} project~\cite{bbmrieric} provides fair access to
-quality-controlled human biological samples and associated biomedical and biomolecular
-data, enabling the investigation of basic mechanisms underlying diseases, indispensable
-for the development of new biomarkers and drugs.
-Here MOLGENIS is used to develop their Directory 1.0 which provides an overview of the
-\gls{bbmri-eric} ecosystem with its distributed structure of National Nodes, and even more
-importantly to help users identify biobanks of interest to them.
-RD-Connect~\cite{rdconnect} is a global infrastructure project initiated that links
-genomic data with patient registries, biobanks, and clinical bioinformatics tools to
-create a central research resource for \gls{rd}s.
-Its composed by the RD-Connect Registry \& Biobank Finder, a tool that helps \gls{rd}
-researchers to find \gls{rd} biobanks and registries and provide information on the
-availability and accessibility of content in each database.
-The finder is also a portal to other RD-Connect tools, providing a link to the
-RD-Connect Sample Catalogue, which was developed using MOLGENIS, a large inventory of
-RD biological samples available in participating biobanks for RD research. 
+With the goal of developing new biomarkers and drugs, the \gls{bbmri-eric} project~\cite{bbmrieric} enables the research of basic mechanisms underlying diseases, by providing fair access to human biological samples and their associated biomedical and biomolecular data.
+Here MOLGENIS is used to develop their Directory 1.0 which presents an overview of the \gls{bbmri-eric} ecosystem with its distributed structure and helps users find biobanks of their interest.
+
+To create a centralized research resource for \gls{rd}, the RD-Connect~\cite{rdconnect} project links genomic data with patient registries, biobanks, and bioinformatics tools.
+To help \gls{rd} researchers to search for \gls{rd} biobanks and registries and also inform availability and accessibility on each database's content, the RD-Connect project has the D-Connect Registry \& Biobank Finder tool, which is also a portal to other of their tools. One of them is the RD-Connect Sample Catalogue, which was developed using MOLGENIS, having an inventory of \gls{rd} biological samples available in associated biobanks.
 
 \subsection*{Cafe Variome}
 Is a general purpose data discovery platform, using design principles that stress
