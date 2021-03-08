@@ -170,36 +170,17 @@ To create a centralized research resource for \gls{rd}, the RD-Connect~\cite{rdc
 To help \gls{rd} researchers to search for \gls{rd} biobanks and registries and also inform availability and accessibility on each database's content, the RD-Connect project has the D-Connect Registry \& Biobank Finder tool, which is also a portal to other of their tools. One of them is the RD-Connect Sample Catalogue, which was developed using MOLGENIS, having an inventory of \gls{rd} biological samples available in associated biobanks.
 
 \subsection*{Cafe Variome}
-Is a general purpose data discovery platform, using design principles that stress
-compliance with relevant and emerging standards, ease of use for system operators and
-discovery users, with extensive options for customized installation to suit many
-different areas of need.
+Data discovery applications connect data owners with data seekers and therefore promote data sharing, however, this last process can bring some complications.
+Cafe Variome~\cite{cafevariome} is a general-purpose data discovery platform, with the goal not to be a place to store, curate or integrate information but to provide a platform to browse through the existing data.
+It was developed following design principles that take into account important and emerging standards, easy to use by system administrators since is composed of a single simple software package, and also by data seekers, with flexible options allowing to customize each installation to the area of use, with a special interest on the  ''genotype-to-phenotype`` application.
+To the administrator is given the ability to determine which data fields can be used for discovery and/or to be displayed as results, and also which records are allowed to be used for discovery.
 
-This particular ''genotype-to-phenotype`` application is of broad current interest,
-though the technology is equally applicable to other areas.
-Cafe Variome~\cite{cafevariome} comprises a single, lightweight software package, which can be easily
-installed and configured locally.
-The system acts to provide a ''shop window`` into extant data, and is explicitly not
-intended as a ''database`` for storing, curating, or integrating information.
-Alternatively, original and larger databases do not have to be copied into the
-database, but can instead be remotely consulted via the platform’s API.
-This same approach of API-based remote data interrogation can also facilitate discovery
-on large data files that carry details about individual samples or patients being made
-discoverable.
-
-The administrator determines which selection of data fields may be employed for
-discovery and/or results display, and also which records are made available for
-discovery by any specific user.
-The total count of records that match the search term(s) are displayed to the user,
-split by data source and also split into three results categories as follows:
+For a data seeker, the number of records that match the search term(s) are split by data source and also split into three categories:
 \begin{itemize}
-    \item openAccess: records for which the particular user is allowed to see the data
-        held in the system.
-    \item linkedAccess: records for which the particular user may not directly see the
-        data held in the system, though a source data link or source contact
-        information is provided.
-    \item restrictedAccess: records for which the particular user may complete and
-        submit to the data owner a data access request.
+    \item open access: the user is allowed to see the data present on the system.
+    \item linked access: the user can't see directly the data stored in the system.
+        An external data source data link or data source contact information is provided.
+    \item restricted access: the user has to make a data request to access the data.
 \end{itemize}
 
 \subsection*{Mica \& Opal}
