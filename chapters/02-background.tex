@@ -26,9 +26,7 @@ different layout.
 The research is then hampered since either different approaches have to be taken to
 analyze each dataset.
 
-The \gls{ehden} project has affiliations with several institutions, data sources and
-data custodians across the \gls{eu}, which the main goal is to, within a federated
-network, harmonize their data to the \gls{omop} \gls{cdm}~\cite{ehden-datapartners}.
+The \gls{ehden} project has affiliations with several institutions, data sources and data custodians across the \gls{eu}, which the main goal is to, within a federated network~\cite{ehden-datapartners}, harmonize their data to the \gls{omop} \gls{cdm}, which was developed by \gls{ohdsi}, a multi-stakeholder, interdisciplinary and collaborative organization that brings out the value of health data through large-scale analytics~\cite{ohdsi-cite}.
 With a \gls{cdm}, the problem of having different representations for the same data
 across distinct data sources is solved.
 Researchers can now develop a single analysis method and then apply it to all gathered
@@ -249,16 +247,16 @@ processes are relevant for the task of extracting/profiling datasets.
 Next are presented such tools:
 
 \subsection*{ACHILLES}
-The \gls{ohdsi} project offers a wide range of open-source tools\cite{ohdsi-tools} to support various data-analytics use cases on observational patient-level data.
-What these tools have in common is that they can all interact with one or more databases using the \gls{cdm}.
-Furthermore, these tools standardize the analytics for various use cases.
+The \gls{ohdsi} project, already mentioned at the beginning of this chapter, offers a variety of open-source tools\cite{ohdsi-tools} that can be used on several data-analytics use cases on observational patient-level data.
+A common aspect of such tools is that they can all interact with one or more databases if they had adhered to the \gls{omop} \gls{cdm}, which enables them to homogenize the analytics for diverse use cases.
+With this, instead of having to build an analysis from scratch, a standard template can be used, turning the process of building analyses easier, and also enhancing transparency and reproducibility.
 
-\gls{achilles}~\cite{achilles-github} is a software tool that provides summaries and metadata of a database conforming to the \gls{cdm}.
-It is implemented as a package written in R~\footnote{https://www.r-project.org/}, that executes a series of SQL queries over the original \gls{cdm} database to calculate all the specific summaries, which in the context of \gls{achilles}, are called analyses.
+\gls{achilles}~\cite{achilles-github} is a software tool that provides summaries and metadata of a database conforming to the \gls{cdm}, where such can be used for characterization and quality assessment of observational health databases.
+It is implemented as a package written in R~\footnote{https://www.r-project.org/}, which executes a series of SQL queries over the original \gls{cdm} database to calculate all the specific summaries, which in the context of \gls{achilles}, are called analyses.
 The result of these queries is then placed on a target database schema chosen by the user.
-The resulting sumaries can be used by researchers to evaluate which databases conform better to their needs.
+The resulting summaries are not study-specific but can be used by researchers to explore and evaluate if the contents of databases can be used on studies that they intend to perform.
 However, certain summaries might reveal some information of the original data that the data owner is not willing to share or because is sensitive patient information.
-With this, variations of these tools are creates where only certain summaries are extracted from the data source, removing the process of having to filter the output of the \gls{achilles}.
+With this, variations of these tools are created where only certain summaries are extracted from the data source, removing the process of having to filter the output of the \gls{achilles}.
 Such a tool was developed associated with the \gls{ehden} project~\cite{peters-tool}.
 
 \subsection*{DataMed}
