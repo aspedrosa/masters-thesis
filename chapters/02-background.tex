@@ -218,23 +218,29 @@ It does this by presenting a Dataverse collection (a virtual archive that contai
 Yet, that page is served by a Dataverse repository (an installation of Dataverse, which hosts multiple Dataverse collections), with institutional support, and long-term preservation guarantees.
 
 \subsection*{NADA}
-\gls{nada}~\cite{nada} is a web-based cataloging application that allows for the creation of portals that allows users to browse, search, compare, apply for access, and download relevant census or survey information.
+Another tool found on the search process performed was \gls{nada}~\cite{nada}, a web-based cataloging application that can be used as a base structure to create portals that allow users to browse, search, apply for access, compare and download census or survey data.
+It was originally developed to assist the establishment of national survey data archives and is currently in use by several regional, national and international organizations.
 
-It was originally developed to support the establishment of national survey data archives.
-The application is used by a diverse and growing number of national, regional, and international organizations.
+When a \gls{nada} installation is deployed, the default catalog created is the Central Data Catalog, where all studies uploaded to \gls{nada} are visible, searchable and accessible through it.
+In most cases, this is enough to have the data stored and organized, however it is possible to split the contents of this central catalog into more specific collections.
+This brings advantages for both the users and the administrators since the former can more easily filter and search collections of surveys that are related, the latter can better distribute management responsibilities to specific administrators for their specific study area.
 
-By default, when a \gls{nada} instance is installed, the catalog created is the Central Data Catalog.
-All studies uploaded to it are visible, searchable and accessible.
-Studies are carried out to gather more knowledge about a subject.
-The \gls{nada} uses the Data Documentation Initiative (DDI) standard for the presentation of metadata for each study, where such documents are prepared outside the \gls{nada} application.
-The detailed information about the survey is searchable down to the variable level for each survey in the catalog.
+The \gls{nada} uses the Data Documentation Initiative (DDI) standard to represent the metadata for each study, where such documents are built outside the \gls{nada} application and then imported.
+Users can take advantage of such metadata by performing searches about surveys in the catalog down to the variable level.
 
-The \gls{nada} allows for the level of access to datasets for studies to be controlled at the study level.
-In other words the level of restriction can differ from study to study: data not available, direct access data files, public use data files, authorized access to data files, data available in an enclave and data available from external repository.
+The tool also allows to include citations at the study level, pointing to works that used the data of a certain study.
+These resources are convenient for researchers to see how the data have been used previously and also to show survey funders the study impact and that the data is being used for research purposes.
 
-Citations are references that can be included at the study level which point to published works that have used the data from a particular study.
-Such resources are useful to researchers who are interested in seeing how the data have been used before.
-They are also a good way of showing the funders of surveys that the data are being used for policy and research purposes and thus are an indicator of some of the impact a study has had.
+The level of access to the studies datasets can be controlled at the study level, allowing to have different access restrictions for distinct studies.
+The available access types are:
+\begin{itemize}
+    \item Data not available
+    \item Direct Access Data Files: no login required
+    \item Public Use Data Files: login required
+    \item Licensed Data Files: application required
+    \item Data available in an Enclave: application required and the data is stored on the data owners site
+    \item Data available at an external repository:  data is stored on the data owners site
+\end{itemize}
 
 \section{Metadata Extraction Tools}
 
@@ -271,6 +277,10 @@ Each specific ingestor uses data iterator(s), which allow streaming to retrieve 
 The ingested raw data is transformed into the \gls{dats}.
 
 There was already some work on mapping datasets represented in with the \gls{omop} \gls{cdm} in \cite{cdm-dats}
+
+% Nesstar Publisher. http://www.nesstar.com/software/publisher.html/ used to build data to later import for nada
+% TODO if I end up describing this tool, mention it on the NADA subsection
+% http://www.nesstar.com/software/publisher.html/
 
 %add this ? 33451426,MARMoSET - Extracting Publication-ready Mass Spectrometry Metadata from RAW Files.
 
@@ -416,7 +426,7 @@ For example you may receive data over HTTP, then write the data out to a file so
 \hline
         EHR4CR \cite{ehr4cr} & {\color{red} \xmark} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
 \hline
-        NextGen Connect & {\color{green} \cmark} \repo{https://github.com/nextgenhealthcare/connect} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
+        NextGen Connect \cite{} & {\color{green} \cmark} \repo{https://github.com/nextgenhealthcare/connect} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
 \hline
 \end{tabular}
 \end{table}
