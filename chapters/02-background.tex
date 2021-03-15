@@ -260,21 +260,21 @@ With this, variations of these tools are created where only certain summaries ar
 Such a tool was developed associated with the \gls{ehden} project~\cite{peters-tool}.
 
 \subsection*{DataMed}
-The mission of DataMed~\cite{datamed} is to provide a data discovery index to help users efficiently find and access existing datasets that are distributed across a wide range of repositories in the biomedical domain.
-DataMed developed a metadata ingestion pipeline which extracts, maps, and indexes by following the \gls{dats}, that describes the metadata elements and the structure for datasets \cite{dats}, based on input from the community and a thorough analysis of existing metadata from popular repositories.
+Facilitating the process to find appropriate datasets is a key aspect to improve data reuse in the biomedical domain, however, it is hard to achieve due to the biomedical data complexity and volume.
+DataMed's~\cite{datamed} mission is to build a data discovery index enabling users to efficiently search and access existing datasets that are spread across several repositories.
 
-It uses a horizontally scalable message oriented extract-transform-load system.
-The pipeline is a loosely coupled distributed system consisting of a message dispatcher and one or more data processing components.
-The dispatcher acts as a hub, orchestrating the data ingestion and processing pipeline using persistent queues.
-Each consumer does operations such as a transformation, cleanup, and/or enhancement on the document, saves the updated document to a document database, and then places a message in the message queue for the dispatcher.
-The dispatcher uses the pipeline specification to decide the next step and places a message in the corresponding consumer’s input message queue.
+It developed a metadata ingestion pipeline that extracts, maps, and indexes by following the \gls{dats} based on community input and an analysis of existing metadata from popular repositories.
+The \gls{dats} model mentioned is used to describe the metadata elements and the structure for datasets~\cite{dats}.
+DataMed's pipeline was built as a horizontally scalable, message-oriented, extract-transform-load, loosely coupled distributed system, composed of a message dispatcher and one or more data processing segments.
+The dispatcher functions as an orchestrator by managing the data ingestion and processing pipeline through message queues.
+Each processing component performs operations on the data such as transformation, cleanup, and/or enrichment, saves the result to a document database and then notifies the dispatcher through the message queues.
+Next, a pipeline specification is used by the dispatcher to decide the next step, injecting a message on the message queue of the target consumer.
 
-To handle heterogeneity in the data availability from multiple sources, the pipeline abstracts retrieval modes and data formats.
-Different ingestors for retrieval mode and data format combinations are developed as specific consumers using a specialized plug-in interface.
-Each specific ingestor uses data iterator(s), which allow streaming to retrieve data only when needed, facilitating the processing of datasets much larger than the system memory.
-The ingested raw data is transformed into the \gls{dats}.
+Since different data sources have distinct representations, the pipeline has to abstract retrieval modes and data formats.
+This is achieved by implementing different ingestors for the possible retrieval modes and data format combinations.
+Each particular ingestor transforms raw data into the \gls{dats}, and they make use of data iterator(s), which allows retrieving data only when necessary, in other words, data streaming, allowing to deal with the situations where the datasets are larger than the available system memory.
 
-There was already some work on mapping datasets represented in with the \gls{omop} \gls{cdm} in \cite{cdm-dats}
+An interesting and important note is that there was already some work done on mapping datasets represented in the \gls{omop} \gls{cdm} to \gls{dats}~\cite{cdm-dats}.
 
 % Nesstar Publisher. http://www.nesstar.com/software/publisher.html/ used to build data to later import for nada
 % TODO if I end up describing this tool, mention it on the NADA subsection
