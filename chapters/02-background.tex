@@ -27,7 +27,7 @@ different layout.
 The research is then hampered since either different approaches have to be taken to
 analyze each dataset.
 
-The \gls{ehden} project has affiliations with several institutions, data sources and data custodians across the \gls{eu}, which the main goal is to, within a federated network~\cite{ehden-datapartners}, harmonize their data to the \gls{omop} \gls{cdm}, which was developed by \gls{ohdsi}, a multi-stakeholder, interdisciplinary and collaborative organization that brings out the value of health data through large-scale analytics~\cite{ohdsi-cite}.
+The \gls{ehden} project has affiliations with several institutions, data sources and data custodians across the \gls{eu}, which the main goal is to, within a federated network~\cite{ehden-datapartners}, harmonize their data to the \gls{omop} \gls{cdm}, which was developed by \gls{ohdsi}, a multi-stakeholder, interdisciplinary and collaborative organization that brings out the value of health data through large-scale analytics~\cite{ohdsi-site}.
 With a \gls{cdm}, the problem of having different representations for the same data
 across distinct data sources is solved.
 Researchers can now develop a single analysis method and then apply it to all gathered
@@ -153,7 +153,7 @@ Authorized users are then given the possibility to access and download all datas
 To become an authorized user, the platform requires that users send an application with their background and an agreement to the terms of use.
 Having these processes of sharing and getting data, prevents researchers from making different applications for each data set and allows having a more diverse data pool which can improve results from their analysis.
 
-As of January 2021, the \gls{pds} website had available cancer trial data from over 150 trials including over 100,000 subjects \cite{datasphere-site}.
+As of January 2021, the \gls{pds} website had available cancer trial data from over 150 trials including over 100,000 subjects~\cite{datasphere-site}.
 
 \subsection*{Molgenis}
 For biologists to efficiently capture, exchange and exploit big amounts of molecular data, user-friendly and scalable software infrastructures are needed.
@@ -201,7 +201,7 @@ Combining Mica with one or more Opal database(s) enables users to safely query a
 Besides developing these two tools, Maelstrom Research and its partners used them to develop the Maelstrom Research Catalogue~\cite{maelstrom}, a flexible collection of epidemiological studies worldwide that offer a user-friendly web-based solution for data discovery.
 
 \subsection*{BioSharing}
-Another interesting tool to promote data dissemination and discoverability is BioSharing~\cite{biosharing}, recently known as FAIRSharing \cite{fairsharing}, a portal of connected, informative and discoverable information about standards, databases, and journal and funder data policies in the life sciences.
+Another interesting tool to promote data dissemination and discoverability is BioSharing~\cite{biosharing}, recently known as FAIRSharing~\cite{fairsharing}, a portal of connected, informative and discoverable information about standards, databases, and journal and funder data policies in the life sciences.
 It acts as a ``shop window'' for the three types of data mentioned, detailing relations between them, presenting metrics, as standards are developed and achieved in the databases, allowing to create a historical view, showing when certain standards are created or deprecated and when updates to a database or policy happen, giving the opportunity to data seekers to check the progression of each resource.
 Currently, all records are manually curated, however many of them have been added and updated by community users, instead of FAIRSharing curators themselves.
 Users are capable of claiming records for resources they manage, allowing not only to make sure that the data on their resource is valid and updated but also to gain credit for their work.
@@ -248,7 +248,7 @@ processes are relevant for the task of extracting/profiling datasets.
 Next are presented such tools:
 
 \subsection*{ACHILLES}
-The \gls{ohdsi} project, already mentioned at the beginning of this chapter, offers a variety of open-source tools\cite{ohdsi-tools} that can be used on several data-analytics use cases on observational patient-level data.
+The \gls{ohdsi} project, already mentioned at the beginning of this chapter, offers a variety of open-source tools~\cite{ohdsi-tools} that can be used on several data-analytics use cases on observational patient-level data.
 A common aspect of such tools is that they can all interact with one or more databases if they had adhered to the \gls{omop} \gls{cdm}, which enables them to homogenize the analytics for diverse use cases.
 With this, instead of having to build an analysis from scratch, a standard template can be used, turning the process of building analyses easier, and also enhancing transparency and reproducibility.
 
@@ -307,23 +307,28 @@ Cafe Variome offers the following network architectures:
 \begin{figure}[H]
     \centering
     \includegraphics[width=.5\linewidth]{cafevariome-network.png}
-    \caption{The avilable network architectures with Cafe Variome. Image retrieved from \cite{cafevariome}.}
+    \caption{The available network architectures in Cafe Variome. Image retrieved from~\cite{cafevariome}.}
 \end{figure}
 
 Despite the chosen arrangement, each node can choose to customize the access policies for specific records or fields, making them available for discovery to certain groups in the network.
 
 \subsection*{GAAIN}
-The primary objective of the \gls{gaain}~\cite{gaain} is to establish a virtual community for sharing Alzheimer's-related data stored in independently-operated repositories around the world.
-Neuroimaging, demographic, genetic, and biologic data are integrated together while respecting the boundaries of existing repositories and protecting the ownership of shared data.
-The system architecture of \gls{gaain} contains a central server that communicates with multiple client applications that are installed at the data partner sites (\gls{dpc}).
-The \gls{gaain} \gls{dpc}s at each data partner site does not interfere with or consume resources of the local production system.
-Since it does not have direct access to the production database, since data is locally exported into CSV files and loaded into the \gls{dpc}', it cannot disrupt the normal operations of the production system.
-The data stored in the \gls{dpc} may be updated at the convenience of the data partner, and the only institutional requirement is to change local firewall configurations to allow HTTPS traffic from the central server into the data partner's network.
-\gls{gaain} data partners retain complete control over their data.
-Every \gls{dpc} has an “on/off switch” which provides the freedom to immediately disconnect data from the network at any time for any reason.
+One more tool analyzed because of its metadata sharing network its \gls{gaain}~\cite{gaain}, in which its main objective is to organize a community for sharing Alzheimer's-related from diverse repositories around the world, where data from different medical fields are combined together, taking into account existing policies of these repositories and preserving the ownership of the data being shared.
 
-When \gls{gaain} investigators query the network through its web interfaces, search requests are sent to the central server.
-The database in each \gls{dpc} is queried and the results are sent back to the central server where they are aggregated into the response passed on to the web interfaces.
+The architecture of \gls{gaain} contains a central server that interacts with multiple client nodes, which are installed in the data partners site (\gls{dpc}).
+These \gls{gaain} \gls{dpc}s don't gather data directly from their data partner production environment, instead, data is locally exported and transformed into a CSV file and only then loaded into the \gls{dpc}.
+With this process a \gls{dpc} will have a low footprint, not interfering with the data parters system, and also is given the freedom to the data owners to update their data when they find it convenient.
+To have this \gls{dpc} running on the data partner's site, the only requirement imposed is to adapt current firewall configurations to allow incoming HTTPS traffic from the central server into their network.
+Data owners still have full control over their data, and to do so every \gls{gaain} \gls{dpc} has ``on/off switch'' which gives the possibility to immediately detach the data from the network.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\linewidth]{gaain.png}
+    \caption{Network architecture of the \gls{gaain}. Image created based on an original retrieved from~\cite{gaain}.}
+\end{figure}
+
+Then, with this network architecture, \gls{gaain} researchers can query the network through its web interfaces, which forwarded the search requests to the central server component which then queries every individual \gls{dpc}.
+The results are sent back to the central server that aggregates them into a response to then be displayed on the web interface.
 
 \subsection*{PopMedNet}
 Popmednet~\cite{popmednet} is a software platform designed to facilitate the creation and operation of distributed health data networks and to meet the needs of disparate data partners, coordinating center models, and researchers.
