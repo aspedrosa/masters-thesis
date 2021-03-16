@@ -375,27 +375,25 @@ This guarantees agreement to local data owners' security policies, without jeopa
 
 \subsection*{NextGen Connect}
 % User guide - https://www.nextgen.com/-/media/files/nextgen-connect/nextgen-connect-310-user-guide.pdf
-% NextGen Health Care
-NextGen Connected Health helps many of the nation’s largest, most respected healthcare entities streamline their
-care-management processes to satisfy the demands of a regulatory, competitive healthcare industry.
-With NextGen Connect, NextGen Healthcare's goal is to provide the healthcare community with a secure, efficient, cost effective means of sharing health information.
-
-% NextGen Connect
-Like an interpreter who translates foreign languages into the one you understand, NextGen Connect Integration Engine translates message standards into the one your system understands.
-Whenever a "foreign" system sends you a message, NextGen Connect Integration Engine’s integration capabilities expedite the following:
-Filtering – reads message parameters and passes the message to or stops it on its way to the transformation stage.
-Transformation – converts the incoming message standard to another standard (e.g., HL7 to XML) (Popular Medical standards supported, ex: DICOM, HL7). Such tranformations cam also be more generic and custom by adding additional javascript or Java code.
-Extraction – can "pull" data from and "push" data to a database.
-Routing – makes sure messages arrive at their assigned destinations.
-
-The interfaces you configure that perform these jobs are called channels:
-A channel consists of multiple connectors.
-A connector is a piece of a channel that does the job of getting data into NextGen Connect (a source connector), or sending data out to an external system (a destination connector).
-Every channel has exactly one source connector, and at least one destination connector.
-For example you may receive data over HTTP, then write the data out to a file somewhere, and also insert pieces of the data into your custom database.
-
 %https://github.com/nextgenhealthcare/connect
+Data owners face challenges when trying to share vital patient data quickly since institutions are pressured to keep interoperability a secure cost-effective functionally.
+To do so, IT administrators need solutions that allow customization and are scalable.
 
+In a continuously changing healthcare economy, NextGen Healthcare Solutions assist in supersede these challenges by: increasing the capabilities of sharing data; efficiently combine and transfer data over multiple systems; diminish costs and satisfy urging needs with Fast Healthcare Interoperability Resources (FHIR, a standard that defines data formats and API to exchange \gls{ehr} ) based APIs.
+One of such solutions is NextGen Connect, where NextGen Healthcare's goal is to offer the healthcare society a secure and practical way to share health data.
+
+NextGen Connect contains an Integration Engine that, like a language interpreter who translates from one language into another, translates a message represented on a given format into another that the destination system understands.
+Whenever NextGen Connect receives a message from an external system, the Integration Engine perform:
+\begin{itemize}
+    \item Filtering: analyses the message parameters and transfers or discards it from going to the transformation phase.
+    \item Transformation: converts the message from its original format to the desired standard format (e.g., HL7 to XML) (Popular Medical standards supported, ex: DICOM, HL7). The tool also allows more customizable transformations by executing custom Javascript or Java code.
+    \item Extraction: retrieve data from and send to a database.
+    \item Routing: ensure that all messages are received by their destinations.
+\end{itemize}
+The components that are configured and execute the jobs mentioned above are called channels.
+It consists of multiple connectors which are in charge of loading the data into NextGen Connect (source connector) or loading the data to an outside system (destination connector).
+Each channel has exactly one source connector and one or more destination connectors.
+A possible configuration is to receive data over HTTP, then send the result of the configured transformations to a file and/or insert it into a configured database.
 
 \section{Findings}
 
