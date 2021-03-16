@@ -331,20 +331,17 @@ Then, with this network architecture, \gls{gaain} researchers can query the netw
 The results are sent back to the central server that aggregates them into a response to then be displayed on the web interface.
 
 \subsection*{PopMedNet}
-Popmednet~\cite{popmednet} is a software platform designed to facilitate the creation and operation of distributed health data networks and to meet the needs of disparate data partners, coordinating center models, and researchers.
-The platform is a flexible architecture and governance models enable network designs that meet the critical needs of data partners within distributed networks, including data privacy and security requirements, system security requirements, governance and operational requirements, regulatory and workflow requirements, and monitoring of network functions.
-PopMedNet includes a number of features designed to facilitate research and network learning more broadly than simply distributing queries.
-These features aid researchers in identifying potential collaborators, discovering prior research conducted within their network, and understanding more about the data available within their network.
+With the increase of availability of electronic health information, the engagement to distributed health data research networks has risen.
+Popmednet~\cite{popmednet} appears to facilitate the creation and management of distributed health networks, taking into account the demands of different data owners and researchers.
+The platform's adaptable architecture allows network designs that satisfy important requirements of data owners of a network, including data privacy and security requirements and network monitoring functionalities.
+Researchers have available a set of features that aid in the processes of finding possible data owner collaborators, finding previously carried out research and learn more about the data in the network, thus the system is going beyond of just issuing queries.
 
-The PopMedNet platform consists of two interrelated components: a web-based portal for distributing requests and administering the network, and the DataMart Client.
-Both components are combined together through a publish-and-subscribe approach, that does not require any open ports, eliminating a critical security concern for data partners.
-The DataMart Client is installed on a data partner end user’s local machine, behind the data partner firewall.
-There is no direct external access to local data and all queries from the network portal are pulled into the local environment rather than being pushed through an open port.
-The DataMart Client acts as an inbox for data partners to receive, review, and respond to queries distributed from a network portal.
-This enables data partners to review the details of all requests, including request metadata such as the name and email address of the requester, a description of the request, the purpose of the request, and the request parameters.
-After review, the data partner may choose to execute the query, hold it for further review, or reject it.
-This asynchronous approach to querying is a feature of the system that provides the data partners with complete control over their data and all its uses.
-Data partners can choose to automate many of the query processing steps, or choose to use the manual process to ensure compliance with local requirements.
+The platform is made of two components: a web-based portal for issuing research requests and managing the network, and the clients' DataMart.
+They communicate with each other following a publish-subscriber philosophy, which removes the need for data owners to have open ports on their systems, solving an important security concern of existing direct external access to local data.
+With this approach, the DataMart Client is present at the data owner's local machine, behind their firewall, and all queries from the network portal are pulled from it, instead of them being pushed through an open port.
+Data owners can then use the DataMart Client to review requests fetched from the network portal by analyzing its metadata such as information of the requester and the description and purpose of the request.
+Then it can opt to execute the query and send the results back to the network portal, keep it for additional review or refuse it.
+With this asynchronous approach to querying, data owners have full control of their data and all its uses, however, instead of doing these review steps manually, it is also given the possibility to automate them.
 
 \subsection*{EHR4CR}
 
