@@ -1,5 +1,6 @@
 \chapter{Background}
 \label{chapter:background}
+\graphicspath{{figs/02-background/}}
 
 Oftentimes medical researchers do studies associated with diseases, such as determining the impact of a certain drug or find variables that are characteristic of certain diseases.
 To perform such studies and have reliable results, a great amount of data is required.
@@ -293,11 +294,23 @@ retrieve data from the data owners site:
 % https://en.wikipedia.org/wiki/ISO/IEC_11179#cite_note-1
 
 \subsection*{CafeVariome}
-Cafe Variome~\cite{cafevariome} was designed to be used with safe or sensitive datasets.
-In the latter case, there is often a need to limit which persons might access the system to undertake data discovery.
-This implies laboratories connecting together in closed or semiclosed discovery networks.
-These could be all-to-all networks (where each group places a discovery interface over their own data, for use by other network members) or a hub and spokes arrangement (where the network establishes just one discovery portal that federates searches across all the partner sites), or a combination of these architectures.
-Regardless of the preferred arrangement, each group might wish to fine-tune which records or fields are made available for discovery by (and potentially then shared with) each other group or individual in the network.
+Coming back again to Cafe Variome~\cite{cafevariome}, it was designed to be used safely, with sensitive datasets.
+With this, it is often important to limit which persons can access the system and perform their data discovery browsing/queries.
+This leads to laboratories connecting in closed or semiclosed discovery networks with limited access.
+Cafe Variome offers the following network architectures:
+\begin{enumerate}
+    \item hub and spokes arrangement: it has a single discovery portal where searches can be performed across all partner in the network
+    \item all-to-all networks: each laboratory has an individual interface over their data, that can be used by other network members
+    \item combination of the previous architectures
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.5\linewidth]{cafevariome-network.png}
+    \caption{The avilable network architectures with Cafe Variome. Image retrieved from \cite{cafevariome}.}
+\end{figure}
+
+Despite the chosen arrangement, each node can choose to customize the access policies for specific records or fields, making them available for discovery to certain groups in the network.
 
 \subsection*{GAAIN}
 The primary objective of the \gls{gaain}~\cite{gaain} is to establish a virtual community for sharing Alzheimer's-related data stored in independently-operated repositories around the world.
