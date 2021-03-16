@@ -344,34 +344,34 @@ Then it can opt to execute the query and send the results back to the network po
 With this asynchronous approach to querying, data owners have full control of their data and all its uses, however, instead of doing these review steps manually, it is also given the possibility to automate them.
 
 \subsection*{EHR4CR}
+Yet another project with an interesting network design to share \gls{ehr} is the EHR4CR~\cite{ehr4cr} project.
+It aims to create a robust and scalable platform to share data from distributed \gls{cdw}, taking into account requirements and policies, such as data protection, allowing to identify patient cohorts (a group of patients that satisfy specific criteria) and to extract patient-centric data.
 
-The EHR4CR~\cite{ehr4cr} project aims to build a robust and scalable platform that will unlock data from hospital EHR systems, in full compliance with the ethical, regulatory and data protection policies and requirements of each participating country.
+The access to the clinical data present at each \gls{cdw} endpoint is done through three logical layers:
+\begin{itemize}
+    \item Legacy system layer: specific to the \gls{cdw}
+    \item Legacy Interface layer: deals with the complexity of translating queries against the EHR4RC data model to the terminology used by the specific \gls{cdw} or \gls{ehr} system and also convert the results of such queries to the common EHR4RC data model.
+    \item EHR4CR Data source Endpoint layer: exposes a standard EHR4CR endpoint interface so other EHR4CR services can easily access the \gls{cdw} or \gls{ehr} system's data.
+\end{itemize}
+Once these layers are implemented and properly working, information about the service provider is added to the central registry of the platform, allowing users to discover and browse through them.
 
-%Information representation
-The developed solutions allow identifying patient cohorts and extracting patient-centric data using distributed EHRs/Clinical data warehouses (CDWs).
+The platform's architecture was built around the Protocol Feasibility Scenario (PFS), which retrieved aggregated results from each data source about quantities of patients that fulfill a certain Eligibility Criteria (EC), and the Patient identification and Recruitment Scenario, that has the goal of retrieving patient information with consent to furder be used on research.
+The most important scenario to analyze is the PFS one, where makes use of three main components:
+\begin{itemize}
+    \item Workbench: acts as an interface where an end-user can issue EC queries to execute on the network and see the aggregated results.
+    \item Orchestrator: distributes the queries received from the workbench across the data endpoints of the network, joining the returned results and sending them back to the workbench.
+    \item Endpoint: services with \gls{cdw}s where the queries will execute
+\end{itemize}
 
-%Platform services
-The access to the clinical data locally at the data endpoints consists of three logical layers: the legacy system layer (specific to the type of CDW or EHR used by the local site), the Legacy Interface layer and the EHR4CR Data source Endpoint layer.
-The Legacy Interface layer deals with the complexity involved when accessing the various types of CDW and EHR systems used and the adopted strategy for translating queries against the EHR4CR information model and pivot terminology into queries that can be executed locally against the CDW or EHR system.
-The EHR4CR Data source Endpoint layer is a generic layer that exposes uniform EHR4CR endpoint interfaces to other EHR4CR services and components.
-Once approved, the service provider metadata is added to the central registry and exposed services and applications can be published so that platform users can discover them.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\linewidth]{ehr4cr.png}
+    \caption{Interation between the main services used on the Protocol Feasibility Scenario. Image retrieved from~\cite{ehr4cr}.}
+\end{figure}
 
-% merge the two following paragraphs into one
-The current architecture description focuses on the Protocol Feasibility Scenario (PFS) and Patient identification and Recruitment Scenario (PRS).
-The most interesting scenario is PFS where The main components involved are:
-• Protocol feasibility tools in the form of a workbench for studying non-identifiable distributed patient data.
-• An orchestration module allowing distributed execution of eligibility criteria queries.
-• Endpoint (data access) services allowing eligibility criteria query execution on local clinical data warehouse facilities.
-
-The process of querying individual data endpoints for protocol feasibility is initiated by the workbench instance on behalf of an end-user.
-The workbench then submits a series of Eligibility Criteria (EC) queries to an orchestrator service instance.
-The orchestrator instance identifies and invokes the data endpoints to which the EC queries are targeted.
-Finally after receiving the individual EC query results, the orchestrator service instance provides a consolidated result to the workbench instance which will eventually be displayed to the end-user.
-
-security
-In order to encompass existing local data provider security policies and firewall rules, the platform supports the invocation of web services using dynamically configurable transport bindings.
-Examples include asynchronous web service invocation by employing message-oriented middleware to provide the ability (from an endpoint provider perspective) to retrieve (pull) incoming queries rather than receiving these directly (push), thus avoiding the need for endpoint providers to accept incoming connections from the Internet into their local network.
-This feature ensures compliance with local data provider policies, thus facilitating platform adoption, while at the same time allowing for standards-based authentication and authorization of end-users and web service clients operating on their behalf.
+While building the platform, data owners' common security policies and firewall restrictions were taken into account by supporting the invocation of web services using dynamically configurable transport bindings.
+Examples of such are publish-subscribe methods that were mentioned in the previous tool, where an endpoint retrieves (pull) incoming queries instead of receiving them directly (push).
+This guarantees agreement to local data owners' security policies, without jeopardizing existing authentication and authorization mechanisms on end-user and web service clients.
 
 \subsection*{NextGen Connect}
 % User guide - https://www.nextgen.com/-/media/files/nextgen-connect/nextgen-connect-310-user-guide.pdf
