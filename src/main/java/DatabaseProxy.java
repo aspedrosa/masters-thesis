@@ -13,7 +13,7 @@ public final class DatabaseProxy implements AutoCloseable {
 
     public DatabaseProxy() throws SQLException {
         // TODO get this parameters by env variables
-        this.database_connection = DriverManager.getConnection("jdbc:postgres://postgres:posrgres@localhost:5432/postgres");
+        this.database_connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
     }
 
     public final Set<Long> pipelines_ids() {
