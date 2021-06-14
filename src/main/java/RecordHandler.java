@@ -1,5 +1,4 @@
 import avro.shaded.com.google.common.collect.Sets;
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -7,6 +6,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.VoidDeserializer;
+import org.apache.kafka.connect.json.JsonDeserializer;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
@@ -96,7 +96,7 @@ public class RecordHandler extends Thread {
 
             final var db_topic = String.format(
                 "db_%s",
-                record.value().get("hash").asText()
+                record.value().get("HASH").asText()
             );
 
             LOGGER.info("msg received");
@@ -108,7 +108,11 @@ public class RecordHandler extends Thread {
 
             LOGGER.info("started");
 
-            while (all_done(online_at_start)) {
+            while (!all_done(online_at_start)) {
+                //var sc = new Scanner(System.in);
+                //System.err.print("continue: ");
+                //sc.nextLine();
+                //break;
                 for (var ready_record : data_ready_consumer.poll(Duration.ofMillis(Long.MAX_VALUE))) {
                     this.pipelines_done.add(ready_record.value().get("sub_id").asLong());
                 }
