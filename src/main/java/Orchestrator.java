@@ -7,29 +7,45 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.VoidDeserializer;
 import org.apache.kafka.connect.json.JsonDeserializer;
 
+import java.sql.SQLException;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 public class Orchestrator {
 
-    public static final String APP_NAME = "orchestrator";
+    private static final Logger LOGGER = Logger.getLogger(Orchestrator.class.getName());
 
     public static void main(final String[] args) {
+        // queue used to send messages between the main thread and the record handler
         final var messages_to_process = new LinkedBlockingQueue<ConsumerRecord<byte[], JsonNode>>();
+        // map with the data of the messages that were processed and can be committed by the main thread
         final var messages_to_commit = Collections.synchronizedMap(
             new HashMap<TopicPartition, OffsetAndMetadata>()
         );
 
-        new RecordHandler(messages_to_process, messages_to_commit).start();
+        DatabaseProxy db_proxy = null;
+        try {
+            db_proxy = new DatabaseProxy();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            System.exit(1);
+        }
+
+        DatabaseProxy finalDb_proxy = db_proxy;
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                finalDb_proxy.close();
+            } catch (SQLException ignored) {
+            }
+        }));
+
+        new RecordHandler(messages_to_process, messages_to_commit, db_proxy).start();
 
         final var uploads_consumer = create_upload_notifications_consumer();
-
-        final var logger = Logger.getLogger(Orchestrator.class.getName());
 
         while (true) {
             uploads_consumer.poll(Duration.ofSeconds(5)).forEach(record -> {
@@ -43,7 +59,7 @@ public class Orchestrator {
             });
 
             if (!messages_to_commit.isEmpty()) {
-                logger.info("commiting");
+                LOGGER.info("commiting");
                 synchronized (messages_to_commit) {
                     uploads_consumer.commitSync(messages_to_commit);
                     messages_to_commit.clear();
@@ -53,19 +69,16 @@ public class Orchestrator {
     }
 
     private static KafkaConsumer<byte[], JsonNode> create_upload_notifications_consumer() {
-        final var env = System.getenv();
-        final var UPLOAD_NOTIFICATION_TOPIC = env.getOrDefault("UPLOAD_NOTIFICATION_TOPIC", "UPLOAD_NOTIFICATIONS");
-
         final var props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.get("BOOTSTRAP_SERVERS"));
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, ConstantsAndVariables.get(ConstantsAndVariables.BOOTSTRAP_SERVERS));
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, VoidDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, APP_NAME + "_upload_notifications");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, ConstantsAndVariables.APP_NAME + "_upload_notifications");
 
         final var consumer = new KafkaConsumer<byte[], JsonNode>(props);
 
-        consumer.subscribe(List.of(UPLOAD_NOTIFICATION_TOPIC));
+        consumer.subscribe(Collections.singletonList(ConstantsAndVariables.get(ConstantsAndVariables.UPLOAD_NOTIFICATIONS_TOPIC)));
 
         return consumer;
     }
