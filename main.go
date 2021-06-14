@@ -4,60 +4,58 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	_ "github.com/lib/pq"
+	"github.com/segmentio/kafka-go"
 	"os"
 	"strings"
-	//_ "github.com/lib/pq"  // final/production
-	_ "github.com/mattn/go-sqlite3" // prototype/tests
-	"github.com/segmentio/kafka-go"
 )
 
-type Subscription struct {
+type Pipeline struct {
 	id int
-	selection string
+	selection []string
 	filter string
 }
 
 func main() {
 	// database related
-	//db_host := os.Getenv("DB_HOST")
-	//db_port := os.Getenv("DB_PORT")
-	//db_user := os.Getenv("DB_USER")
-	//db_password := os.Getenv("DB_PASSWORD")
-	//db_name := os.Getenv("DB_NAME")
+	db_host := os.Getenv("DB_HOST")
+	db_port := os.Getenv("DB_PORT")
+	db_user := os.Getenv("DB_USER")
+	db_password := os.Getenv("DB_PASSWORD")
+	db_name := os.Getenv("DB_NAME")
 
 	// kafka related
 	bootstrap_servers := os.Getenv("BOOTSTRAP_SERVERS")
 
+	psqlconn := fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		db_host, db_port, db_user, db_password, db_name)
 
-	//psqlconn := fmt.Sprintf(
-	//	"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-	//	db_host, db_port, db_user, db_password, db_name)
-
-	//db, err := sql.Open("postgres", psqlconn)
-	db, err := sql.Open("sqlite3", "database/db.db")
+	db, err := sql.Open("postgres", psqlconn)
 	if err != nil {
 		panic("unable to connect to the database")
 	}
 
-	/* sqlite3 */
-	_, err = db.Exec("DROP TABLE IF EXISTS subscription")
-	_, err = db.Exec("CREATE TABLE subscription (id INTEGER PRIMARY KEY AUTOINCREMENT, filter VARCHAR, selection VARCHAR)")
-	_, err = db.Exec("INSERT INTO subscription (filter, selection) VALUES ('analysis_id = 0', 'count_value')")
-
-	rows, err := db.Query(`SELECT id, filter, selection from subscription`)
+	rows, err := db.Query(`SELECT id, filter FROM pipeline`)
 
 	for rows.Next() {
-		var sub Subscription
+		var pipeline Pipeline
 
-		err = rows.Scan(&sub.id, &sub.filter, &sub.selection)
+		err = rows.Scan(&pipeline.id, &pipeline.filter)
 
-		go launch_pipeline(sub)
+		selections, _ := db.Query(`SELECT selection_column FROM pipeline_selection ORDER BY selection_order`)
+		var column string
+		for selections.Next() {
+			selections.Scan(&column)
+			pipeline.selection = append(pipeline.selection, column)
+		}
+
+		go launch_pipeline(pipeline, false)
 	}
 
 	consumer := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: strings.Split(bootstrap_servers, ","),
-		GroupID: "subscriptions_manager",
-		Topic: "subscriptions_updates",
+		Topic: "pipelines_updates",
 	})
 
 	for {
@@ -67,8 +65,8 @@ func main() {
 		// parse message
 
 		// 1. create pipeline
-		// 2. stop pipeline
-		// 3. pause pipeline
+		// 2. edit pipeline
+		// 3. stop pipeline
 	}
 }
 
