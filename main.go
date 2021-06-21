@@ -121,8 +121,9 @@ func main() {
           tx.Take(&pipeline, record.(*Subscription).PipelineID)
 
           if pipeline.Status == "STOPPED" {
+            // TODO send message to topic to start pipeline workers
             pipeline.Status = "ACTIVE"
-          	tx.Save(&pipeline)
+            tx.Save(&pipeline)
           }
 
           return nil
@@ -163,8 +164,9 @@ func main() {
 
           if count == 0 {
             var pipeline Pipeline
-          	tx.Take(&pipeline, subscription.PipelineID)
+            tx.Take(&pipeline, subscription.PipelineID)
 
+            // TODO send message to topic to stop pipeline workers
             pipeline.Status = "STOPPED"
             tx.Save(&pipeline)
           }
