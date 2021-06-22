@@ -24,7 +24,7 @@ public class RecordHandler extends Thread {
 
     private static final Logger LOGGER = Logger.getLogger(RecordHandler.class.getName());
 
-    private final LinkedBlockingQueue<ConsumerRecord<byte[], JsonNode>> messages;
+    private final LinkedBlockingQueue<Upload> messages;
     private final Map<TopicPartition, OffsetAndMetadata> messages_processed;
 
     private final KafkaConsumer<byte[], Integer> pipelines_done_consumer;
@@ -32,7 +32,7 @@ public class RecordHandler extends Thread {
     private final Properties redirect_streams_props;
 
     public RecordHandler(
-        LinkedBlockingQueue<ConsumerRecord<byte[], JsonNode>> messages,
+        LinkedBlockingQueue<Upload> messages,
         Map<TopicPartition, OffsetAndMetadata> messages_processed
     ) {
         this.messages = messages;
@@ -44,23 +44,19 @@ public class RecordHandler extends Thread {
 
     private static KafkaConsumer<byte[], Integer> create_pipelines_done_consumer() {
         final var props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, ConstantsAndVariables.get(ConstantsAndVariables.BOOTSTRAP_SERVERS));
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, Variables.get(Variables.BOOTSTRAP_SERVERS));
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, VoidDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
 
-        final var consumer = new KafkaConsumer<byte[], Integer>(props);
-
-        consumer.subscribe(Collections.singletonList(ConstantsAndVariables.get(ConstantsAndVariables.DATA_READY_TO_SEND_TOPIC)));
-
-        return consumer;
+        return new KafkaConsumer<>(props);
     }
 
     private static Properties redirect_streams_props() {
         final var props = new Properties();
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, ConstantsAndVariables.APP_NAME + "_redirect_stream");
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG, Orchestrator.APP_NAME + "_redirect_stream");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, ConstantsAndVariables.get(ConstantsAndVariables.BOOTSTRAP_SERVERS));
+        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, Variables.get(Variables.BOOTSTRAP_SERVERS));
 
         return props;
     }
@@ -74,12 +70,17 @@ public class RecordHandler extends Thread {
             }
         })));
 
+        ConsumerRecord<byte[], JsonNode> record;
+        int pipelines_set;
         while (true) {
-            ConsumerRecord<byte[], JsonNode> record;
 
             while (true) {
                 try {
-                    record = messages.take();
+                    var upload = messages.take();
+
+                    record = upload.getRecord();
+                    pipelines_set = upload.getPipelines_set();
+
                     break;
                 } catch (InterruptedException ignored) {
                 }
@@ -92,20 +93,30 @@ public class RecordHandler extends Thread {
 
             LOGGER.info("msg received");
             final var builder = new StreamsBuilder();
-            builder.stream(db_topic).to(ConstantsAndVariables.get(ConstantsAndVariables.COMMON_DATA_TOPIC));
+            builder.stream(db_topic).to(
+                String.format(
+                    Variables.get(Variables.DATA_TO_PARSE_TOPIC_FORMAT),
+                    pipelines_set
+                )
+            );
             final var stream = new KafkaStreams(builder.build(), redirect_streams_props);
             open_streams.push(stream);
             stream.start();
 
             LOGGER.info("started");
 
+            this.pipelines_done_consumer.subscribe(
+                Collections.singletonList(Variables.get(Variables.PIPELINES_SETS_DONE_TOPIC))
+            );
+
+            final int finalPipelines_set = pipelines_set;
             while (
                 StreamSupport
                     .stream(
                         this.pipelines_done_consumer.poll(Duration.ofMillis(Long.MAX_VALUE)).spliterator(),
                         false
                     )
-                    .anyMatch(r -> r.value() == 0)
+                    .noneMatch(r -> r.value() == finalPipelines_set)
             ) {
             }
 
@@ -119,6 +130,8 @@ public class RecordHandler extends Thread {
             open_streams.pop();
             stream.cleanUp();
             LOGGER.info("closed");
+
+            this.pipelines_done_consumer.unsubscribe();
         }
     }
 
