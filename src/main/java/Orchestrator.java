@@ -62,7 +62,7 @@ public class Orchestrator {
 
         final var consumer = new KafkaConsumer<byte[], JsonNode>(props);
 
-        consumer.subscribe(Collections.singletonList(Variables.get(Variables.DATABASES_UPLOAD_NOTIFICATIONS_TOPIC)));
+        consumer.subscribe(Collections.singletonList(Constants.DATABASES_UPLOAD_NOTIFICATIONS_TOPIC));
 
         return consumer;
     }
