@@ -1,21 +1,24 @@
-import avro.shaded.com.google.common.collect.Sets;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.serialization.IntegerDeserializer;
 import org.apache.kafka.common.serialization.VoidDeserializer;
-import org.apache.kafka.connect.json.JsonDeserializer;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.errors.StreamsException;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
+import java.util.stream.StreamSupport;
 
 public class RecordHandler extends Thread {
 
@@ -24,38 +27,29 @@ public class RecordHandler extends Thread {
     private final LinkedBlockingQueue<ConsumerRecord<byte[], JsonNode>> messages;
     private final Map<TopicPartition, OffsetAndMetadata> messages_processed;
 
-    private final KafkaConsumer<byte[], JsonNode> data_ready_consumer;
+    private final KafkaConsumer<byte[], Integer> pipelines_done_consumer;
 
     private final Properties redirect_streams_props;
 
-    private final DatabaseProxy db_proxy;
-
-    private final Set<Long> pipelines_done;
-
     public RecordHandler(
         LinkedBlockingQueue<ConsumerRecord<byte[], JsonNode>> messages,
-        Map<TopicPartition, OffsetAndMetadata> messages_processed,
-        DatabaseProxy db_proxy
+        Map<TopicPartition, OffsetAndMetadata> messages_processed
     ) {
         this.messages = messages;
         this.messages_processed = messages_processed;
 
-        this.data_ready_consumer = create_data_ready_consumer();
+        this.pipelines_done_consumer = create_pipelines_done_consumer();
         this.redirect_streams_props = redirect_streams_props();
-
-        this.db_proxy = db_proxy;
-
-        pipelines_done = new HashSet<>();
     }
 
-    private static KafkaConsumer<byte[], JsonNode> create_data_ready_consumer() {
+    private static KafkaConsumer<byte[], Integer> create_pipelines_done_consumer() {
         final var props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, ConstantsAndVariables.get(ConstantsAndVariables.BOOTSTRAP_SERVERS));
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, VoidDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, ConstantsAndVariables.APP_NAME + "_data_ready");
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
 
-        final var consumer = new KafkaConsumer<byte[], JsonNode>(props);
+        final var consumer = new KafkaConsumer<byte[], Integer>(props);
 
         consumer.subscribe(Collections.singletonList(ConstantsAndVariables.get(ConstantsAndVariables.DATA_READY_TO_SEND_TOPIC)));
 
@@ -91,9 +85,6 @@ public class RecordHandler extends Thread {
                 }
             }
 
-            // get pipelines active
-            Set<Long> online_at_start = db_proxy.pipelines_ids();
-
             final var db_topic = String.format(
                 "db_%s",
                 record.value().get("HASH").asText()
@@ -108,14 +99,14 @@ public class RecordHandler extends Thread {
 
             LOGGER.info("started");
 
-            while (!all_done(online_at_start)) {
-                //var sc = new Scanner(System.in);
-                //System.err.print("continue: ");
-                //sc.nextLine();
-                //break;
-                for (var ready_record : data_ready_consumer.poll(Duration.ofMillis(Long.MAX_VALUE))) {
-                    this.pipelines_done.add(ready_record.value().get("sub_id").asLong());
-                }
+            while (
+                StreamSupport
+                    .stream(
+                        this.pipelines_done_consumer.poll(Duration.ofMillis(Long.MAX_VALUE)).spliterator(),
+                        false
+                    )
+                    .anyMatch(r -> r.value() == 0)
+            ) {
             }
 
             this.messages_processed.put(
@@ -128,17 +119,7 @@ public class RecordHandler extends Thread {
             open_streams.pop();
             stream.cleanUp();
             LOGGER.info("closed");
-
-            this.pipelines_done.clear();
         }
-    }
-
-    private boolean all_done(final Set<Long> online_at_start) {
-        var currently_active = db_proxy.pipelines_ids();
-
-        online_at_start.retainAll(currently_active);
-
-        return Sets.intersection(online_at_start, this.pipelines_done).size() == online_at_start.size();
     }
 
 }

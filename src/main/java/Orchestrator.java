@@ -7,7 +7,6 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.VoidDeserializer;
 import org.apache.kafka.connect.json.JsonDeserializer;
 
-import java.sql.SQLException;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,23 +26,7 @@ public class Orchestrator {
             new HashMap<TopicPartition, OffsetAndMetadata>()
         );
 
-        DatabaseProxy db_proxy = null;
-        try {
-            db_proxy = new DatabaseProxy();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            System.exit(1);
-        }
-
-        DatabaseProxy finalDb_proxy = db_proxy;
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                finalDb_proxy.close();
-            } catch (SQLException ignored) {
-            }
-        }));
-
-        new RecordHandler(messages_to_process, messages_to_commit, db_proxy).start();
+        new RecordHandler(messages_to_process, messages_to_commit).start();
 
         final var uploads_consumer = create_upload_notifications_consumer();
 
