@@ -1,7 +1,8 @@
 import asyncio
+import json
 
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
-from kafka import TopicPartition
+from kafka.structs import TopicPartition
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from task import send_updates
@@ -11,7 +12,7 @@ async def main():
     db_engine = create_async_engine("sqlite:///demo.db")
 
     consumer = AIOKafkaConsumer(
-        "PIPELINES_UPLOAD_NOTIFICATIONS",
+        "PIPELINES_SETS_UPLOAD_NOTIFICATIONS",
         bootstrap_servers="localhost:9092",
         group_id="sender_main",
         enable_auto_commit=False,
@@ -29,9 +30,10 @@ async def parse_uploads(conn, main_consumer, upload_info):
     pipelines_set = 0  # TODO get this from the upload_info record
 
     consumer = AIOKafkaConsumer(
-        f"PIPELINES_DATA_READY_{pipelines_set}",
+        f"PIPELINES_SET_{pipelines_set}_DATA_READY_TO_SEND",
         bootstrap_servers="localhost:9092",
         group_id="sender_task_creator",
+        value_deserializer=json.loads
     )
 
     done_producer = AIOKafkaProducer(
@@ -45,9 +47,14 @@ async def parse_uploads(conn, main_consumer, upload_info):
         while not _all_done(conn, active_at_start, pipelines_done):
             done_notification = await consumer.getone()
 
-            send_updates.delay(done_notification)
+            pipeline_id = done_notification.value["pipeline_id"]
+            filename = done_notification.value["filename"]
 
-            pipelines_done.add(done_notification)
+            # TODO for each subscription associated with this pipeline create a new task
+            #  or do all this on the celery task
+            send_updates.delay(pipeline_id, filename)
+
+            pipelines_done.add(pipeline_id)
 
     async with done_producer:
         await asyncio.gather(
