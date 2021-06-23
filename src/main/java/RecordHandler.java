@@ -49,6 +49,7 @@ public class RecordHandler extends Thread {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, VoidDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, Orchestrator.APP_NAME + "_pipelines_done");
 
         return new KafkaConsumer<>(props);
     }
@@ -173,6 +174,7 @@ public class RecordHandler extends Thread {
             stream.cleanUp();
             LOGGER.info("closed");
 
+            pipelines_done_consumer.commitSync();
             pipelines_done_consumer.unsubscribe();
         }
     }
