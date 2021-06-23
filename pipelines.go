@@ -71,19 +71,19 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 		consumer_manager := kafka.NewReader(kafka.ReaderConfig{
 			Brokers: strings.Split(bootstrap_servers, ","),
 			GroupID: fmt.Sprintf("subscription_%d_manager", pipeline.id),
-			Topic:   fmt.Sprintf("PIPELINES_SET_%d_UPLOAD_NOTIFICATIONS"),
+			Topic:   fmt.Sprintf("PIPELINES_SET_%d_UPLOAD_NOTIFICATIONS", pipelines_set),
 		})
 
 		consumer := kafka.NewReader(kafka.ReaderConfig{
 			Brokers: strings.Split(bootstrap_servers, ","),
 			GroupID: fmt.Sprintf("pipeline_%d", pipeline.id),
-			Topic:   fmt.Sprintf("PIPELINES_SET_%d_PIPELINE_%d", pipeline.id),
+			Topic:   fmt.Sprintf("PIPELINES_SET_%d_PIPELINE_%d", pipelines_set, pipeline.id),
 		})
 
 		consumer_not := kafka.NewReader(kafka.ReaderConfig{
 			Brokers: strings.Split(bootstrap_servers, ","),
 			GroupID: fmt.Sprintf("pipeline_%d_not", pipeline.id),
-			Topic:   fmt.Sprintf("PIPELINES_SET_%d_PIPELINE_%d_NOT", pipeline.id),
+			Topic:   fmt.Sprintf("PIPELINES_SET_%d_PIPELINE_%d_NOT", pipelines_set, pipeline.id),
 		})
 
 		data_ready_to_send_producer := &kafka.Writer{
@@ -111,7 +111,7 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 			// read upload notifications messages
 			msg, err := consumer_manager.FetchMessage(ctx)
 			if err != nil {
-				panic("some error happen on manager for subs 1")
+				return
 			}
 			rows = binary.BigEndian.Uint32(msg.Value) - 1
 
@@ -126,8 +126,9 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 
 			// launch worker that reads and writes the result of the pipeline to a file
 			go func() {
-				f, err := os.Create(filename)
-				fmt.Println(err)
+				defer wg.Done()
+
+				f, _ := os.Create(filename)
 				defer f.Close()
 
 				// calculate the file header
@@ -193,12 +194,12 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 				}
 
 				fmt.Println("worker exiting")
-
-				wg.Done()
 			}()
 
 			// launch worker in charge of counting the number of messages that were filtered by the pipeline
 			go func() {
+				defer wg.Done()
+
 				for {
 					msg, err := consumer_not.FetchMessage(children_ctx)
 					if err != nil {
@@ -210,7 +211,6 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 				}
 
 				fmt.Println("worker not exiting")
-				wg.Done()
 			}()
 
 			processed_messages := uint32(0)
@@ -241,14 +241,13 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 						"pipeline_id": pipeline.id,
 						"filename":    filename,
 					})
-					err = data_ready_to_send_producer.WriteMessages(ctx,
+					data_ready_to_send_producer.WriteMessages(
+						ctx,
 						kafka.Message{
 							Topic: fmt.Sprintf("PIPELINES_SET_%d_DATA_READY_TO_SEND", pipelines_set),
 							Value: data_ready_notification,
-						})
-					if err != nil {
-						fmt.Println(err)
-					}
+						},
+					)
 
 					break
 				}

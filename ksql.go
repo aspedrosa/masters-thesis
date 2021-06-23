@@ -3,15 +3,62 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/riferrei/srclient"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 )
+
+func init_data_stream(pipelines_set int) error {
+	//ksql_url := os.Getenv("KSQL_URL")
+	ksql_url := "http://localhost:8088"
+
+	data_topic := fmt.Sprintf("PIPELINES_SET_%d_DATA_TO_PARSE", pipelines_set)
+
+	post_json_body, _ := json.Marshal(map[string]interface{}{
+		"ksql": fmt.Sprintf("DESCRIBE %s;", data_topic),
+	})
+	post_body := bytes.NewBuffer(post_json_body)
+	response, err := http.Post(fmt.Sprintf("%s/ksql", ksql_url), "application/json", post_body)
+	if err != nil {
+		return err
+	} else if response.StatusCode == 400 {
+		// assume that if fails the data stream doesn't exist
+
+		_, err := schemaRegistryClient.GetLatestSchema(data_topic, false)
+		if err != nil {
+			f, _ := os.Open("pipelines_sets_data_topics_schema.json")
+			schema_json, _ := ioutil.ReadAll(f)
+			f.Close()
+			_, err := schemaRegistryClient.CreateSchema(data_topic, string(schema_json), srclient.Avro, false)
+			if err != nil {
+				return nil
+			}
+		}
+
+		post_json_body, _ = json.Marshal(map[string]interface{}{
+			"ksql": fmt.Sprintf("CREATE STREAM %s WITH (kafka_topic='%s', value_format='avro');", data_topic, data_topic),
+		})
+		post_body = bytes.NewBuffer(post_json_body)
+		response, err = http.Post(fmt.Sprintf("%s/ksql", ksql_url), "application/json", post_body)
+		if err != nil {
+			return err
+		} else if response.StatusCode != 200 {
+			return errors.New("creation of data stream failed")
+		}
+	}
+
+	return nil
+}
 
 func init_streams(pipelines_set int, pipeline Pipeline) error {
 	//ksql_url := os.Getenv("KSQL_URL")
 	ksql_url := "http://localhost:8088"
+
+	data_topic := fmt.Sprintf("PIPELINS_SET_%d_DATA_TO_PARSE", pipelines_set)
 
 	var selection string
 	if len(pipeline.selection) == 0 {
@@ -31,26 +78,32 @@ func init_streams(pipelines_set int, pipeline Pipeline) error {
 	}
 
 	post_json_body, _ := json.Marshal(map[string]interface{}{
-		"ksql": fmt.Sprintf("CREATE STREAM PIPELINES_SET_%d_PIPELINE_%d AS SELECT %s FROM PIPELINES_SET_%d_DATA_TO_PARSE %s;",
-			pipelines_set, pipeline.id, selection, pipelines_set, where),
+		"ksql": fmt.Sprintf("CREATE STREAM PIPELINES_SET_%d_PIPELINE_%d AS SELECT %s FROM %s %s;",
+			pipelines_set, pipeline.id, selection, data_topic, where),
 	})
 	post_body := bytes.NewBuffer(post_json_body)
 	response, err := http.Post(fmt.Sprintf("%s/ksql", ksql_url), "application/json", post_body)
 	if err != nil {
 		return err
 	}
-	fmt.Println(ioutil.ReadAll(response.Body))
+	if response.StatusCode != 200 {
+		response_str, _ := ioutil.ReadAll(response.Body)
+		return errors.New(string(response_str))
+	}
 
 	post_json_body, _ = json.Marshal(map[string]interface{}{
-		"ksql": fmt.Sprintf("CREATE STREAM PIPELINES_SET_%d_PIPELINE_%d_NOT AS SELECT 1 FROM PIPEINES_SET_%d_DATA_TO_PARSE %s;",
-			pipelines_set, pipeline.id, pipelines_set, where_not),
+		"ksql": fmt.Sprintf("CREATE STREAM PIPELINES_SET_%d_PIPELINE_%d_NOT AS SELECT 1 FROM %s %s;",
+			pipelines_set, pipeline.id, data_topic, where_not),
 	})
 	post_body = bytes.NewBuffer(post_json_body)
 	response, err = http.Post(fmt.Sprintf("%s/ksql", ksql_url), "application/json", post_body)
 	if err != nil {
 		return err
 	}
-	fmt.Println(ioutil.ReadAll(response.Body))
+	if response.StatusCode != 200 {
+		response_str, _ := ioutil.ReadAll(response.Body)
+		return errors.New(string(response_str))
+	}
 
 	return nil
 }
