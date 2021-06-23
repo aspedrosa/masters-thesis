@@ -7,8 +7,10 @@ import (
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/segmentio/kafka-go"
+	"math/rand"
 	"os"
 	"strings"
+	"time"
 )
 
 type Pipeline struct {
@@ -42,6 +44,8 @@ func main() {
 	if err != nil {
 		panic("unable to connect to the database")
 	}
+
+	rand.Seed(time.Now().UTC().UnixNano())
 
 	rows, _ := db.Query(`SELECT id, filter FROM pipelines`)
 	for rows.Next() {
