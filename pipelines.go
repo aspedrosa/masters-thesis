@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"os"
 	"strconv"
 	"strings"
@@ -16,24 +17,24 @@ import (
 
 var mappings = make(map[int]context.CancelFunc)
 
-var column_types = map[string]string {
-	"ANALYSIS_ID": "long",
-	"STRATUM_1": "string",
-	"STRATUM_2": "string",
-	"STRATUM_3": "string",
-	"STRATUM_4": "string",
-	"STRATUM_5": "string",
-	"COUNT_VALUE": "long",
-	"MIN_VALUE": "double",
-	"AVG_VALUE": "double",
+var column_types = map[string]string{
+	"ANALYSIS_ID":  "long",
+	"STRATUM_1":    "string",
+	"STRATUM_2":    "string",
+	"STRATUM_3":    "string",
+	"STRATUM_4":    "string",
+	"STRATUM_5":    "string",
+	"COUNT_VALUE":  "long",
+	"MIN_VALUE":    "double",
+	"AVG_VALUE":    "double",
 	"MEDIAN_VALUE": "double",
-	"P10_VALUE": "double",
-	"P25_VALUE": "double",
-	"P75_VALUE": "double",
-	"P90_VALUE": "double",
+	"P10_VALUE":    "double",
+	"P25_VALUE":    "double",
+	"P75_VALUE":    "double",
+	"P90_VALUE":    "double",
 }
 
-var all_normal_order = []string {
+var all_normal_order = []string{
 	"ANALYSIS_ID",
 	"STRATUM_1",
 	"STRATUM_2",
@@ -52,19 +53,14 @@ var all_normal_order = []string {
 
 var schemaRegistryClient = srclient.CreateSchemaRegistryClient("http://localhost:8081")
 
-type UploadMessage struct {
-	HASH string
-	ROWS int64
-}
-
-func launch_pipeline(pipeline Pipeline, create_streams bool) {
+func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) {
 	// create context to stop pipeline worker
 	ctx := context.Background()
 	ctx, cancel_pipeline_woker := context.WithCancel(ctx)
 	mappings[pipeline.id] = cancel_pipeline_woker
 
 	if create_streams {
-		init_streams(pipeline)
+		init_streams(pipelines_set, pipeline)
 	}
 
 	// launch pipeline worker
@@ -75,20 +71,24 @@ func launch_pipeline(pipeline Pipeline, create_streams bool) {
 		consumer_manager := kafka.NewReader(kafka.ReaderConfig{
 			Brokers: strings.Split(bootstrap_servers, ","),
 			GroupID: fmt.Sprintf("subscription_%d_manager", pipeline.id),
-			Topic: "UPLOAD_NOTIFICATIONS",
+			Topic:   fmt.Sprintf("PIPELINES_SET_%d_UPLOAD_NOTIFICATIONS"),
 		})
 
 		consumer := kafka.NewReader(kafka.ReaderConfig{
 			Brokers: strings.Split(bootstrap_servers, ","),
 			GroupID: fmt.Sprintf("pipeline_%d", pipeline.id),
-			Topic: fmt.Sprintf("PIPELINE_%d", pipeline.id),
+			Topic:   fmt.Sprintf("PIPELINES_SET_%d_PIPELINE_%d", pipeline.id),
 		})
 
 		consumer_not := kafka.NewReader(kafka.ReaderConfig{
 			Brokers: strings.Split(bootstrap_servers, ","),
 			GroupID: fmt.Sprintf("pipeline_%d_not", pipeline.id),
-			Topic: fmt.Sprintf("PIPELINE_%d_NOT", pipeline.id),
+			Topic:   fmt.Sprintf("PIPELINES_SET_%d_PIPELINE_%d_NOT", pipeline.id),
 		})
+
+		data_ready_to_send_producer := &kafka.Writer{
+			Addr: kafka.TCP(strings.Split(bootstrap_servers, ",")...),
+		}
 
 		// channels so children workers communicate received messages
 		counts := make(chan byte)
@@ -106,22 +106,27 @@ func launch_pipeline(pipeline Pipeline, create_streams bool) {
 			msgs_filtered := make([]kafka.Message, 0, 1500)
 			msgs_filtered_not := make([]kafka.Message, 0, 1500)
 
+			var rows uint32
+
 			// read upload notifications messages
 			msg, err := consumer_manager.FetchMessage(ctx)
 			if err != nil {
 				panic("some error happen on manager for subs 1")
 			}
+			rows = binary.BigEndian.Uint32(msg.Value) - 1
 
 			fmt.Println("upload")
 
-			var upload UploadMessage
-			err = json.Unmarshal(msg.Value, &upload)
-			fmt.Println(err)
-			upload.ROWS--
+			var filename string
+			{
+				b := make([]byte, 20)
+				rand.Read(b)
+				filename = fmt.Sprintf("%x", b)
+			}
 
 			// launch worker that reads and writes the result of the pipeline to a file
 			go func() {
-				f, err := os.Create(upload.HASH)
+				f, err := os.Create(filename)
 				fmt.Println(err)
 				defer f.Close()
 
@@ -139,7 +144,7 @@ func launch_pipeline(pipeline Pipeline, create_streams bool) {
 				// write the header to the file
 				for i, column := range order {
 					f.WriteString(column)
-					if i != len(order) - 1 {
+					if i != len(order)-1 {
 						f.WriteString(",")
 					} else {
 						f.WriteString("\n")
@@ -176,7 +181,7 @@ func launch_pipeline(pipeline Pipeline, create_streams bool) {
 							}
 						}
 
-						if i != len(order) - 1 {
+						if i != len(order)-1 {
 							f.WriteString(",")
 						} else {
 							f.WriteString("\n")
@@ -208,19 +213,18 @@ func launch_pipeline(pipeline Pipeline, create_streams bool) {
 				wg.Done()
 			}()
 
-			processed_messages := int64(0)
-
+			processed_messages := uint32(0)
 
 			for {
 				select {
-				case <- ctx.Done():
+				case <-ctx.Done():
 					cancel_childrens()
 					return
-				case _ = <- counts:
+				case _ = <-counts:
 					processed_messages++
 				}
 
-				if processed_messages == upload.ROWS {
+				if processed_messages == rows {
 					fmt.Println("done")
 					cancel_childrens()
 
@@ -233,6 +237,19 @@ func launch_pipeline(pipeline Pipeline, create_streams bool) {
 					err = consumer_not.CommitMessages(ctx, msgs_filtered_not...)
 					fmt.Println(err)
 
+					data_ready_notification, _ := json.Marshal(map[string]interface{}{
+						"pipeline_id": pipeline.id,
+						"filename":    filename,
+					})
+					err = data_ready_to_send_producer.WriteMessages(ctx,
+						kafka.Message{
+							Topic: fmt.Sprintf("PIPELINES_SET_%d_DATA_READY_TO_SEND", pipelines_set),
+							Value: data_ready_notification,
+						})
+					if err != nil {
+						fmt.Println(err)
+					}
+
 					break
 				}
 			}
@@ -242,15 +259,15 @@ func launch_pipeline(pipeline Pipeline, create_streams bool) {
 	}()
 }
 
-func edit_pipeline(new_pipeline Pipeline) {
-	stop_pipeline(new_pipeline.id)
+func edit_pipeline(pipelines_set int, new_pipeline Pipeline) {
+	stop_pipeline(pipelines_set, new_pipeline.id)
 
-	launch_pipeline(new_pipeline, true)
+	launch_pipeline(pipelines_set, new_pipeline, true)
 }
 
-func stop_pipeline(pipeline_id int) {
+func stop_pipeline(pipelines_set int, pipeline_id int) {
 	mappings[pipeline_id]()
 	delete(mappings, pipeline_id)
 
-	stop_streams(pipeline_id)
+	stop_streams(pipelines_set, pipeline_id)
 }
