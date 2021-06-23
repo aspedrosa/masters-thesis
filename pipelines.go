@@ -95,10 +95,10 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 		defer close(counts)
 		wg := sync.WaitGroup{}
 
-		// context to stop children workers once all messages were processed
-		children_ctx, cancel_childrens := context.WithCancel(ctx)
-
 		for {
+			// context to stop children workers once all messages were processed
+			children_ctx, cancel_childrens := context.WithCancel(ctx)
+
 			wg.Add(2)
 
 			// read messages that can be committed
@@ -162,8 +162,7 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 
 					// parse avro format
 					schema_id := binary.BigEndian.Uint32(msg.Value[1:5])
-					schema, err := schemaRegistryClient.GetSchema(int(schema_id))
-					fmt.Println(err)
+					schema, _ := schemaRegistryClient.GetSchema(int(schema_id))
 					native, _, _ := schema.Codec().NativeFromBinary(msg.Value[5:])
 					data := native.(map[string]interface{})
 
@@ -230,12 +229,9 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 
 					wg.Wait()
 
-					err := consumer_manager.CommitMessages(ctx, msg)
-					fmt.Println(err)
-					err = consumer.CommitMessages(ctx, msgs_filtered...)
-					fmt.Println(err)
-					err = consumer_not.CommitMessages(ctx, msgs_filtered_not...)
-					fmt.Println(err)
+					consumer_manager.CommitMessages(ctx, msg)
+					consumer.CommitMessages(ctx, msgs_filtered...)
+					consumer_not.CommitMessages(ctx, msgs_filtered_not...)
 
 					data_ready_notification, _ := json.Marshal(map[string]interface{}{
 						"pipeline_id": pipeline.id,
