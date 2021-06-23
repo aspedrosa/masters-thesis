@@ -58,7 +58,7 @@ func init_streams(pipelines_set int, pipeline Pipeline) error {
 	//ksql_url := os.Getenv("KSQL_URL")
 	ksql_url := "http://localhost:8088"
 
-	data_topic := fmt.Sprintf("PIPELINS_SET_%d_DATA_TO_PARSE", pipelines_set)
+	data_topic := fmt.Sprintf("PIPELINES_SET_%d_DATA_TO_PARSE", pipelines_set)
 
 	var selection string
 	if len(pipeline.selection) == 0 {
@@ -87,8 +87,9 @@ func init_streams(pipelines_set int, pipeline Pipeline) error {
 		return err
 	}
 	if response.StatusCode != 200 {
-		response_str, _ := ioutil.ReadAll(response.Body)
-		return errors.New(string(response_str))
+		response_bytes, _ := ioutil.ReadAll(response.Body)
+		response_str := string(response_bytes)
+		return errors.New(response_str)
 	}
 
 	post_json_body, _ = json.Marshal(map[string]interface{}{
@@ -101,8 +102,9 @@ func init_streams(pipelines_set int, pipeline Pipeline) error {
 		return err
 	}
 	if response.StatusCode != 200 {
-		response_str, _ := ioutil.ReadAll(response.Body)
-		return errors.New(string(response_str))
+		response_bytes, _ := ioutil.ReadAll(response.Body)
+		response_str := string(response_bytes)
+		return errors.New(response_str)
 	}
 
 	return nil
