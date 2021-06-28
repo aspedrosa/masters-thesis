@@ -5,8 +5,10 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 	"sync"
@@ -128,7 +130,10 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 			go func() {
 				defer wg.Done()
 
-				f, _ := os.Create(filename)
+				f, err := os.Create(path.Join(os.Getenv("DATA_READY_DIRECTORY"), filename))
+				if err != nil {
+					log.Fatal(err)
+				}
 				defer f.Close()
 
 				// calculate the file header

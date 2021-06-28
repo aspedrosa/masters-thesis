@@ -5,7 +5,9 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
-	_ "github.com/mattn/go-sqlite3"
+	"log"
+
+	//_ "github.com/mattn/go-sqlite3"
 	"github.com/segmentio/kafka-go"
 	"math/rand"
 	"os"
@@ -20,7 +22,7 @@ type Pipeline struct {
 }
 
 func main() {
-	pipelines_set := 0
+	pipelines_set := 0 // TODO get this as a program argument
 
 	// kafka related
 	bootstrap_servers := os.Getenv("BOOTSTRAP_SERVERS")
@@ -29,34 +31,39 @@ func main() {
 	init_data_stream(pipelines_set)
 
 	// database related
-	//db_host := os.Getenv("DB_HOST")
-	//db_port := os.Getenv("DB_PORT")
-	//db_user := os.Getenv("DB_USER")
-	//db_password := os.Getenv("DB_PASSWORD")
-	//db_name := os.Getenv("DB_NAME")
+	db_host := os.Getenv("DB_HOST")
+	db_port := os.Getenv("DB_PORT")
+	db_user := os.Getenv("DB_USER")
+	db_password := os.Getenv("DB_PASSWORD")
+	db_name := os.Getenv("DB_NAME")
 
-	//psqlconn := fmt.Sprintf(
-	//	"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-	//	db_host, db_port, db_user, db_password, db_name)
+	psqlconn := fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		db_host, db_port, db_user, db_password, db_name)
 
-	//db, err := sql.Open("postgres", psqlconn)
-	db, err := sql.Open("sqlite3", "demo.db")
+	db, err := sql.Open("postgres", psqlconn)
+	//db, err := sql.Open("sqlite3", "demo.db")
 	if err != nil {
 		panic("unable to connect to the database")
 	}
 
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	rows, _ := db.Query(`SELECT id, filter FROM pipelines`)
-	for rows.Next() {
+	rows, _ := db.Query(`SELECT id, filter FROM pipelines WHERE status = 'ACTIVE'`)
+	for rows != nil && rows.Next() {
 		var pipeline Pipeline
 
 		rows.Scan(&pipeline.id, &pipeline.filter)
 
-		selections, _ := db.Query(
-			`SELECT column FROM pipeline_selections WHERE pipeline_id = ? ORDER BY "order"`,
-			pipeline.id,
+		selections, err := db.Query(
+			fmt.Sprintf(
+				`SELECT selection_column FROM pipeline_selections WHERE pipeline_id = %d ORDER BY selection_order`,
+				pipeline.id,
+			),
 		)
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		var column string
 		for selections.Next() {
