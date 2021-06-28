@@ -1,11 +1,14 @@
 package main
 
 import (
-  "fmt"
-  "github.com/jinzhu/gorm"
-  _ "github.com/mattn/go-sqlite3"
-  "github.com/qor/admin"
-  "net/http"
+	"fmt"
+	"github.com/jinzhu/gorm"
+	_ "github.com/lib/pq"
+	"github.com/qor/admin"
+	"github.com/qor/roles"
+	"log"
+	"net/http"
+	"os"
 )
 
 type Pipeline struct {
@@ -40,18 +43,30 @@ type Request struct {
 }
 
 func main() {
-  //os.Remove("demo.db")
+	db_host := os.Getenv("DB_HOST")
+	db_port := os.Getenv("DB_PORT")
+	db_user := os.Getenv("DB_USER")
+	db_password := os.Getenv("DB_PASSWORD")
+	db_name := os.Getenv("DB_NAME")
 
-  DB, _ := gorm.Open("sqlite3", "demo.db")
-  DB.AutoMigrate(&Pipeline{}, &PipelineSelection{}, &Subscription{}, &Request{})
+	DB, err := gorm.Open(
+		"postgres",
+		fmt.Sprintf(
+			"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+			db_host, db_port, db_user, db_password, db_name),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	DB.AutoMigrate(&Pipeline{}, &PipelineSelection{}, &Subscription{}, &Request{}, &SubscriptionLog{}, &RequestLog{})
 
-  // Initialize
-  Admin := admin.New(&admin.AdminConfig{DB: DB})
+	// Initialize
+	Admin := admin.New(&admin.AdminConfig{DB: DB})
 
-  // Allow to use Admin to manage Pipeline and Subscriptions
-  pipeline := Admin.AddResource(&Pipeline{})
-  pipeline.NewAttrs("-Status")
-  pipeline.EditAttrs("-Status")
+	// Allow to use Admin to manage Pipeline and Subscriptions
+	pipeline := Admin.AddResource(&Pipeline{})
+	pipeline.NewAttrs("-Status")
+	pipeline.EditAttrs("-Status")
 
   selection := pipeline.Meta(&admin.Meta{Name: "Selections"}).Resource
   selection.Meta(&admin.Meta{
