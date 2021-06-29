@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	"github.com/qor/admin"
+	"github.com/qor/qor"
 	"github.com/qor/roles"
 	"github.com/segmentio/kafka-go"
 	"os"
@@ -13,7 +14,7 @@ import (
 
 type Database struct {
 	gorm.Model
-	Hash string
+	Hash string `gorm:"not null;unique"`
 }
 
 type Pipeline struct {
@@ -75,18 +76,47 @@ func configure_admin_models(DB *gorm.DB) *admin.Admin {
 	// Initialize
 	Admin := admin.New(&admin.AdminConfig{DB: DB})
 
+	configure_databases(Admin)
+
 	pipeline := configure_pipeline(Admin)
 	configure_pipeline_selection(pipeline)
 
 	subscription := configure_subscription(Admin)
 	configure_subscription_request(subscription)
 
-	// dont allow to create or update logs entries
+	// dont allow to create or update log entries
 	Admin.AddResource(&SubscriptionLog{}, &admin.Config{
 		Permission: roles.Deny(roles.Update, roles.Anyone).Deny(roles.Create, roles.Anyone),
 	})
 
 	return Admin
+}
+
+func configure_databases(Admin *admin.Admin) {
+	// TODO enforce uniqueness of hash
+
+	database := Admin.AddResource(&Database{}, &admin.Config{
+		Permission: roles.Deny(roles.Update, roles.Anyone),
+	})
+
+	database.IndexAttrs("-ID")
+
+	default_impl := database.SaveHandler
+	database.SaveHandler = func(result interface{}, context *qor.Context) error {
+		hash := result.(*Database).Hash
+
+		err := create_database_status_streams(hash)
+		if err != nil {
+			return err
+		}
+
+		err = default_impl(result, context)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
 }
 
 func configure_pipeline(Admin *admin.Admin) *admin.Resource {

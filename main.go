@@ -24,6 +24,7 @@ func main() {
 	db_password := get_env_var("DB_PASSWORD")
 	db_name := get_env_var("DB_NAME")
 	get_env_var("BOOTSTRAP_SERVERS")
+	get_env_var("KSQL_URL")
 
 	DB, err := gorm.Open(
 		"postgres",
