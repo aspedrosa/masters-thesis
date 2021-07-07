@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"sync"
@@ -12,13 +13,17 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
+var mappings_mtx = sync.Mutex{}
 var mappings = make(map[int]context.CancelFunc)
 
 func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) {
 	// create context to stop pipeline worker
 	ctx := context.Background()
 	ctx, cancel_pipeline_woker := context.WithCancel(ctx)
+
+	mappings_mtx.Lock()
 	mappings[pipeline.id] = cancel_pipeline_woker
+	mappings_mtx.Unlock()
 
 	if create_streams {
 		init_streams(pipelines_set, pipeline)
@@ -81,7 +86,7 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 			}
 			sent_rows = binary.BigEndian.Uint32(msg.Value) - 1
 
-			fmt.Println("upload")
+			log.Printf("Pipeline %d received an upload\n", pipeline.id)
 
 			// launch worker that reads and writes the result of the pipeline to a file
 			go func() {
@@ -98,7 +103,7 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 					filtered <- 1
 				}
 
-				fmt.Println("worker exiting")
+				log.Printf("Worker for pipeline %d exiting\n", pipeline.id)
 			}()
 
 			// launch worker in charge of counting the number of messages that were filtered by the pipeline
@@ -115,7 +120,7 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 					filtered_not <- 1
 				}
 
-				fmt.Println("worker not exiting")
+				log.Printf("WorkerNot for pipeline %d exiting\n", pipeline.id)
 			}()
 
 			filtered_count := uint32(0)
@@ -133,7 +138,7 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 				}
 
 				if filtered_count+filtered_not_count == sent_rows {
-					fmt.Println("done")
+					log.Printf("All records processed on pipeline %d\n", pipeline.id)
 					cancel_childrens()
 
 					wg.Wait()
@@ -141,6 +146,8 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 					consumer_manager.CommitMessages(ctx, msg)
 					consumer.CommitMessages(ctx, msgs_filtered...)
 					consumer_not.CommitMessages(ctx, msgs_filtered_not...)
+
+					log.Printf("Sending DATA_READY_TO_SEND message from pipeline %d\n", pipeline.id)
 
 					data_ready_notification, _ := json.Marshal(map[string]interface{}{
 						"pipeline_id":   pipeline.id,
@@ -160,7 +167,7 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 				}
 			}
 
-			fmt.Println("out")
+			log.Printf("All done on pipeline %d for this upload\n", pipeline.id)
 		}
 	}()
 }
@@ -173,7 +180,9 @@ func edit_pipeline(pipelines_set int, new_pipeline Pipeline) {
 
 func stop_pipeline(pipelines_set int, pipeline_id int) {
 	mappings[pipeline_id]()
+	mappings_mtx.Lock()
 	delete(mappings, pipeline_id)
+	mappings_mtx.Unlock()
 
 	stop_streams(pipelines_set, pipeline_id)
 }

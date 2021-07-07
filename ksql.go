@@ -12,11 +12,11 @@ import (
 	"strings"
 )
 
-var schemaRegistryClient = srclient.CreateSchemaRegistryClient("http://localhost:8081")
+var schemaRegistryClient = srclient.CreateSchemaRegistryClient("http://localhost:8081") // don't hardcode
 
 func init_data_stream(pipelines_set int) error {
 	//ksql_url := os.Getenv("KSQL_URL")
-	ksql_url := "http://localhost:8088"
+	ksql_url := "http://localhost:8088" // TODO don't hardcode
 
 	data_topic := fmt.Sprintf("PIPELINES_SET_%d_DATA_TO_PARSE", pipelines_set)
 
@@ -58,7 +58,7 @@ func init_data_stream(pipelines_set int) error {
 
 func init_streams(pipelines_set int, pipeline Pipeline) error {
 	//ksql_url := os.Getenv("KSQL_URL")
-	ksql_url := "http://localhost:8088"
+	ksql_url := "http://localhost:8088" // TODO dont' hardcode
 
 	data_topic := fmt.Sprintf("PIPELINES_SET_%d_DATA_TO_PARSE", pipelines_set)
 
@@ -117,7 +117,11 @@ func stop_streams(pipelines_set int, pipeline_id int) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(ioutil.ReadAll(response.Body))
+	if response.StatusCode != 200 {
+		response_bytes, _ := ioutil.ReadAll(response.Body)
+		response_str := string(response_bytes)
+		return errors.New(response_str)
+	}
 
 	return nil
 }

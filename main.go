@@ -8,12 +8,9 @@ import (
 	_ "github.com/lib/pq"
 	"log"
 
-	//_ "github.com/mattn/go-sqlite3"
 	"github.com/segmentio/kafka-go"
-	"math/rand"
 	"os"
 	"strings"
-	"time"
 )
 
 type Pipeline struct {
@@ -53,7 +50,7 @@ func main() {
 		panic("unable to connect to the database")
 	}
 
-	rand.Seed(time.Now().UTC().UnixNano())
+	log.Println("Fetching for active pipelines")
 
 	rows, _ := db.Query(`SELECT id, filter FROM pipelines WHERE status = 'ACTIVE'`)
 	for rows != nil && rows.Next() {
@@ -77,6 +74,8 @@ func main() {
 			pipeline.selection = append(pipeline.selection, column)
 		}
 
+		log.Printf("Launching active pipeline %d\n", pipeline.id)
+
 		go launch_pipeline(pipelines_set, pipeline, false)
 	}
 
@@ -85,12 +84,13 @@ func main() {
 		Topic:   "PIPELINES_MANAGEMENT",
 	})
 
+	log.Println("Listening to pipeline management messages")
+
 	for {
 		message, _ := consumer.ReadMessage(context.Background())
 
 		var message_value ManagementMessage
-		err := json.Unmarshal(message.Value, &message_value)
-		fmt.Println(err)
+		json.Unmarshal(message.Value, &message_value)
 
 		var pipeline Pipeline
 		pipeline.id = message_value.PipelineId
@@ -116,12 +116,16 @@ func main() {
 				pipeline.selection = append(pipeline.selection, column)
 			}
 
+			log.Printf("Launching pipeline with id %d\n", pipeline.id)
+
 			launch_pipeline(pipelines_set, pipeline, true)
 
 		} else if message_value.Action == "STOPPED" {
+			log.Printf("Stopping pipeline with id %d\n", pipeline.id)
+
 			stop_pipeline(pipelines_set, message_value.PipelineId)
 		} else {
-			fmt.Printf("Invalid action %s\n", message_value.Action)
+			log.Printf("Invalid action %s\n", message_value.Action)
 		}
 
 		// TODO edit pipeline
