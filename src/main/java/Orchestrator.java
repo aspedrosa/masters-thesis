@@ -43,7 +43,8 @@ public class Orchestrator {
             });
 
             if (!messages_to_commit.isEmpty()) {
-                LOGGER.info("commiting");
+                LOGGER.info("Committing a database upload notification message");
+
                 synchronized (messages_to_commit) {
                     uploads_consumer.commitSync(messages_to_commit);
                     messages_to_commit.clear();

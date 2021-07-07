@@ -120,7 +120,7 @@ public class RecordHandler extends Thread {
                 db_hash
             );
 
-            LOGGER.info("msg received");
+            LOGGER.info(String.format("Database with hash \"%s\" sent data", db_hash));
             final var builder = new StreamsBuilder();
             builder.stream(db_topic).to(
                 String.format(Constants.DATA_TO_PARSE_TOPIC_FORMAT, pipelines_set)
@@ -129,7 +129,7 @@ public class RecordHandler extends Thread {
             open_streams.push(stream);
             stream.start();
 
-            LOGGER.info("started");
+            LOGGER.info(String.format("Launched the redirect stream to pipelines set %d", pipelines_set));
 
             pipelines_set_upload_notifications_producer.send(
                 new ProducerRecord<>(
@@ -147,6 +147,8 @@ public class RecordHandler extends Thread {
                     node
                 )
             );
+
+            LOGGER.info("Sent an Upload Notification to the MetadataSender");
 
             pipelines_done_consumer.subscribe(
                 Collections.singletonList(Constants.PIPELINES_SETS_DONE_TOPIC)
@@ -168,11 +170,13 @@ public class RecordHandler extends Thread {
                 new OffsetAndMetadata(record.offset() + 1, record.leaderEpoch(), "")
             );
 
-            LOGGER.info("will close");
+            LOGGER.info("All pipelines finished");
+
             stream.close();
             open_streams.pop();
             stream.cleanUp();
-            LOGGER.info("closed");
+
+            LOGGER.info("Closed the redirect stream");
 
             pipelines_done_consumer.commitSync();
             pipelines_done_consumer.unsubscribe();
