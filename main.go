@@ -80,14 +80,16 @@ func main() {
 	}
 
 	consumer := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: strings.Split(bootstrap_servers, ","),
-		Topic:   "PIPELINES_MANAGEMENT",
+		Brokers:     strings.Split(bootstrap_servers, ","),
+		Topic:       "PIPELINES_MANAGEMENT",
+		GroupID:     fmt.Sprintf("pipelines_set_%d_pipelines_management", pipelines_set),
+		StartOffset: kafka.LastOffset,
 	})
 
 	log.Println("Listening to pipeline management messages")
 
 	for {
-		message, _ := consumer.ReadMessage(context.Background())
+		message, _ := consumer.FetchMessage(context.Background())
 
 		var message_value ManagementMessage
 		json.Unmarshal(message.Value, &message_value)
