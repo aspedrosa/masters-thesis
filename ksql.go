@@ -78,26 +78,15 @@ func init_streams(pipelines_set int, pipeline Pipeline) error {
 	}
 
 	post_json_body, _ := json.Marshal(map[string]interface{}{
-		"ksql": fmt.Sprintf("CREATE STREAM PIPELINES_SET_%d_PIPELINE_%d AS SELECT %s FROM %s %s;",
-			pipelines_set, pipeline.id, selection, data_topic, where),
+		"ksql": fmt.Sprintf(
+			"CREATE STREAM PIPELINES_SET_%d_PIPELINE_%d AS SELECT %s FROM %s %s;"+
+				"CREATE STREAM PIPELINES_SET_%d_PIPELINE_%d_NOT AS SELECT 1 FROM %s %s;",
+			pipelines_set, pipeline.id, selection, data_topic, where,
+			pipelines_set, pipeline.id, data_topic, where_not,
+		),
 	})
 	post_body := bytes.NewBuffer(post_json_body)
 	response, err := http.Post(fmt.Sprintf("%s/ksql", ksql_url), "application/json", post_body)
-	if err != nil {
-		return err
-	}
-	if response.StatusCode != 200 {
-		response_bytes, _ := ioutil.ReadAll(response.Body)
-		response_str := string(response_bytes)
-		return errors.New(response_str)
-	}
-
-	post_json_body, _ = json.Marshal(map[string]interface{}{
-		"ksql": fmt.Sprintf("CREATE STREAM PIPELINES_SET_%d_PIPELINE_%d_NOT AS SELECT 1 FROM %s %s;",
-			pipelines_set, pipeline.id, data_topic, where_not),
-	})
-	post_body = bytes.NewBuffer(post_json_body)
-	response, err = http.Post(fmt.Sprintf("%s/ksql", ksql_url), "application/json", post_body)
 	if err != nil {
 		return err
 	}
@@ -114,23 +103,15 @@ func stop_streams(pipelines_set int, pipeline_id int) error {
 	//ksql_url := os.Getenv("KSQL_URL")
 	ksql_url := "http://localhost:8088"
 
-	// drop main stream
 	post_json_body, _ := json.Marshal(map[string]interface{}{
-		"ksql": fmt.Sprintf("DROP STREAM PIPELINES_SET_%d_PIPELINE_%d;", pipelines_set, pipeline_id),
+		"ksql": fmt.Sprintf(
+			"DROP STREAM PIPELINES_SET_%d_PIPELINE_%d;"+
+				"DROP STREAM PIPELINES_SET_%d_PIPELINE_%d_NOT;",
+			pipelines_set, pipeline_id, pipelines_set, pipeline_id,
+		),
 	})
 	post_body := bytes.NewBuffer(post_json_body)
 	response, err := http.Post(fmt.Sprintf("%s/ksql", ksql_url), "application/json", post_body)
-	if err != nil {
-		return err
-	}
-	fmt.Println(ioutil.ReadAll(response.Body))
-
-	// drop not stream
-	post_json_body, _ = json.Marshal(map[string]interface{}{
-		"ksql": fmt.Sprintf("DROP STREAM PIPELINES_SET_%d_PIPELINE_%d_NOT;", pipelines_set, pipeline_id),
-	})
-	post_body = bytes.NewBuffer(post_json_body)
-	response, err = http.Post(fmt.Sprintf("%s/ksql", ksql_url), "application/json", post_body)
 	if err != nil {
 		return err
 	}
