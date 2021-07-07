@@ -12,6 +12,8 @@ import (
 	"strings"
 )
 
+var schemaRegistryClient = srclient.CreateSchemaRegistryClient("http://localhost:8081")
+
 func init_data_stream(pipelines_set int) error {
 	//ksql_url := os.Getenv("KSQL_URL")
 	ksql_url := "http://localhost:8088"

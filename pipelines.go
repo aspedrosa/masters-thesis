@@ -5,55 +5,14 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"log"
-	"math/rand"
 	"os"
-	"path"
-	"strconv"
 	"strings"
 	"sync"
 
-	"github.com/riferrei/srclient"
 	"github.com/segmentio/kafka-go"
 )
 
 var mappings = make(map[int]context.CancelFunc)
-
-var column_types = map[string]string{
-	"ANALYSIS_ID":  "long",
-	"STRATUM_1":    "string",
-	"STRATUM_2":    "string",
-	"STRATUM_3":    "string",
-	"STRATUM_4":    "string",
-	"STRATUM_5":    "string",
-	"COUNT_VALUE":  "long",
-	"MIN_VALUE":    "double",
-	"AVG_VALUE":    "double",
-	"MEDIAN_VALUE": "double",
-	"P10_VALUE":    "double",
-	"P25_VALUE":    "double",
-	"P75_VALUE":    "double",
-	"P90_VALUE":    "double",
-}
-
-var all_normal_order = []string{
-	"ANALYSIS_ID",
-	"STRATUM_1",
-	"STRATUM_2",
-	"STRATUM_3",
-	"STRATUM_4",
-	"STRATUM_5",
-	"COUNT_VALUE",
-	"MIN_VALUE",
-	"AVG_VALUE",
-	"MEDIAN_VALUE",
-	"P10_VALUE",
-	"P25_VALUE",
-	"P75_VALUE",
-	"P90_VALUE",
-}
-
-var schemaRegistryClient = srclient.CreateSchemaRegistryClient("http://localhost:8081")
 
 func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) {
 	// create context to stop pipeline worker
@@ -93,8 +52,12 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 		}
 
 		// channels so children workers communicate received messages
-		counts := make(chan byte)
-		defer close(counts)
+		filtered := make(chan byte)
+		filtered_not := make(chan byte)
+		defer close(filtered)
+		defer close(filtered_not)
+
+		// wait group for main worker wait for both children to exit
 		wg := sync.WaitGroup{}
 
 		for {
@@ -108,54 +71,21 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 			msgs_filtered := make([]kafka.Message, 0, 1500)
 			msgs_filtered_not := make([]kafka.Message, 0, 1500)
 
-			var rows uint32
+			var sent_rows uint32
+			var last_offset int64
 
 			// read upload notifications messages
 			msg, err := consumer_manager.FetchMessage(ctx)
 			if err != nil {
 				return
 			}
-			rows = binary.BigEndian.Uint32(msg.Value) - 1
+			sent_rows = binary.BigEndian.Uint32(msg.Value) - 1
 
 			fmt.Println("upload")
-
-			var filename string
-			{
-				b := make([]byte, 20)
-				rand.Read(b)
-				filename = fmt.Sprintf("%x", b)
-			}
 
 			// launch worker that reads and writes the result of the pipeline to a file
 			go func() {
 				defer wg.Done()
-
-				f, err := os.Create(path.Join(os.Getenv("DATA_READY_DIRECTORY"), filename))
-				if err != nil {
-					log.Fatal(err)
-				}
-				defer f.Close()
-
-				// calculate the file header
-				var order []string
-				if len(pipeline.selection) == 0 {
-					order = all_normal_order
-				} else {
-					for i, column := range pipeline.selection {
-						pipeline.selection[i] = strings.ToUpper(column)
-					}
-					order = pipeline.selection
-				}
-
-				// write the header to the file
-				for i, column := range order {
-					f.WriteString(column)
-					if i != len(order)-1 {
-						f.WriteString(",")
-					} else {
-						f.WriteString("\n")
-					}
-				}
 
 				for {
 					msg, err := consumer.FetchMessage(children_ctx)
@@ -163,38 +93,9 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 						break
 					}
 
-					fmt.Println("worker read record")
-
-					// parse avro format
-					schema_id := binary.BigEndian.Uint32(msg.Value[1:5])
-					schema, _ := schemaRegistryClient.GetSchema(int(schema_id))
-					native, _, _ := schema.Codec().NativeFromBinary(msg.Value[5:])
-					data := native.(map[string]interface{})
-
-					// write row values to the file
-					for i, column := range order {
-						column_data := data[column].(map[string]interface{})
-						data_type := column_types[column]
-						value, exists := column_data[data_type]
-						if exists {
-							if data_type == "long" {
-								f.WriteString(strconv.FormatInt(value.(int64), 10))
-							} else if data_type == "double" {
-								f.WriteString(strconv.FormatFloat(value.(float64), 'g', -1, 64))
-							} else {
-								f.WriteString(value.(string))
-							}
-						}
-
-						if i != len(order)-1 {
-							f.WriteString(",")
-						} else {
-							f.WriteString("\n")
-						}
-					}
-
 					msgs_filtered = append(msgs_filtered, kafka.Message{Topic: msg.Topic, Partition: msg.Partition, Offset: msg.Offset})
-					counts <- 1
+					last_offset = msg.Offset
+					filtered <- 1
 				}
 
 				fmt.Println("worker exiting")
@@ -211,24 +112,27 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 					}
 
 					msgs_filtered_not = append(msgs_filtered_not, kafka.Message{Topic: msg.Topic, Partition: msg.Partition, Offset: msg.Offset})
-					counts <- 1
+					filtered_not <- 1
 				}
 
 				fmt.Println("worker not exiting")
 			}()
 
-			processed_messages := uint32(0)
+			filtered_count := uint32(0)
+			filtered_not_count := uint32(0)
 
 			for {
 				select {
 				case <-ctx.Done():
 					cancel_childrens()
 					return
-				case _ = <-counts:
-					processed_messages++
+				case _ = <-filtered:
+					filtered_count++
+				case _ = <-filtered_not:
+					filtered_not_count++
 				}
 
-				if processed_messages == rows {
+				if filtered_count+filtered_not_count == sent_rows {
 					fmt.Println("done")
 					cancel_childrens()
 
@@ -239,8 +143,10 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 					consumer_not.CommitMessages(ctx, msgs_filtered_not...)
 
 					data_ready_notification, _ := json.Marshal(map[string]interface{}{
-						"pipeline_id": pipeline.id,
-						"filename":    filename,
+						"pipeline_id":   pipeline.id,
+						"pipelines_set": pipelines_set,
+						"last_offset":   last_offset,
+						"count":         filtered_count,
 					})
 					data_ready_to_send_producer.WriteMessages(
 						ctx,
