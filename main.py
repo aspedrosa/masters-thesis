@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 import os
 
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
@@ -11,6 +12,10 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from task import launch_workers
+
+# logger = logging.getLogger(__name__)
+logger = logging
+logging.root.setLevel(logging.INFO)
 
 
 def json_deserializer(value):
@@ -31,7 +36,6 @@ async def main():
     DB_USER = get_env_variable("DB_USER")
     DB_PASSWORD = get_env_variable("DB_PASSWORD")
     DB_NAME = get_env_variable("DB_NAME")
-    get_env_variable("DATA_READY_DIRECTORY")
 
     admin = KafkaAdminClient(bootstrap_servers=BOOTSTRAP_SERVERS)
     try:
@@ -51,6 +55,12 @@ async def main():
 
     async with db_engine.connect() as conn, consumer:
         async for upload in consumer:
+            logger.info(
+                'An upload from db "%s" was redirected to pipelines set %d',
+                upload.value["db_hash"],
+                upload.value["pipelines_set"],
+            )
+
             asyncio.create_task(
                 parse_uploads(conn, consumer, upload),
             )
@@ -76,14 +86,25 @@ async def parse_uploads(conn, main_consumer, upload_info):
     active_at_start = await _get_active_pipelines(conn)
 
     async with consumer:
-        while not await _all_done(conn, active_at_start, pipelines_done):
+        while not await _all_done(conn, active_at_start, pipelines_done, pipelines_set):
             done_notification = await consumer.getone()
 
             pipeline_id = done_notification.value["pipeline_id"]
 
-            launch_workers.delay(upload_info.value["db_hash"], pipeline_id, done_notification.value["filename"])
+            logger.info("Pipeline %d of pipelines set %d finished", pipeline_id, pipelines_set)
+
+            launch_workers.delay(
+                upload_info.value["db_hash"],
+                pipeline_id,
+                done_notification.value["pipelines_set"],
+                done_notification.value["last_offset"],
+                done_notification.value["count"],
+            )
 
             pipelines_done.add(pipeline_id)
+
+    logger.info("All pipelines done for pipelines set %d", pipelines_set)
+    logger.info("Sending pipelines set done message for orchestrator")
 
     async with done_producer:
         await asyncio.gather(
@@ -94,12 +115,17 @@ async def parse_uploads(conn, main_consumer, upload_info):
         #  previous messages and all their associated pipelines haven't finished yet
 
 
-async def _all_done(conn, active_at_start, pipelines_done):
+async def _all_done(conn, active_at_start, pipelines_done, pipelines_set):
     currently_active = await _get_active_pipelines(conn)
 
     active_at_start.intersection_update(currently_active)
 
-    return len(set.intersection(active_at_start, pipelines_done)) == len(active_at_start)
+    done = len(set.intersection(active_at_start, pipelines_done))
+    to_wait_for = len(active_at_start)
+
+    logger.info("%d of %d done for pipelines set %d", done, to_wait_for, pipelines_set)
+
+    return done == to_wait_for
 
 
 async def _get_active_pipelines(conn):
