@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	_ "github.com/lib/pq"
 	"log"
@@ -19,6 +20,11 @@ type Pipeline struct {
 	id        int
 	selection []string
 	filter    string
+}
+
+type ManagementMessage struct {
+	PipelineId int    `json:"pipeline_id"`
+	Action     string `json:"action"`
 }
 
 func main() {
@@ -74,8 +80,6 @@ func main() {
 		go launch_pipeline(pipelines_set, pipeline, false)
 	}
 
-	db.Close()
-
 	consumer := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: strings.Split(bootstrap_servers, ","),
 		Topic:   "PIPELINES_MANAGEMENT",
@@ -84,11 +88,42 @@ func main() {
 	for {
 		message, _ := consumer.ReadMessage(context.Background())
 
-		fmt.Println(message.Value)
-		// parse message
+		var message_value ManagementMessage
+		err := json.Unmarshal(message.Value, &message_value)
+		fmt.Println(err)
 
-		// 1. create pipeline
-		// 2. edit pipeline
-		// 3. stop pipeline
+		var pipeline Pipeline
+		pipeline.id = message_value.PipelineId
+
+		if message_value.Action == "ACTIVE" {
+			row, err := db.Query(fmt.Sprintf("SELECT filter FROM pipeline WHERE id = %d", message_value.PipelineId))
+			row.Next()
+			row.Scan(&pipeline.filter)
+
+			selections, err := db.Query(
+				fmt.Sprintf(
+					`SELECT selection_column FROM pipeline_selections WHERE pipeline_id = %d ORDER BY selection_order`,
+					pipeline.id,
+				),
+			)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			var column string
+			for selections.Next() {
+				selections.Scan(&column)
+				pipeline.selection = append(pipeline.selection, column)
+			}
+
+			launch_pipeline(pipelines_set, pipeline, true)
+
+		} else if message_value.Action == "STOPPED" {
+			stop_pipeline(pipelines_set, message_value.PipelineId)
+		} else {
+			fmt.Printf("Invalid action %s\n", message_value.Action)
+		}
+
+		// TODO edit pipeline
 	}
 }
