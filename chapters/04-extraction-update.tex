@@ -1,0 +1,71 @@
+\chapter{Automatic Metadata Extraction and Update}
+\label{chapter:metadata-visualization}
+
+\section{Extraction}
+
+\begin{itemize}
+    \item a ideia geral em mente
+    \item diagrama high-level do data flow
+\end{itemize}
+
+\subsection{ACHILLES}
+\begin{itemize}
+    \item organização interna
+    \item implementado em R
+    \item diferentes maneiras de exportação (json, csv ou diramente para db)
+    \item a query for each analaysis
+    \item Catalogue Export
+\end{itemize}
+
+\subsection{Asynchronous Message Systems}
+
+\subsubsection{RabbitMQ}
+
+\subsubsection{Kafka}
+
+
+\subsection{Kafka Source Connectors}
+\begin{itemize}
+    \item fetch from files
+    \item fetch from tables/sql
+\end{itemize}
+
+\section{Publishing}
+
+\begin{itemize}
+    \item need to send custom data on a CUSTOM FORMAT to a custom REST endpoint
+    \item Kafka Sink Connectors (The target REST API is not customizable, such as the data format ) - need for a sender application
+    \item No known end on kafka topics/streams - require some management on top of kafka
+\end{itemize}
+
+\section{Network Manager}
+\begin{itemize}
+    \item centralized entity
+    \item transforms the data to the required format
+    \item sends to the specific application's endpoint
+    \item 4 components
+\end{itemize}
+
+\subsection{Pipelines Workers}
+\begin{itemize}
+    \item select and filter the data comming from the databses
+\end{itemize}
+\subsection{Sender}
+\begin{itemize}
+    \item sends/publishes the data resulting from the pipelines, to the application's endpoints
+\end{itemize}
+\subsection{Orchestrator}
+\begin{itemize}
+    \item To ensure multiple records of multiple databases are not processes at the same time, this component redirects the data from databases to the pipelines workers preventing the previous problem
+\end{itemize}
+\subsection{Admin Dashboard}
+\begin{itemize}
+    \item Allows to create new pipelines and add aplications 
+\end{itemize}
+
+\section{Network Data Flow}
+\begin{itemize}
+    \item Evaluation?
+    \item step by step
+    \item number of topics involved
+\end{itemize}

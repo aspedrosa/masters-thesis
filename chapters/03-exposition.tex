@@ -1,0 +1,67 @@
+\chapter{Metadata Visualization}
+\label{chapter:metadata-visualization}
+
+\section{MONTRA}
+\begin{itemize}
+    \item O que é o montra e o seu estado atual
+    \item explicar de maneira mais aprefundada a paltaforma, realçando partes que devem ser alteradas ou que não estão corretas
+\end{itemize}
+
+\subsection{Communities}
+\subsection{Questionnaires}
+\begin{itemize}
+    \item questions
+    \item tipo de questoes
+\end{itemize}
+
+\subsection{Fingerprints}
+\begin{itemize}
+    \item answers
+    \item submissions (FingerprintHead)
+    \item Views
+    \item validação feita toda do lado do cliente, existindo a possiblidade de ataques xss
+    \item a validação builtin do django não está a ser usada
+\end{itemize}
+
+\subsection{Import Questionnaires - Excel}
+\begin{itemize}
+    \item Como os vários conceitos anteriores são mapeados para o excel
+    \item Question Sets
+    \item Questions
+    \item Choices
+    \item ...
+\end{itemize}
+
+\subsection{Data Models}
+\begin{itemize}
+    \item Diagrama de classes
+    \item Principal intuito de cada class
+\end{itemize}
+
+\section{Refactoring}
+\begin{itemize}
+    \item o que necessita de, ou vai, ser alterado
+\end{itemize}
+
+\subsection{Data Models}
+\begin{itemize}
+    \item explicar escolha de apenas reformular apenas a apartir de determinado nivel
+    \item explicar os novos modelos e de que maneiras resolvem problemas que existiam
+    \item trade offs tidos em conta
+    \item diagrama de classes com diferenças
+    \item tipos de perguntas novos e deprecated
+\end{itemize}
+
+\subsection{Questionnaire}
+\begin{itemize}
+    \item UI changes
+    \item consequencia da alteração do front end devido à alateração do backend
+    \item passar toda a verificação para o backend, passando a usar a validação built in do Django
+    \item tentar reutilizar os modulos existentes
+\end{itemize}
+
+\subsection{Excel}
+\begin{itemize}
+    \item mais concreto, e tem mais em conta o contexto em volta das questoes
+    \item entanto é mais estenso
+\end{itemize}
