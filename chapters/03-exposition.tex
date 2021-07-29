@@ -3,7 +3,7 @@
 \label{chapter:metadata-visualization}
 
 Among the presented tools in chapter \ref{chapter:background}, MONTRA was our go-to mainly because of its data source-centric approach.
-Also, no real data is shown here, only metadata is handled within the platform, however, the still allows impose access permissions at several levels.
+Also, no real data is shown here, only metadata is handled within the platform, however, it still allows to impose access permissions at several levels.
 
 This chapter will be detailed the key concepts of the MONTRA framework and its internal data model.
 After this, there will be presented a refactoring process that was done to the platform, with its improvements and flaws fixed.
@@ -16,7 +16,9 @@ After this, there will be presented a refactoring process that was done to the p
 %\end{itemize}
 
 Originally, the MONTRA framework was developed by the Bioinformatics team of the Institute of Electronics and Informatics Engineering of Aveiro associated with the \gls{emif} project with the goal to develop a common patient health information framework with emphasis on the research topics of Obesity and its metabolic complications and Markers for the development of Alzheimer's disease and other dementias.
-The code is publicly available on github\footnote{https://github.com/bioinformatics-ua/montra}, whereby its development started at the beginning of 2013 and ended in the middle of 2018.
+The code is publicly available on github\footnote{https://github.com/bioinformatics-ua/montra}, whereby Django 1.4, a high-level Python Web framework\cite{django}, was used as a framework to develop the entire system.
+
+MONTRA's development started at the beginning of 2013 and ended in the middle of 2018.
 After this date, at the end of 2018, the framework started being used by the \gls{ehden} project, to develop a portal to allow discovery and analysis of health data of a federated network of data sources standardized to the \gls{omop} common data model in Europe.
 Currently, the project is being developed in a private repository but has intentions to make it public after the code base is more robust and well documented.
 
@@ -26,11 +28,15 @@ In the first versions of the framework, MONTRA allowed only one level of organiz
 Newer versions created the concept of a Community.
 This allows having multiple networks of data sources on the same portal, where originally the only option was to have different installations of the framework.
 
-% TODO communities can be requested and then approved by the installation admin
-% or 
-% the installation can be deployed in single community mode where a community is created the first time the installation is deployed and no other communities can be created
+These communities can be created in several ways:
 
-These communities than can have different access levels:
+\begin{enumerate}
+    \item the admin can create it through Django's admin console
+    \item a user can request a community to be created through a form and then the admin will receive an admin with such request
+    \item the MONTRA installation can be deployed in a single community mode where only one community exists, which is created on the first setup, giving the idea that there is no community concept on the platform
+\end{enumerate}
+
+They also can have different access levels:
 
 \begin{itemize}
     \item Open: Does not require membership. Any user can access the data sources of this community
@@ -41,8 +47,8 @@ These communities than can have different access levels:
 
 \subsection*{Plugins}
 The concept of Community also allows customization at that level, affecting only sections within that given community.
-One example of such customization are plugins
-% TODO
+One example of such customization is plugins, a way to extend the functionalities of the framework without having to deal with the base code.
+These plugins can either be full web applications, with different functionalities, that are linked to MONTRA through the community navigation menu or extensions that provide extra data services such as a dashboard about the data of a data source.
 
 \subsection{Questionnaires}
 
@@ -133,7 +139,7 @@ Besides the input widget where the data owner can insert its answers, the user a
             \item Allow printing: On the fingerprints list page, showed in figure \ref{fig: listings}, there is a dropdown with tools, being the only one the "Print" tool (ref{fig:listings-tools}). However, this feature is not correctly implemented since it calls the browser's built-int printing function on the fingerprint list page, so no actual fingerprint data will be printed. This permission ends up being useless. Additionally, if a user calls the browser's print function (e.g. hitting Ctrl+P) when viewing the data of a fingerprint, the platform will not block the action.
                 \begin{figure}[h]
                     \center
-                    \includegraphics{listings-tools}
+                    \includegraphics[width=.2\linewidth]{listings-tools}
                     \caption{Available tools on the fingerprint selection}
                     \label{fig:listings-tools}
                 \end{figure}
@@ -151,22 +157,20 @@ Besides the input widget where the data owner can insert its answers, the user a
     \label{fig:fingerprint-new}
 \end{figure}
 
-%% TODO grammarly
-
-One the fingerprint is filled and published, a regular user can consult the metadata and, by default, a detailed view, similar to the create view, is presented with some different buttons:
+Once the fingerprint is filled and published, a regular user can consult the metadata, which will be displayed by default in detailed vie. Similar to the create view, it is presented with some control buttons:
 
 \begin{enumerate}
     \item Database level plugins associated with this community
     \item Statistics of this fingerprint
         \begin{itemize}
-            \item Progress bar + Filled: How much questions of the questionnaire were answered
+            \item Progress bar + Filled: How many questions of the questionnaire were answered
             \item Hits: Number of times this fingerprint showed up on search queries
             \item Unique Views: Number of users that visited this fingerprint
         \end{itemize}
     \item Question set controls
         \begin{itemize}
             \item Summary: Allows to switch to the summary view (Figure \ref{fig:fingerprint-show-summary})
-            \item Collapse \& Show: Same role as mentioned for the create view
+            \item Collapse \& Show: The same role as mentioned for the create view
         \end{itemize}
     \item Fingerprint control buttons
         \begin{itemize}
@@ -174,8 +178,8 @@ One the fingerprint is filled and published, a regular user can consult the meta
             \item Manage: Several fingerprint operations
                 \begin{itemize}
                     \item Edit: Enter the edit mode
-                    \item Share: Allows to add other users as other of the fingerprint and also to create links that enable non-logged users to consult the fingerprint
-                    \item Export: Different forms of export. CSV, PDF and montra format to import on another instalations of the MONTRA framewor
+                    \item Share: Allows to add other users as owners of the fingerprint and also to create links that enable anonymous users to consult the fingerprint
+                    \item Export: Different forms of export. CSV, PDF, and MONTRA format to import on other installations of the MONTRA framework
                     \item Delete: Remove the fingerprint from the community
                 \end{itemize}
         \end{itemize}
@@ -189,7 +193,7 @@ One the fingerprint is filled and published, a regular user can consult the meta
 \end{figure}
 
 On the show view, if the user enters the detailed view (Figure \ref{fig:fingerprint-show-detailed}), the user is presented with a table with three columns where each row contains the question number, name and the answer given.
-On this view, by hovering over an empty answer container the user can send a request to the database owner to give an answer to the specific answer.
+On this view, by hovering over an empty answer container the user can send a request to the database owner to answer the specific question.
 
 \begin{figure}[h]
     \center
@@ -198,12 +202,68 @@ On this view, by hovering over an empty answer container the user can send a req
     \label{fig:fingerprint-show-summary}
 \end{figure}
 
-The Edit view is similar to the create view, however as a checkbox on the top so the database owner can request to publish the fingerprint.
+This groups of view provide a valid workflow to perform \gls{crud} operation over the metadata related to a data source, however, present several flaws related to how the inputs are validated and how they are presented to the user.
 
-\subsection*{Input Validation}
+First, the validation of the user input is done on the client-side through javascript code that runs after a user submits a question set form.
+Subsequently, the data is sent to the backend through \gls{api} calls.
+However, if one would use the \gls{api} directly to update metadata of the fingerprint, the validation could be skipped and invalid data could be stored on the database.
+In some cases there might exist some validation code on the server-side, however, this brings the necessity to maintain two separate code files.
 
-%    \item validação feita toda do lado do cliente, existindo a possiblidade de ataques xss
-%    \item a validação builtin do django não está a ser usada
+Second, there is no escaping procedure done to the user's input when it is fetched from the database which allows that \gls{xss} attacks can be easily performed and put users that consult a compromised fingerprint at risk.
+As an example, on figure \ref{fig:montra-xss-create} on the Database Name field, I added a \textit{script} tag with code that shows a popup and also a valid database name after.
+Once a user opens the fingerprint to check the data, the code will execute but the dummy name will render on the Database Name field.
+This can be further exploited, where the user visiting the fingerprint will not notice that malicious code was executed.
+
+
+\begin{figure}[h]
+    \center
+    \includegraphics[width=0.75\textwidth]{montra-xss-create}
+    \caption{Example of how an \gls{xss} attack could be done on MONTRA}
+    \label{fig:montra-xss-create}
+\end{figure}
+
+\begin{figure}[h]
+    \center
+    \includegraphics[width=0.75\textwidth]{montra-xss}
+    \caption{Victim of a simple \gls{xss} attack}
+    \label{fig:montra-xss}
+\end{figure}
+
+All these problems exist because such views were developed from scratch without using the provided features that Django has out of the box for form validation and security.
+For client-side validation, Django takes advantage of HTML5 form validation features\footnote{\url{https://developer.mozilla.org/en-US/docs/Learn/Forms/Form_validation}}.
+This allows imposing restrictions and validations on the user's input without writing any additional javascript code.
+
+To show these features I wrote a simple HTML file with a simple form that expects a number under 100 and an email.
+
+\begin{verbatim}
+<html>
+  <body>
+    <form>
+      <label for"num">Number:</label>
+      <input id="num" type="number" max="100">
+
+      <label for"mail">Email:</label>
+      <input id="mail" type="email">
+
+      <button type="submit">Submit</button>
+    </form>
+  </body>
+</html>
+\end{verbatim}
+
+If I try to submit the form with invalid values, error messages are presented as shown in figure \ref{fig:html-form-validation}.
+
+\begin{figure}[h]
+    \center
+    \includegraphics[width=.3\textwidth]{html-form-validation}
+    \caption{Error messages that appear after submitting the form on a chrome based browser}
+    \label{fig:html-form-validation}
+\end{figure}
+
+Additionally, if the data is sent directly through an \gls{api} call to the backend, Django forms framework ensures invalid data is rejected.
+With this, when building a form in Django the developer only needs to specify what fields are present and their type and restrictions and Django will validate all this before data is stored on the database.
+
+Finally, \gls{xss} attacks are prevented because Django escapes the values that were previously provided by users when filling the input tags, e.g. the character ``<'' is transformed in ``\&lt;'', avoiding the browser to interpret user's input as \gls{html} code.
 
 \subsection{Import Questionnaires - Excel}
 \label{subsection:excel}
