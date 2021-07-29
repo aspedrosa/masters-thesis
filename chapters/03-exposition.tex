@@ -267,13 +267,57 @@ Finally, \gls{xss} attacks are prevented because Django escapes the values that 
 
 \subsection{Import Questionnaires - Excel}
 \label{subsection:excel}
+
+%\begin{itemize}
+%    \item Como os vários conceitos anteriores são mapeados para o excel
+%    \item Question Sets
+%    \item Questions
+%    \item Choices
+%    \item ...
+%\end{itemize}
+
+As mentioned before, to define a skeleton of the metadata that describes a data source for a given community, a spreadsheet file has to be submitted.
+There is already a template with some instructions and columns where a community manager only has to fill the necessary rows to then get the wanted result.
+
+The column defined in the template are the following:
 \begin{itemize}
-    \item Como os vários conceitos anteriores são mapeados para o excel
-    \item Question Sets
-    \item Questions
-    \item Choices
-    \item ...
+    \item Type: the type of the specific row. Here are allows 3 different values:
+        \begin{itemize}
+            \item QuestionSet: allows dividing the questionnaire into several sections
+            \item Question: a question specification
+            \item Category: allows to create a group of questions inside a question set
+        \end{itemize}
+    \item Text/Question: label/name given to the item being defined
+    \item Level/Number: use as a level for questions and categories and number otherwise. As level allows to create groups of questions inside a question set. As number defines the number, and subsequently the order, of the question sets.
+    \item Data type: used only for rows of type Question, specifying the question type
+    \item Value list: used to indicate choices for choice-oriented questions
+    \item Help text/Description: a small text that will be displayed along with the item being defined
+    \item Tooltip: Yes if the Help text/Description should be displayed as a tooltip or No otherwise
+    \item Slug: internal identifier
+    \item Dependencies: used to tell that a question or group of questions can only be answered if a specific choice of a choice-based question was selected
+    %\item Stats: 
+    %\item Comments Stats:
+    %\item Disposition
+    \item Include in Advanced Search: if the answers of the question can be used to search fingerprints
 \end{itemize}
+
+\subsection*{Question Groups}
+From the previous list, question groups were mentioned both when the type column has the Category value and on the Level part of the Level/Number column.
+The former is used to add a title with no question associated.
+
+\begin{figure}[h]
+    \center
+    \includegraphics[width=\textwidth]{category}
+    \caption{}
+    \label{fig:}
+\end{figure}
+
+...
+
+\subsection*{Dependencies}
+...
+\subsection*{Choices}
+...
 
 \subsection{Data Models}
 \begin{itemize}
