@@ -72,7 +72,7 @@ choice                    & single choice (radio box)                           
 choice-freeform           & single choice with an open text fields                      \\ \hline
 choice-multiple           & multiple choice (checkbox)                                  \\ \hline
 choice-multiple-freeform  & multiple choice with and open text fields                   \\ \hline
-choice-tabular            & creates a table with single or multiple choices by row      \\ \hline
+choice-tabular            & creates a table with single, multiple choices or text by row      \\ \hline
 choice-yesno              & single choice with yea and no choices                       \\ \hline
 choice-yesnodontknow      & single choice with yes, no and don't know choices           \\ \hline
 comment                   & used to separate groups of questions                        \\ \hline
@@ -85,7 +85,7 @@ open                      & text field with no validation                       
 open-button               & text input with backend validation                          \\ \hline
 open-location             & text input with autocomplete sugestions                     \\ \hline
 open-multiple             & allows to record an history of a value overtime             \\ \hline
-open-multiple-composition & allows to record an history of values overtime              \\ \hline
+open-multiple-composition & allows to record an history of several values overtime              \\ \hline
 open-textfield            & same as open but a textarea html tag is used                \\ \hline
 open-upload-image         & image upload                                                \\ \hline
 open-validated            & text input with a regex validation                          \\ \hline
@@ -290,7 +290,7 @@ The column defined in the template are the following:
     \item Text/Question: label/name given to the item being defined
     \item Level/Number: use as a level for questions and categories and number otherwise. As level allows to create groups of questions inside a question set. As number defines the number, and subsequently the order, of the question sets.
     \item Data type: used only for rows of type Question, specifying the question type
-    \item Value list: used to indicate choices for choice-oriented questions
+    \item Value list: used to indicate extra information to build the question
     \item Help text/Description: a small text that will be displayed along with the item being defined
     \item Tooltip: Yes if the Help text/Description should be displayed as a tooltip or No otherwise
     \item Slug: internal identifier
@@ -303,21 +303,115 @@ The column defined in the template are the following:
 
 \subsection*{Question Groups}
 From the previous list, question groups were mentioned both when the type column has the Category value and on the Level part of the Level/Number column.
-The former is used to add a title with no question associated.
+The former is used to add a title with no question associated, resulting in what is presented in figure \ref{fig:question-group-category}.
 
 \begin{figure}[h]
     \center
     \includegraphics[width=\textwidth]{category}
+    \caption{Create a group of questions with a title}
+    \label{fig:question-group-category}
+\end{figure}
+
+On the latter, the text of the question in the most upper level is used as the title of the questions group, resulting in an output similar to the one in figure \ref{fig:question-group-levels}.
+
+\begin{figure}[h]
+    \center
+    \includegraphics[width=\textwidth]{levels}
+    \caption{Create a group of questions using a question's text as the title}
+    \label{fig:question-group-levels}
+\end{figure}
+
+It's important to highlight that the category way to create question groups is not independent of levels.
+If both a category row and a question are on the most upper level, MONTRA will render two separate collapsable containers, where the first one will be empty, as is shown in figure \ref{fig:question-group-category-wrong-levels}.
+
+\begin{figure}[h]
+    \center
+    \includegraphics[width=\textwidth]{category-levels}
+    \caption{Example to show that the category way to create question groups also depends on the values that are set on the level column}
+    \label{fig:question-group-category-wrong-levels}
+\end{figure}
+
+\subsection*{Value list}
+
+To avoid having a spreadsheet with several columns that will not be used for all types of rows, the value list column expects some extra information required for some types of questions.
+
+\subsubsection*{Choices}
+
+For choice-based questions, the value list column is used to define the possible choices and to add an extra text field associated with a given choice.
+Choices are separated by a ``|'' character and the extra text field can be set by appending ``\{...\}'' after the target choice's text.
+
+\begin{figure}[h]
+    \center
+    \includegraphics[width=\textwidth]{choice-freeforms}
+    \caption{Multiple choice question with some extra text fields associated with the several choices}
+\end{figure}
+
+Although the framework allows the extensibility to have an additional text field, these don't support other types of input and also have no validation.
+Also, if the number of choices is high and the text of them is long, there starts to exist some clutter on the spreadsheet.
+With this, the person creating the spreadsheet will have problems perform edits and check if there is something wrong or missing.
+
+To facilitate the job of who is filling the spreadsheet, some question types are shortcuts.
+For example, the choice-yesnodontknow is a question of type choice with three possible options: Yes, No, Don't Know.
+Choice variants with freeform on the name, besides the usual choices, always have an additional text field, associated with the question instead of a choice.
+
+\subsubsection*{Open Multiple Composition}
+
+Open multiple questions allow showing a history of a given value.
+For that the simple version of the question is represented in a table of two columns: Date and the value, so no input is expected on the value list column.
+The composition version of the question type allows having several values, instead of just one.
+In a way, the simpler version can be used as a shortcut question type, since it can be reproduced with the composition variant.
+
+To render this question type, a third-party widget called Tabulator\footnote{http://tabulator.info/} was being used.
+The configuration of such widget, expects an array of \gls{json} objects, each specifying some configuration of each column.
+To configure the open multiple composition question type, the value list column expects these \gls{json} objects, where the date column is implicit.
+The MONTRA framework will then put the provided objects on the configuration array that the Tabulator widgets expect, adding the configuration for the date column.
+
+\begin{figure}[h]
+    \center
+    \includegraphics[width=\textwidth]{open-multiple}
+    \caption{How an open-multiple-composition question type is specified on the spreadsheet and how it is rendered}
+    \label{fig:open-multiple}
+\end{figure}
+
+\subsubsection*{Choice Tabular}
+
+This type of question allows to reuse the same choices for several 
+3 things:
+choices, columns
+questions/things, rows
+answers types, widget (choice, multiple-choice, text)
+
+\begin{figure}[h]
+    \center
+    \includegraphics[width=\textwidth]{choice-tabular}
+    \caption{How a tabular-choice question type is specified on the spreadsheet and how it is rendered}
+    \label{fig:choice-tabular}
+\end{figure}
+
+clutter problem agaen
+
+\subsection*{Dependencies}
+
+\begin{figure}[h]
+    \center
+    \includegraphics[width=\linewidth]{dependencies-excel}
     \caption{}
     \label{fig:}
 \end{figure}
 
-...
+\begin{figure}[h]
+    \center
+    \includegraphics[width=0.75\linewidth]{dependencies-no}
+    \caption{}
+    \label{fig:}
+\end{figure}
 
-\subsection*{Dependencies}
-...
-\subsection*{Choices}
-...
+\begin{figure}[h]
+    \center
+    \includegraphics[width=0.75\linewidth]{dependencies-yes}
+    \caption{}
+    \label{fig:}
+\end{figure}
 
 \subsection{Data Models}
 \begin{itemize}
