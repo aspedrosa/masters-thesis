@@ -136,7 +136,7 @@ Besides the input widget where the data owner can insert its answers, the user a
     \item Allows the data owners to set permissions at the question set level 
         \begin{itemize}
             \item Visibility: Let plugins have access to answers data
-            \item Allow printing: On the fingerprints list page, showed in figure \ref{fig: listings}, there is a dropdown with tools, being the only one the "Print" tool (ref{fig:listings-tools}). However, this feature is not correctly implemented since it calls the browser's built-int printing function on the fingerprint list page, so no actual fingerprint data will be printed. This permission ends up being useless. Additionally, if a user calls the browser's print function (e.g. hitting Ctrl+P) when viewing the data of a fingerprint, the platform will not block the action.
+            \item Allow printing: On the fingerprints list page, showed in figure \ref{fig:listings}, there is a dropdown with tools, being the only one the "Print" tool (\ref{fig:listings-tools}). However, this feature is not correctly implemented since it calls the browser's built-int printing function on the fingerprint list page, so no actual fingerprint data will be printed. This permission ends up being useless. Additionally, if a user calls the browser's print function (e.g. hitting Ctrl+P) when viewing the data of a fingerprint, the platform will not block the action.
                 \begin{figure}[h]
                     \center
                     \includegraphics[width=.2\linewidth]{listings-tools}
@@ -256,7 +256,7 @@ If I try to submit the form with invalid values, error messages are presented as
 \begin{figure}[h]
     \center
     \includegraphics[width=.3\textwidth]{html-form-validation}
-    \caption{Error messages that appear after submitting the form on a chrome based browser}
+    \caption{Error messages that appear after submitting the form on a chromium based browser}
     \label{fig:html-form-validation}
 \end{figure}
 
@@ -361,10 +361,10 @@ For that the simple version of the question is represented in a table of two col
 The composition version of the question type allows having several values, instead of just one.
 In a way, the simpler version can be used as a shortcut question type, since it can be reproduced with the composition variant.
 
-To render this question type, a third-party widget called Tabulator\footnote{http://tabulator.info/} was being used.
+To render this question type, a third-party widget called Tabulator\footnote{http://tabulator.info/} is being used.
 The configuration of such widget, expects an array of \gls{json} objects, each specifying some configuration of each column.
 To configure the open multiple composition question type, the value list column expects these \gls{json} objects, where the date column is implicit.
-The MONTRA framework will then put the provided objects on the configuration array that the Tabulator widgets expect, adding the configuration for the date column.
+The MONTRA framework will then put the provided objects on the configuration array that the Tabulator widgets expects, adding the configuration for the date column.
 
 \begin{figure}[h]
     \center
@@ -375,11 +375,23 @@ The MONTRA framework will then put the provided objects on the configuration arr
 
 \subsubsection*{Choice Tabular}
 
-This type of question allows to reuse the same choices for several 
-3 things:
-choices, columns
-questions/things, rows
-answers types, widget (choice, multiple-choice, text)
+This type of question allows reusing the same choices across several answering items.
+There are three variations of this questions types, where the difference between them is what and how is the information connected between answering items and choices.
+There are two versions where the user can select one (single choice) or more (multiple-choice) choices for each answering item.
+The other version allows the user to write text for each choice within each answering item.
+The question type is rendered as a table where in the columns are displayed the several choices and on the rows the different answering items are presented.
+Additionally, there is always a ``More'' choice column, where the user can insert any text information for a specific answering item since is displayed with a textarea \gls{html} element.
+
+The value list column of a choice tabular question type expects a three-component value.
+Each component is separated by the characters ``\textbackslash\textbackslash''.
+Within each component, items are separated by the ``|'' character.
+The components are the following:
+
+\begin{itemize}
+    \item choices (columns)
+    \item answering items (rows)
+    \item type of the information: available values are choice, multiple-choice and text
+\end{itemize}
 
 \begin{figure}[h]
     \center
@@ -388,30 +400,41 @@ answers types, widget (choice, multiple-choice, text)
     \label{fig:choice-tabular}
 \end{figure}
 
-clutter problem agaen
+Once again, we encounter the clutter problem, as shown in the spreadsheet section of figure \ref{fig:choice-tabular}, which hampers readability and update of the value list field.
 
 \subsection*{Dependencies}
+
+In several form applications, e.g. Google Forms, it is common to find situations where if a certain choice is selected, then other questions will show up.
+E.g. If a user answers ``Yes'' to the Question ``Have you visited Aveiro?'', then other questions such as ``Would you recommend it to a friend?'' would appear.
+
+MONTRA supports this kind of dependencies, which should be defined on the Dependencies column of the questionnaire spreadsheet.
 
 \begin{figure}[h]
     \center
     \includegraphics[width=\linewidth]{dependencies-excel}
-    \caption{}
-    \label{fig:}
+    \caption{An example of both a question and a category that depend on the selected value for another question.}
+    \label{fig:dependencies-excel}
 \end{figure}
+
+As shown in figure \ref{fig:dependencies-excel}, first you should indicate the slug of the question on which the specific question depends.
+Then, separated by a ``|'' character, it must be specified which choice has to be selected for the dependency to be fulfilled, using its index, starting at 1.
+On figure \ref{fig:dependencies-excel}, since a choice-yesnodontknow question type has three implicit choices, by having a dependency with the value ``Any\_blood\_collected|1'', both the \textit{Blood collection} category and the \textit{Plasma} question will only be displayed to the user once the choice \textit{Yes} of the \textit{Blood Collection} is selected.
 
 \begin{figure}[h]
     \center
     \includegraphics[width=0.75\linewidth]{dependencies-no}
-    \caption{}
-    \label{fig:}
+    \caption{The questions with dependencies are not rendered if the specific choice is not selected}
+    \label{fig:dependencies-no}
 \end{figure}
 
 \begin{figure}[h]
     \center
     \includegraphics[width=0.75\linewidth]{dependencies-yes}
-    \caption{}
-    \label{fig:}
+    \caption{Once the dependency of a specific question is meet it will be rendered}
+    \label{fig:dependencies-yes}
 \end{figure}
+
+Besides such restrictions are imposed on the user when he visits the web page, if the API was used directly, such dependencies would not be checked, which would lead to unnecessary data be stored on the database since it won't be displayed to the user.
 
 \subsection{Data Models}
 \begin{itemize}
