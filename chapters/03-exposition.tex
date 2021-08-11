@@ -17,12 +17,13 @@ After this, there will be presented a refactoring process that was done to the p
 
 Originally, the MONTRA framework was developed by the Bioinformatics team of the Institute of Electronics and Informatics Engineering of Aveiro associated with the \gls{emif} project with the goal to develop a common patient health information framework with emphasis on the research topics of Obesity and its metabolic complications and Markers for the development of Alzheimer's disease and other dementias.
 The code is publicly available on github\footnote{https://github.com/bioinformatics-ua/montra}, whereby Django 1.4, a high-level Python Web framework\cite{django}, was used as a framework to develop the entire system.
-% TODO describe django
-% .applications
-% - models. orm
-% - views
-% - templates
-% - urls
+This framework allows to develop complete web applications, in a faster and easier way.
+It contains a model layer that allows specifying database tables through python classes called models, following a \gls{orm} approach, allowing to perform database queries through python code instead of \gls{sql} queries.
+Django can then check if there are new models or if existing ones have changed. Such changes are then expressed through database migration files which will apply them to the database tables.
+Next, the developer can set custom URL patterns so specific requests are handled by a specific function of the view layer, where the business logic will be implemented.
+Finally, Django contains a template layer that allows building dynamic \gls{html} pages without requiring to have a separate javascript framework to do such.
+The developer builds the main static structure of the page and then uses a special syntax that describes how Django should display the data received from the view layer.
+Django also has an import form feature that allows to easily create a set of pages that allow performing the usual \gls{crud} operation over the database model.
 
 MONTRA's development started at the beginning of 2013 and ended in the middle of 2018.
 After this date, at the end of 2018, the framework started being used by the \gls{ehden} project, to develop a portal to allow discovery and analysis of health data of a federated network of data sources standardized to the \gls{omop} common data model in Europe.
