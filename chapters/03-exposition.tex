@@ -274,9 +274,102 @@ Finally, \gls{xss} attacks are prevented because Django escapes the values that 
 
 \subsection*{API}
 
+%\begin{itemize}
+%    \item how submissions of fingerprint works
+%\end{itemize}
+
+It was mentioned several times that some checks are not enforced through the \gls{api}.
+It will be detailed now what calls are performed by MONTRA's fingerprint views.
+
+Note that there are two different \gls{api}s available here.
+Fingerprint views use one specific set of \gls{api} requests that return answers in \gls{html} format, ready to present to the user, and others to send the user's data.
+For a regular user to use, there are other set o \gls{api} endpoints that are more human friendly, which is documented and has a How to Use page, however, an advanced user can see what requests are made on the fingerprint views through browser's console and perform the requests themselves.
+
+First, we will go over the \gls{api} used by the fingerprint views.
+But before showing the available endpoints, let's go over how the fingerprint views are organized and how they show only the questions of a certain question set at a time.
+
+\begin{figure}[h]
+    \center
+    \includegraphics[width=\textwidth]{fingerprint-hidden-question-sets}
+    \caption{Each question set has its container.
+    Here the current container is presented within the red rectangle.
+    The other existing question sets are represented through the blue lines, which currently are hidden.}
+    \label{fig:fingerprint-hidden-question-sets}
+\end{figure}
+
+Let use figure \ref{fig:fingerprint-hidden-question-sets} as example.
+According to the right side menu, there are six question sets and currently the question set ``Contact Details'' is being presented.
+In the middle of the page, we then see the content of the question set: questions, title, control buttons, and permissions.
+Note that there is a scroll bar so the question set contains more questions.
+Also the previous, next, cancel and save buttons are not tied to the question set.
+The other question sets are also present on the page, however, are hidden.
+Every question set has its container, so whenever the user clicks on the previous or next buttons or selects another question set on the question set side menu bar, the current question set container is hidden and the new is shown.
+For questionnaires with a high number of question sets, rendering all available question sets could not be necessary.
+For that, a question set is loaded only when accessed the first time and following accesses will not require a load.
+
+The fingerprint view can be used for four different use cases:
 \begin{itemize}
-    \item how submissions of fingerprint works
+    \item Create a new fingerprint: The questions are presented with clear and editable inputs
+    \item Edit an existing fingerprint: All questions are editable but the previously answered questions are filled
+    \item View the answers of a fingerprint: A read-only version of the fingerprint's answers
+    \item Search for fingerprints: Same as creating a new fingerprint, however, no validations are performed on the user's input
 \end{itemize}
+
+For these use cases, the following endpoints are used:
+
+\begin{lstlisting}[basicstyle=\tiny]
+Create:
+GET [base url]/c/[community slug]/addqs/[fingerprint hash]/[questionnaire id]/[question set id]/
+POST [base url]/c/[community slug]/addPost/[questionnaire id]/[question set id]/[save id]
+
+Edit:
+GET [base url]/editqs/[fingerprint hash]/[questionnaire id]/[question set]/
+POST [base url]/c/[community slug]/addPost/[questionnaire id]/[question set id]/[save id]
+
+View:
+GET [base url]/detailedqs/[fingerprint hash]/[questionnaire id]/[question set id]/
+
+Search:
+GET [base url]/c/[community slug]/searchqs/[questionnaire id]/[question set id]/
+\end{lstlisting}
+
+For both cases where new data is stored, besides the usual GET that is used to load the question set, there is also a POST request that saves the progress done to a specific question set.
+The data for these requests are gathered natively by javascript once each question set container contains a \textit{form} tag englobing all the questions inputs.
+This way there is no need to iterate over the questions of a question set and append each response to the request's data.
+The \textit{save id} field of the endpoints tells to which question set the data is related to, however, there is already a \textit{question set} field which always has the value of 1, so one of these fields could be removed from the endpoint.
+
+The GET request is then used to load the \gls{html} to present the questions of a question set.
+Note that the returned data is just the \gls{html} data to be placed on the respective question set container and not the whole fingerprint page.
+
+Moving now to the set of \gls{api} endpoints available to the users to both read and update answer data the following are available:
+
+\begin{verbatim}
+GET /api/fingerprints/[fingerprint hash]/answers/
+GET /api/fingerprints/[fingerprint hash]/answers/[question_slug]
+PUT /api/fingerprints/[fingerprint hash]/answers/[question_slug]
+\end{verbatim}
+
+The first two GETs are used to retrieve answers data, which is returned as the \gls{json} object presented next, the only difference being the first one returns an array of the mentioned object instead of just one.
+
+\begin{verbatim}
+{
+  "question":"patients_count",
+  "data":""
+}
+\end{verbatim}
+
+With the PUT request, a fingerprint owner can update data of specific answers where a \gls{json} object should be sent in the body of the request with the field ``data''.
+
+\begin{verbatim}
+{
+  "data": 10000
+}
+\end{verbatim}
+
+Existing two different types of endpoints to retrieve answers data makes sense since the returned format is returned in a way that is easier to handle data by the target entity that will consume that endpoint.
+If the fingerprint pages receive the data in \gls{html} format they can just put the \gls{html} in the determined container instead of having to build the entire container and insert the data on each input.
+Accordingly, if data is returned in a \gls{json} format it can easily access the data and perform some data processing avoiding going transverse the \gls{html} and retrieve the data from each input.
+However, having two different endpoints to update data doesn't make that much sense since current \gls{http} requests libraries offer an easy way to build a request in the required format as the one's browsers automatically build whenever a form is submitted.
 
 \subsection{Import Questionnaires - Excel}
 \label{subsection:excel}
