@@ -1,7 +1,7 @@
 %%!TEX encoding = UTF-8 Unicode
 
 % According to UA rules, font size should range from 10 to 12pt.
-\documentclass[11pt,a4paper,openright,final,twoside,onecolumn]{memoir}
+\documentclass[11pt,a4paper,openright,twoside,onecolumn]{memoir}
 
 \listfiles
 \fixpdflayout
@@ -37,12 +37,11 @@
 %For English and Portuguese languages
 %Portuguese will be the default.
 %Use \setdefaultlanguage to change it
-\usepackage{csquotes}
 \usepackage[english]{babel}
 
-% For custom date format
-\usepackage{datetime}
-\newdateformat{thesisdate}{\monthname[\THEMONTH] \THEYEAR} % Month Year
+% Uncomment to use a custom date format
+%\usepackage{datetime}
+%\newdateformat{thesisdate}{\monthname[\THEMONTH] \THEYEAR} % Month Year
 
 \usepackage{microtype} % Make pdf look better
 
@@ -80,7 +79,9 @@
 
 %For PDF Comments
 \usepackage{comment}
-\usepackage{pdfcomment}
+\ifthenelse{\equal{\useoverleaf}{0}}
+{\usepackage{pdfcomment}}%
+{}
 \usepackage{bookmark} % New Bookmarks
 
 %For Multiple columns in Glossary
@@ -114,6 +115,7 @@
 
 \renewcommand\listingscaption{Código}
 \fvset{fontsize=\footnotesize} % Make Code blocks smaller than text
+\usepackage{csquotes}
 
 %Biber using IEEE style for proper UTF-8 support
 \usepackage[backend=biber,style=ieee, sorting=none]{biblatex}
@@ -122,11 +124,36 @@
 %Use acronyms
 \usepackage[printonlyused]{acronym} % For acronyms
 
+% For indenting the first paragraph after section start
+\usepackage{indentfirst}
+
 % Enable chart support through pgf and tikz
 \usepackage[version=0.96]{pgf}
 \usepackage{tikz}
 \usepackage{pgf-umlsd}
-\usetikzlibrary{arrows,shadows,trees,shapes,snakes,automata,backgrounds,petri,mindmap} % for pgf-umlsd
+\usetikzlibrary{arrows,shadows,trees,shapes,decorations,automata,backgrounds,petri,mindmap} % for pgf-umlsd
+
+%For Electric Circuits
+%\usepackage[detect-weight=true, binary-units=true]{siunitx}
+%\sisetup{load-configurations = binary}
+
+% Set Voltage direction accordingly
+% Option : oldvoltagedirection,nooldvoltagedirection,RPvoltages,EFvoltages
+% More information at: https://mirrors.ibiblio.org/CTAN/graphics/pgf/contrib/circuitikz/doc/circuitikzmanual.pdf
+%By default this template is using the Old Voltage Direction
+%\usepackage[oldvoltagedirection,american,cuteinductors,smartlabels]{circuitikz}
+%
+%\usetikzlibrary{calc}
+%\ctikzset{bipoles/thickness=1}
+%\ctikzset{bipoles/length=0.8cm}
+%\ctikzset{bipoles/diode/height=.375}
+%\ctikzset{bipoles/diode/width=.3}
+%\ctikzset{tripoles/thyristor/height=.8}
+%\ctikzset{tripoles/thyristor/width=1}
+%\ctikzset{bipoles/vsourceam/height/.initial=.7}
+%\ctikzset{bipoles/vsourceam/width/.initial=.7}
+%\tikzstyle{every node}=[font=\small]
+%\tikzstyle{every path}=[line width=0.8pt,line cap=round,line join=round]
 
 % For inline TT text (e.g. code snippets)
 \usepackage{verbatim}
