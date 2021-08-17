@@ -209,7 +209,10 @@ On this view, by hovering over an empty answer container the user can send a req
     \label{fig:fingerprint-show-summary}
 \end{figure}
 
-This groups of view provide a valid workflow to perform \gls{crud} operation over the metadata related to a data source, however, present several flaws related to how the inputs are validated and how they are presented to the user.
+% TODO allows custom validations that can be attach to the question.
+%  are defined on the checks field of the question model
+
+This groups of views provide a valid workflow to perform \gls{crud} operation over the metadata related to a data source, however, present several flaws related to how the inputs are validated and how they are presented to the user.
 
 First, the validation of the user input is done on the client-side through javascript code that runs after a user submits a question set form.
 Subsequently, the data is sent to the backend through \gls{api} calls.
@@ -220,7 +223,6 @@ Second, there is no escaping procedure done to the user's input when it is fetch
 As an example, on figure \ref{fig:montra-xss-create} on the Database Name field, I added a \textit{script} tag with code that shows a popup and also a valid database name after.
 Once a user opens the fingerprint to check the data, the code will execute but the dummy name will render on the Database Name field.
 This can be further exploited, where the user visiting the fingerprint will not notice that malicious code was executed.
-
 
 \begin{figure}[h]
     \center
@@ -462,6 +464,8 @@ Choice variants with freeform on the name, besides the usual choices, always hav
 
 \subsubsection*{Open Multiple Composition}
 
+% TODO columns information is stored on the metadata field of the question model
+
 Open multiple questions allow showing a history of a given value.
 For that the simple version of the question is represented in a table of two columns: Date and the value, so no input is expected on the value list column.
 The composition version of the question type allows having several values, instead of just one.
@@ -480,6 +484,8 @@ The MONTRA framework will then put the provided objects on the configuration arr
 \end{figure}
 
 \subsubsection*{Choice Tabular}
+
+% TODO rows and columns information is stored on the metadata field of the question model
 
 This type of question allows reusing the same choices across several answering items.
 There are three variations of this questions types, where the difference between them is what and how is the information connected between answering items and choices.
@@ -645,18 +651,86 @@ Strangely on the Questionnaire model, the disable column uses a character type c
 If there are some user input errors, it could lead to unexpected behavior or internal server error.
 
 \section{Refactoring}
-\begin{itemize}
-    \item o que necessita de, ou vai, ser alterado
-\end{itemize}
+
+%\begin{itemize}
+%    \item o que necessita de, ou vai, ser alterado
+%\end{itemize}
+
+Until now it was shown how the MONTRA framework was designed around databases, their metadata, and how that metadata can be shared among the platform users.
+For regular users the framework provides a good user experience, however, for power users, that make use of \gls{api}s, might make some errors which the framework will not prevent, leading to inaccurate data to be stored and presented.
+Also for developers, such flaws and bad design choices make the maintainability process of MONTRA instance a demanding and tedious process.
+
+Next, we will propose several changes to be applied to the framework, beginning from the data models, regarding how fingerprint answers data is stored, how questionnaires structure is stored and some other fixes for some defects explained previously.
+Such refactoring will imply changes on other components, one of them being the rendering of questionnaires and how input validation is done.
+Finally, several clutter problems were mentioned when describing the spreadsheet to define a questionnaire structure, so the spreadsheet will also undergo a refactor.
 
 \subsection{Data Models}
+
+%\begin{itemize}
+%    \item explicar escolha de apenas reformular apenas a apartir de determinado nivel
+%    \item explicar os novos modelos e de que maneiras resolvem problemas que existiam
+%    \item trade offs tidos em conta
+%    \item diagrama de classes com diferenças
+%\end{itemize}
+
+Since the MANTRA framework uses some outdated software and there are active installations, the refactoring process can not be simply designing new models and views, implementing them, and replacing old ones is not a viable option.
+The approach taken was to first decide what components would go through a refactoring process and within each, until what level we would apply it.
+
+Taking into account figure \ref{fig:old-models}, since both the Community and Developer (Plugins) Django applications target functionalities not so fingerprint-centric and are more related to features of the framework as a whole, we decided not to perform any changes on the models of these applications.
+This leaves us with both the Fingerprint and Questionnaire applications.
+Regarding the Fingerprint application, the fingerprint model is one of the main models of the framework, affecting several features of the framework, so we intend to perform minimal changes on it.
+However, the remaining models associated with the answers of a fingerprint and submissions will have a new models design.
+Respecting the Questionnaire application both the Questionnaire and QuestionSet models are represent well-defined concepts and don't require any changes, yet, the remaining models, mainly the models storing the structure of the questions, their dependencies, choices, etc.\, will also have a new design.
+
+\begin{figure}[h]
+    \center
+    \includegraphics[width=\textwidth]{new-models}
+    \caption{Model Diagram of the new models}
+    \label{fig:new-models}
+\end{figure}
+
+In Figure \ref{fig:new-models} it is presented the new models in light green.
+The decided approach to implement these models was to create a new Django application and create all these new models on that application.
+This way, the migration process is an iterative process where the framework is always operational since the previous models still exist.
+Then with the help of an \gls{ide}, we can search for usages of the old models and migrate each feature at the time.
+
+Let's start with the fingerprint-related changes.
+Now there is a new Answer model that doesn't hold directly the content of answers, instead the content is stored on data-specific models such as IntegerAnswer and DateAnswer.
+For choice-based questions, instead of storing the value of the selected choice(s), a single or multiple choice answer contains a foreign key(s) for the selected choices.
+To establish the connection between the main Answer model and the data-specific model, the main model contains a \textit{type} field that indicates the data type of the answer.
+Then the primary keys of the data-specific answer model are the same as the associated record of the Answer model, which allows fetching the data-specific answers of an Answer.
+Is important to note that the number of different answer types is not the same as the number of question types.
+Answers of different questions types can be stored in the same answer type models, for example, open text and email questions both can be stored as text in the database.
+Previously fingerprint submissions were being represented with the model FingerprintHead, now we created a Submission model which contains the same relationships as before, a set of answers, a set of answer changes, all this associated with a fingerprint.
+The AnswerChange model now does not contain the data of the previous and current answers, instead, it contains the foreign keys for the answer model.
+In cases where the change was from or to an empty answer, either the previous answer or the next answer field are filled with the NULL value.
+
+Moving now to the models related to the Questionnaire application, there is a new Question model mainly because the previous one had too many fields.
+An example of these extra fields is the \textit{metadata}, which is used to store the information of the column of the open-multiple question type and the choices and answering items of a choice tabular question type.
+This field was replaced by the addition of new models (Label) which will be explained in more detail in the next Excel subsection.
+Another example was the category field, which indicated if a specific question record described a category in the questionnaire which is being used to create subgroups of questions.
+With the new models, a new Group model was created which has a set of questions associated.
+Previously this relationship did not exist, so MONTRA would create a group based only on the question's order and level.
+Additionally, with the addition of this Group model, there is no need to have a level field on the question type, since nested levels are represented through Groups, which can have a parent group.
+A group with no parent is represented in the root level of the questionnaire.
+The remaining models (Label, Choice, and their descendants) will be explained in more depth in the next Excel subsection since they were created mainly because of how questions are represented in the new spreadsheet format.
+
+Meanwhile, there are previously existing models that have undergone changes to fix some design flaws mentioned before.
+
 \begin{itemize}
-    \item explicar escolha de apenas reformular apenas a apartir de determinado nivel
-    \item explicar os novos modelos e de que maneiras resolvem problemas que existiam
-    \item trade offs tidos em conta
-    \item diagrama de classes com diferenças
-    \item tipos de perguntas novos e deprecated
+    \item QuestionnaireImportFile: To provide feedback to the user this model only contained an \textit{error_message} field.
+        However several times there are some errors with the questionnaire, but the framework can continue.
+        In these situations, a warning could be sent to the user just so he is aware that a part of the spreadsheet has some errors and the result could not be his real end goal.
+        Then the new model contains two new fields, \textit{errors}, replacing the old \textit{error_message}, and \textit{warnings} fields, which are stored in \gls{json}, where the keys are the lines where the errors or warnings were found and the values are an array of messages associated with that line.
+    \item Questionnaire: associated with the questionnaire model we mentioned that it has a specific fingerprint attached that was used to show a preview of the result of the questionnaire.
+        This field is not required since the preview mode of a questionnaire is viewed on read-only, so no answers are associated with these preview fingerprints.
+    \item QuestionSetPermissions: From this model, we removed the useless permission of ``Allow Printing'', considering it is impossible to restrict users from printing the page since a screen capture software can be used as a replacement for the browser's print function.
+        Also, there was a record associated with each question set of every fingerprint, even if the values of each permission were the default ones.
+        The new approach taken is to only create a record if any permission value is different from the default one.
+        Otherwise, an object with the default values is returned.
 \end{itemize}
+
+\subsection{API}
 
 \subsection{Questionnaire}
 \begin{itemize}
@@ -670,4 +744,5 @@ If there are some user input errors, it could lead to unexpected behavior or int
 \begin{itemize}
     \item mais concreto, e tem mais em conta o contexto em volta das questoes
     \item entanto é mais estenso
+    \item tipos de perguntas novos e deprecated
 \end{itemize}
