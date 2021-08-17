@@ -1,6 +1,3 @@
-# Plano
-[Link](https://docs.google.com/spreadsheets/d/1gEiOxpHuaqqkbfP1-dlFXAPG1NNSEmfCIHeSVjBjQ6I/edit?usp=sharing)
-
 # ua-thesis-template
 
 A thesis LaTeX template that complies with the University of Aveiro's
