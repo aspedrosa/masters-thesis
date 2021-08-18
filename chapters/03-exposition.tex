@@ -210,9 +210,27 @@ On this view, by hovering over an empty answer container the user can send a req
     \label{fig:fingerprint-show-summary}
 \end{figure}
 
+The MONTRA framework also offers an ``Advanced Search'' feature, allowing to perform searches for fingerprints.
+The overall interface used is identical to the ones presented above, where the user answers the questions of the specific questionnaire of the community.
+The main difference to the other versions of the fingerprint view is that the only control buttons available are just the navigation ones, and all the questions don't have any validation.
+Additionally, at the bottom of the page, it is provided to the user a way to customize the search query, allowing to create complex search criteria through a drag and drop interface, as is presented in figure \ref{fig:boolean-query}.
+
+\begin{figure}[h]
+    \center
+    \includegraphics[width=\textwidth]{boolean-query}
+    \caption{Interface to customize the fingerprint search query}
+    \label{fig:boolean-query}
+\end{figure}
+
 % ---
 
-These groups of views provide a valid workflow to perform \gls{crud} operation over the metadata related to a data source, however, present several flaws related to how the inputs are validated and how they are presented to the user.
+Despite all these variations of the same view having a similar look, as some components appear on several variants, all views have a separate Django template, so there is some duplicated code across the different views.
+If some changes are made to a shared component, such as the side question set menu bar, those changes have to be applied to all different templates.
+This can be avoided since the Django template system allows to both include a shared component into other templates and also supports conditional rendering, for example, the permissions dropdown for a question set of a fingerprint should only be rendered when the user is editing or creating a fingerprint.
+
+% ---
+
+These different view versions provide a valid workflow to perform \gls{crud} operations over the metadata related to a data source, however, views that are used to insert or edit metadata of a fingerprint present several flaws related to how the inputs are validated and how they are presented to the user.
 
 First, the validation of the user input is done on the client-side through javascript code that runs after a user submits a question set form.
 Subsequently, the data is sent to the backend through \gls{api} calls.
