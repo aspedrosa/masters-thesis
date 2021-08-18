@@ -164,7 +164,8 @@ Besides the input widget where the data owner can insert its answers, the user a
     \label{fig:fingerprint-new}
 \end{figure}
 
-Once the fingerprint is filled and published, a regular user can consult the metadata, which will be displayed by default in detailed vie. Similar to the create view, it is presented with some control buttons:
+Once the fingerprint is filled and published, a regular user can consult the metadata, which will be displayed by default in detailed view.
+Similar to the create view, it is presented with some control buttons:
 
 \begin{enumerate}
     \item Database level plugins associated with this community
@@ -209,10 +210,9 @@ On this view, by hovering over an empty answer container the user can send a req
     \label{fig:fingerprint-show-summary}
 \end{figure}
 
-% TODO allows custom validations that can be attach to the question.
-%  are defined on the checks field of the question model
+% ---
 
-This groups of views provide a valid workflow to perform \gls{crud} operation over the metadata related to a data source, however, present several flaws related to how the inputs are validated and how they are presented to the user.
+These groups of views provide a valid workflow to perform \gls{crud} operation over the metadata related to a data source, however, present several flaws related to how the inputs are validated and how they are presented to the user.
 
 First, the validation of the user input is done on the client-side through javascript code that runs after a user submits a question set form.
 Subsequently, the data is sent to the backend through \gls{api} calls.
@@ -239,7 +239,7 @@ This can be further exploited, where the user visiting the fingerprint will not 
 \end{figure}
 
 All these problems exist because such views were developed from scratch without using the provided features that Django has out of the box for form validation and security.
-For client-side validation, Django takes advantage of HTML5 form validation features\footnote{\url{https://developer.mozilla.org/en-US/docs/Learn/Forms/Form_validation}}.
+For client-side validation, Django takes advantage of HTML5 form validation features~\cite{form-validation}.
 This allows imposing restrictions and validations on the user's input without writing any additional javascript code.
 
 To show these features I wrote a simple HTML file with a simple form that expects a number under 100 and an email.
@@ -319,21 +319,26 @@ The fingerprint view can be used for four different use cases:
 
 For these use cases, the following endpoints are used:
 
+\begin{itemize}
+    \item Create
 \begin{lstlisting}[basicstyle=\tiny]
-Create:
 GET [base url]/c/[community slug]/addqs/[fingerprint hash]/[questionnaire id]/[question set id]/
 POST [base url]/c/[community slug]/addPost/[questionnaire id]/[question set id]/[save id]
-
-Edit:
+\end{lstlisting}
+    \item Edit
+\begin{lstlisting}[basicstyle=\tiny]
 GET [base url]/editqs/[fingerprint hash]/[questionnaire id]/[question set]/
 POST [base url]/c/[community slug]/addPost/[questionnaire id]/[question set id]/[save id]
-
-View:
+\end{lstlisting}
+    \item View
+\begin{lstlisting}[basicstyle=\tiny]
 GET [base url]/detailedqs/[fingerprint hash]/[questionnaire id]/[question set id]/
-
-Search:
+\end{lstlisting}
+    \item Search
+\begin{lstlisting}[basicstyle=\tiny]
 GET [base url]/c/[community slug]/searchqs/[questionnaire id]/[question set id]/
 \end{lstlisting}
+\end{itemize}
 
 For both cases where new data is stored, besides the usual GET that is used to load the question set, there is also a POST request that saves the progress done to a specific question set.
 The data for these requests are gathered natively by javascript once each question set container contains a \textit{form} tag englobing all the questions inputs.
@@ -347,8 +352,8 @@ Moving now to the set of \gls{api} endpoints available to the users to both read
 
 \begin{verbatim}
 GET /api/fingerprints/[fingerprint hash]/answers/
-GET /api/fingerprints/[fingerprint hash]/answers/[question_slug]
-PUT /api/fingerprints/[fingerprint hash]/answers/[question_slug]
+GET /api/fingerprints/[fingerprint hash]/answers/[question slug]
+PUT /api/fingerprints/[fingerprint hash]/answers/[question slug]
 \end{verbatim}
 
 The first two GETs are used to retrieve answers data, which is returned as the \gls{json} object presented next, the only difference being the first one returns an array of the mentioned object instead of just one.
@@ -372,6 +377,23 @@ Existing two different types of endpoints to retrieve answers data makes sense s
 If the fingerprint pages receive the data in \gls{html} format they can just put the \gls{html} in the determined container instead of having to build the entire container and insert the data on each input.
 Accordingly, if data is returned in a \gls{json} format it can easily access the data and perform some data processing avoiding going transverse the \gls{html} and retrieve the data from each input.
 However, having two different endpoints to update data doesn't make that much sense since current \gls{http} requests libraries offer an easy way to build a request in the required format as the one's browsers automatically build whenever a form is submitted.
+
+\subsection*{Draft}
+
+We will also go over the \gls{api} endpoints that the front end code uses to request to change the fingerprint state from draft to published.
+Associated with this feature, there are two endpoints available:
+
+\begin{verbatim}
+POST [base url]/api/pending/[fingerprin hash]
+POST [base url]/api/draft/[fingerprin hash]
+\end{verbatim}
+
+The existence of two endpoints for the same purpose is because Communities have a setting that allows to auto-accept requests to publish a fingerprint.
+For that, whenever the auto-accept setting is off, the first endpoint must be used, which will send a request to the community owners to publish the given fingerprint.
+The second must be used otherwise.
+
+The problem with this approach is that the code that decides what endpoint to use is on the client-side and there is no server-side check if the correct endpoint is being used.
+If the auto-accept setting is off and the second endpoint is used, a user can publish his fingerprint without requiring the approval of the community owners.
 
 \subsection{Import Questionnaires - Excel}
 \label{subsection:excel}
@@ -464,8 +486,6 @@ Choice variants with freeform on the name, besides the usual choices, always hav
 
 \subsubsection*{Open Multiple Composition}
 
-% TODO columns information is stored on the metadata field of the question model
-
 Open multiple questions allow showing a history of a given value.
 For that the simple version of the question is represented in a table of two columns: Date and the value, so no input is expected on the value list column.
 The composition version of the question type allows having several values, instead of just one.
@@ -484,8 +504,6 @@ The MONTRA framework will then put the provided objects on the configuration arr
 \end{figure}
 
 \subsubsection*{Choice Tabular}
-
-% TODO rows and columns information is stored on the metadata field of the question model
 
 This type of question allows reusing the same choices across several answering items.
 There are three variations of this questions types, where the difference between them is what and how is the information connected between answering items and choices.
@@ -650,6 +668,11 @@ Also, accepting will change questionnaire's in\_preview variable to \textit{fals
 Strangely on the Questionnaire model, the disable column uses a character type column instead of a boolean one since it expects only the value of ``False'' and ``True''.
 If there are some user input errors, it could lead to unexpected behavior or internal server error.
 
+% TODO allows custom validations that can be attach to the question.
+%  are defined on the checks field of the question model
+% choice tabular: rows and columns information is stored on the metadata field of the question model
+% open multiple: columns information is stored on the metadata field of the question model
+
 \section{Refactoring}
 
 %\begin{itemize}
@@ -718,19 +741,62 @@ The remaining models (Label, Choice, and their descendants) will be explained in
 Meanwhile, there are previously existing models that have undergone changes to fix some design flaws mentioned before.
 
 \begin{itemize}
-    \item QuestionnaireImportFile: To provide feedback to the user this model only contained an \textit{error_message} field.
+    \item QuestionnaireImportFile: To provide feedback to the user this model only contained an \textit{error\_message} field.
         However several times there are some errors with the questionnaire, but the framework can continue.
         In these situations, a warning could be sent to the user just so he is aware that a part of the spreadsheet has some errors and the result could not be his real end goal.
-        Then the new model contains two new fields, \textit{errors}, replacing the old \textit{error_message}, and \textit{warnings} fields, which are stored in \gls{json}, where the keys are the lines where the errors or warnings were found and the values are an array of messages associated with that line.
+        Then the new model contains two new fields, \textit{errors}, replacing the old \textit{error\_message}, and \textit{warnings} fields, which are stored in \gls{json}, where the keys are the lines where the errors or warnings were found and the values are an array of messages associated with that line.
     \item Questionnaire: associated with the questionnaire model we mentioned that it has a specific fingerprint attached that was used to show a preview of the result of the questionnaire.
         This field is not required since the preview mode of a questionnaire is viewed on read-only, so no answers are associated with these preview fingerprints.
     \item QuestionSetPermissions: From this model, we removed the useless permission of ``Allow Printing'', considering it is impossible to restrict users from printing the page since a screen capture software can be used as a replacement for the browser's print function.
         Also, there was a record associated with each question set of every fingerprint, even if the values of each permission were the default ones.
         The new approach taken is to only create a record if any permission value is different from the default one.
         Otherwise, an object with the default values is returned.
+    \item Fingerpritn: It has a new ``submission\_token'' used for the new \gls{api} endpoints explained next.
 \end{itemize}
 
 \subsection{API}
+
+Previously we have seen that the frontend used 
+
+\begin{lstlisting}[basicstyle=\tiny]
+GET  [base url]/questions/[questionnaire id]/[section index]/preview/
+
+GET  [base url]/questions/[community slug]/[questionnaire id]/[section index]/search/
+
+GET  [base url]/questions/[community slug]/[questionnaire id]/[section index]/  % create
+GET  [base url]/questions/[questionnaire id]/[section index]/  % create
+
+GET  [base url]/questions/[fingerprint hash]/[section index]/  % edit
+
+GET  [base url]/questions/[fingerprint hash]/[section index]/show/
+\end{lstlisting}
+
+new api to send answers data which will be used for both the front end and the end users
+
+new api to retrieve the question sets html
+
+TODO:
+\begin{itemize}
+    \item is the cancel endpoint usefull. cancel only the client side on the last not saved qs?
+    \item the api to fetch answers is the same or a new one?
+\end{itemize}
+
+\begin{lstlisting}[basicstyle=\scriptsize]
+Questionnaire information:
+GET  [base url]/api/questionnaire/info/[community slug]/[questionnaire id]/[section index]/
+GET  [base url]/api/questionnaire/info/[questionnaire id]/[section index]/
+
+Submissions management:
+POST [base url]/api/submission/save/[community slug]/[questionnaire id]/[section index]/
+POST [base url]/api/submission/save/[questionnaire id]/[section index]/
+POST [base url]/api/submission/save/[fingerprint_hash]/[section index]/
+\end{lstlisting}
+
+\subsection*{Draft}
+
+\begin{verbatim}
+POST [base url]/api/draft/[fingerprint hash]
+\end{verbatim}
 
 \subsection{Questionnaire}
 \begin{itemize}
