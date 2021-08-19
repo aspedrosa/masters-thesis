@@ -443,9 +443,7 @@ The column defined in the template are the following:
     \item Tooltip: Yes if the Help text/Description should be displayed as a tooltip or No otherwise
     \item Slug: internal identifier
     \item Dependencies: used to tell that a question or group of questions can only be answered if a specific choice of a choice-based question was selected
-    %\item Stats: 
-    %\item Comments Stats:
-    %\item Disposition
+    \item Stats, Comments Stats and Disposition: Columns that were used for old features but are still present on the spreadsheet
     \item Include in Advanced Search: if the answers of the question can be used to search fingerprints
 \end{itemize}
 
@@ -615,6 +613,8 @@ Classes with the same color belong to the same Django application, dividing them
     \item Gray - Community application: Community's groups, users and access permissions, fields to be presented on the fingerprint list page for each questionnaire and plugins.
 \end{itemize}
 
+% ---
+
 Going into more detail on some models we can see some poor design decisions.
 
 \begin{figure}[h]
@@ -649,6 +649,8 @@ Each submission has an associated FingerprintHead record, which its name might h
 For every FingerprintHead there is a set of answers that suffer changes which are then recorded on the AnswerChange model.
 In this model, we can get the answers data duplicated three times since it is already stored on the Answer model and can also be stored again as text in both \textit{old\_value} and \textit{new\_value}.
 
+% ---
+
 \begin{figure}[h]
     \center
     \includegraphics[width=.6\linewidth]{fingerprint-pending-models}
@@ -664,6 +666,8 @@ Once a request is rejected or accepted, the value of the pending value is change
 On the Fingerprint model, there is also a \textit{draft} value that indicates if the fingerprint is published or not.
 Once a fingerprint is published, the value of the \textit{draft} will be true, and on the FingerprintPending table, the associated record will have the pending value at \textit{false}.
 However, this value is not required to be stored on the database since after a fingerprint is published, the fingerprint will not be pending therefore, the associated FingerprintPending record could be deleted.
+
+% ---
 
 \begin{figure}[h]
     \center
@@ -686,10 +690,27 @@ Also, accepting will change questionnaire's in\_preview variable to \textit{fals
 Strangely on the Questionnaire model, the disable column uses a character type column instead of a boolean one since it expects only the value of ``False'' and ``True''.
 If there are some user input errors, it could lead to unexpected behavior or internal server error.
 
-% TODO allows custom validations that can be attach to the question.
-%  are defined on the checks field of the question model
-% choice tabular: rows and columns information is stored on the metadata field of the question model
-% open multiple: columns information is stored on the metadata field of the question model
+% ---
+
+\begin{figure}[h]
+    \center
+    \includegraphics[width=.4\textwidth]{question-model}
+    \caption{Question model and its extensive number of fields}
+    \label{fig:question-model}
+\end{figure}
+
+Associated with how the structure of a questionnaire is stored, there are only four models to do so: Questionnaire, QuestionSet, Question, and Choice.
+All are associated with a specific concept of the questionnaire, although other concepts are not represented.
+First, there's the category, used to create question groups within a question set.
+It is represented as with a question record, where the ``category'' field of the question models has the value ``true''.
+For more complex question types that require extra configuration such as choice tabular, which requires information about the name of the rows and column, and open multiple, which expects the configuration of the columns, such data is stored in a metadata field of the associated question model.
+Question types that do not make use of these fields, will have an empty value, leading to some database space being wasted.
+
+When the questionnaire's spreadsheet was explained, some fields were related to some old deprecated features.
+The question model contains the same fields that map to the questionnaire's spreadsheet deprecated fields: stats, visible\_default, and disposition.
+There is also a slug\_fk field that points to a Slugs model that replicates the question's slug and text, which is was used to yet another deprecated feature.
+
+Finally, a question supports for the user to define additional checks which are defined on the ``checks'' field however, this feature is not exposed through the questionnaire's spreadsheet.
 
 \section{Refactoring}
 
@@ -714,7 +735,7 @@ Finally, several clutter problems were mentioned when describing the spreadsheet
 %    \item diagrama de classes com diferenças
 %\end{itemize}
 
-Since the MANTRA framework uses some outdated software and there are active installations, the refactoring process can not be simply designing new models and views, implementing them, and replacing old ones is not a viable option.
+Since the MONTRA framework uses some outdated software and there are active installations, the refactoring process can not be simply designing new models and views, implementing them, and replacing old ones is not a viable option.
 The approach taken was to first decide what components would go through a refactoring process and within each, until what level we would apply it.
 
 Taking into account figure \ref{fig:old-models}, since both the Community and Developer (Plugins) Django applications target functionalities not so fingerprint-centric and are more related to features of the framework as a whole, we decided not to perform any changes on the models of these applications.
@@ -772,6 +793,17 @@ Meanwhile, there are previously existing models that have undergone changes to f
     \item Fingerpritn: It has a new ``submission\_token'' used for the new \gls{api} endpoints explained next.
 \end{itemize}
 
+\subsection{Questionnaire}
+
+%\begin{itemize}
+%    \item UI changes
+%    \item consequencia da alteração do front end devido à alateração do backend
+%    \item passar toda a verificação para o backend, passando a usar a validação built in do Django
+%    \item tentar reutilizar os modulos existentes
+%\end{itemize}
+
+
+
 \subsection{API}
 
 Previously we have seen that the frontend used 
@@ -815,14 +847,6 @@ POST [base url]/api/submission/save/[fingerprint_hash]/[section index]/
 \begin{verbatim}
 POST [base url]/api/draft/[fingerprint hash]
 \end{verbatim}
-
-\subsection{Questionnaire}
-\begin{itemize}
-    \item UI changes
-    \item consequencia da alteração do front end devido à alateração do backend
-    \item passar toda a verificação para o backend, passando a usar a validação built in do Django
-    \item tentar reutilizar os modulos existentes
-\end{itemize}
 
 \subsection{Excel}
 \begin{itemize}
