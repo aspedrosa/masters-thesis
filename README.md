@@ -1,4 +1,6 @@
-[Estado Atual](https://github.com/aspedrosa/masters-thesis/tree/master/build/matter.pdf)
+[Current Progress (Open on GitHub)](https://github.com/aspedrosa/masters-thesis/tree/master/build/matter.pdf)
+<br>
+[Current Progress (Download)](https://github.com/aspedrosa/masters-thesis/raw/master/build/matter.pdf)
 
 # ua-thesis-template
 
