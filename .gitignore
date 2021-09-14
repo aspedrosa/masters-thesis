@@ -6,6 +6,9 @@ build/**/*
 !build/**/
 # And allow gitkeeps
 !build/**/.gitkeep
+# Exclude the currrent output
+!build/matter.pdf
+
 
 # Rest for linux,windows,osx,vim,emacs,sublimetext,visualstudiocode
 *.aux
