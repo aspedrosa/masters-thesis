@@ -5,7 +5,7 @@
 Among the presented tools in chapter \ref{chapter:background}, MONTRA was our go-to mainly because of its data source-centric approach.
 Also, no real data is shown here, only metadata is handled within the platform, however, it still allows to impose access permissions at several levels.
 
-This chapter will be detailed the key concepts of the MONTRA framework and its internal data model.
+This chapter will detail the key concepts of the MONTRA framework and its internal data model.
 After this, there will be presented a refactoring process that was done to the platform, with its improvements and flaws fixed.
 
 \section{MONTRA}
@@ -23,7 +23,7 @@ Django can then check if there are new models or if existing ones have changed. 
 Next, the developer can set custom URL patterns so specific requests are handled by a specific function of the view layer, where the business logic will be implemented.
 Finally, Django contains a template layer that allows building dynamic \gls{html} pages without requiring to have a separate javascript framework to do such.
 The developer builds the main static structure of the page and then uses a special syntax that describes how Django should display the data received from the view layer.
-Django also has an import form feature that allows to easily create a set of pages that allow performing the usual \gls{crud} operation over the database model.
+Django also has an important form feature that allows to easily create a set of pages that allow performing the usual \gls{crud} operation over the database model.
 
 MONTRA's development started at the beginning of 2013 and ended in the middle of 2018.
 After this date, at the end of 2018, the framework started being used by the \gls{ehden} project, to develop a portal to allow discovery and analysis of health data of a federated network of data sources standardized to the \gls{omop} common data model in Europe.
@@ -66,7 +66,7 @@ These plugins can either be full web applications, with different functionalitie
 
 As the data from different data sources is highly heterogeneous, MONTRA ensures that the data inserted within a given community follow a common structure.
 This structure is called a skeleton, which is represented in a form of a questionnaire with a set of questions, which can then be grouped in sections called Question Sets.
-It represents a set of metadata that betters describes the original data of data sources that need to remain private.
+It represents a set of metadata that better describes the original data of data sources that need to remain private.
 The skeleton schema can easily be defined through a spreadsheet, which will be more detailed on subsection \ref{subsection:excel}.
 
 Next is presented the available question types which can be used to build a questionnaire for a community
@@ -126,7 +126,7 @@ Data owners can start to answer the questions to build the profile of their data
 
 On the list presented in figure \ref{fig:listings}, we can notice that the only fingerprint present is marked as draft.
 This is a state of the fingerprint which prevents from non-ready or non-approved fingerprints won't show to the regular community users.
-With this, for such users the list shows above would be empty.
+With this, for such users the list showed above would be empty.
 Fingerprints can be published depending on the chosen settings for the community.
 After the data source owners request to publish a fingerprint the framework allows to either automatically accept or require a community manger to accept it.
 
@@ -200,7 +200,7 @@ Similar to the create view, it is presented with some control buttons:
     \label{fig:fingerprint-show-detailed}
 \end{figure}
 
-On the show view, if the user enters the detailed view (Figure \ref{fig:fingerprint-show-detailed}), the user is presented with a table with three columns where each row contains the question number, name and the answer given.
+On the show view, if the user enters the summary view (Figure \ref{fig:fingerprint-show-summary}), the user is presented with a table with three columns where each row contains the question number, name and the answer given.
 On this view, by hovering over an empty answer container the user can send a request to the database owner to answer the specific question.
 
 \begin{figure}[h]
@@ -526,7 +526,7 @@ There are three variations of this questions types, where the difference between
 There are two versions where the user can select one (single choice) or more (multiple-choice) choices for each answering item.
 The other version allows the user to write text for each choice within each answering item.
 The question type is rendered as a table where in the columns are displayed the several choices and on the rows the different answering items are presented.
-Additionally, there is always a ``More'' choice column, where the user can insert any text information for a specific answering item since is displayed with a textarea \gls{html} element.
+Additionally, there can be a ``More'' choice column, where the user can insert any text information for a specific answering item since is displayed with a textarea \gls{html} element.
 
 The value list column of a choice tabular question type expects a three-component value.
 Each component is separated by the characters ``\textbackslash\textbackslash''.
@@ -564,7 +564,7 @@ MONTRA supports this kind of dependencies, which should be defined on the Depend
 
 As shown in figure \ref{fig:dependencies-excel}, first you should indicate the slug of the question on which the specific question depends.
 Then, separated by a ``|'' character, it must be specified which choice has to be selected for the dependency to be fulfilled, using its index, starting at 1.
-On figure \ref{fig:dependencies-excel}, since a choice-yesnodontknow question type has three implicit choices, by having a dependency with the value ``Any\_blood\_collected|1'', both the \textit{Blood collection} category and the \textit{Plasma} question will only be displayed to the user once the choice \textit{Yes} of the \textit{Blood Collection} is selected.
+On figure \ref{fig:dependencies-excel}, since a choice-yesnodontknow question type has three implicit choices, by having a dependency with the value ``Any\_blood\_collected|1'', both the \textit{Blood collection} category and the \textit{Plasma} question will only be displayed to the user once the choice \textit{Yes} of the \textit{Any Blood Collection?} question is selected.
 
 \begin{figure}[h]
     \center
@@ -683,9 +683,7 @@ It contains an in\_preview variable that is set to \textit{true} whenever a ques
 If it fails to import, only the QuestionnaireImportFile record will be kept, which the status will change to \textit{Failed} and an error message will also be attached to the import record.
 
 If the questionnaire is valid, the user will be redirected to a page where he can preview the result and can accept or reject it.
-It is important to point out that for the preview process a new Fingerprint object is created so \gls{api} calls can be performed, to give a better preview experience to the user testing the questionnaire.
-This preview fingerprint will be kept if the user decides to accept the questionnaire and deleted if it rejects.
-Also, accepting will change questionnaire's in\_preview variable to \textit{false}.
+It is important to point out that for the preview process a new Fingerprint object is created so \gls{api} calls can be performed.
 
 Strangely on the Questionnaire model, the disable column uses a character type column instead of a boolean one since it expects only the value of ``False'' and ``True''.
 If there are some user input errors, it could lead to unexpected behavior or internal server error.
@@ -770,7 +768,7 @@ In cases where the change was from or to an empty answer, either the previous an
 Moving now to the models related to the Questionnaire application, there is a new Question model mainly because the previous one had too many fields.
 An example of these extra fields is the \textit{metadata}, which is used to store the information of the column of the open-multiple question type and the choices and answering items of a choice tabular question type.
 This field was replaced by the addition of new models (Label) which will be explained in more detail in the next Excel subsection.
-Another example was the category field, which indicated if a specific question record described a category in the questionnaire which is being used to create subgroups of questions.
+Another example was the category field, which indicated if a specific question record described a category in the questionnaire which was being used to create subgroups of questions.
 With the new models, a new Group model was created which has a set of questions associated.
 Previously this relationship did not exist, so MONTRA would create a group based only on the question's order and level.
 Additionally, with the addition of this Group model, there is no need to have a level field on the question type, since nested levels are represented through Groups, which can have a parent group.
@@ -784,16 +782,35 @@ Meanwhile, there are previously existing models that have undergone changes to f
         However several times there are some errors with the questionnaire, but the framework can continue.
         In these situations, a warning could be sent to the user just so he is aware that a part of the spreadsheet has some errors and the result could not be his real end goal.
         Then the new model contains two new fields, \textit{errors}, replacing the old \textit{error\_message}, and \textit{warnings} fields, which are stored in \gls{json}, where the keys are the lines where the errors or warnings were found and the values are an array of messages associated with that line.
-    \item Questionnaire: associated with the questionnaire model we mentioned that it has a specific fingerprint attached that was used to show a preview of the result of the questionnaire.
+    \item Questionnaire: associated with the questionnaire model we mentioned that it had a specific fingerprint attached that was used to show a preview of the result of the questionnaire.
         This field is not required since the preview mode of a questionnaire is viewed on read-only, so no answers are associated with these preview fingerprints.
     \item QuestionSetPermissions: From this model, we removed the useless permission of ``Allow Printing'', considering it is impossible to restrict users from printing the page since a screen capture software can be used as a replacement for the browser's print function.
         Also, there was a record associated with each question set of every fingerprint, even if the values of each permission were the default ones.
         The new approach taken is to only create a record if any permission value is different from the default one.
         Otherwise, an object with the default values is returned.
-    \item Fingerpritn: It has a new ``submission\_token'' used for the new \gls{api} endpoints explained next.
+    \item Fingerprint: It has a new ``submission\_token'' used for the new \gls{api} endpoints explained next.
 \end{itemize}
 
-\subsection{Questionnaire}
+\subsection{Views}
+
+Deixo isto mais para o fim pois ainda vou fazer alterações nas views
+
+\begin{itemize}
+    \item Agora todas a variantes da fingerprint view usa o mesmo template. Uma alteração implica apenas uma alteração
+    \item Falar nos vários componentes da pagina de fingerprint E em que variantes da view eles aparecem:
+        \begin{itemize}
+            \item draft checkbox
+            \item Question sets menu (vai ser detalhado na secção do API)
+            \item inputs das questões
+            \item butões de questionario (summary, detailed, collapse, show)
+            \item butões de question set (show, collapse, permissions)
+            \item progress bar
+            \item hitcount stats
+        \end{itemize}
+    \item falar nas versão de apenas uma e duas colunas. Criar imagens com retangulos com transparencia
+\end{itemize}
+
+\subsection{API}
 
 %\begin{itemize}
 %    \item UI changes
@@ -802,11 +819,32 @@ Meanwhile, there are previously existing models that have undergone changes to f
 %    \item tentar reutilizar os modulos existentes
 %\end{itemize}
 
+When we went over how question sets were rendered, we saw that each question set had its container and they are only rendered when is accessed for the first time.
+When it needs to be rendered, \gls{api} endpoints are used to fetch the \gls{html} of a specific question set.
+On this \gls{html} returned, each question has attached their client-side validation code.
+The goal is to remove all existing code of client-side validation, making use of only simple built-in \gls{html} validations on the client-side and use Django's forms framework to have all remaining validations on the server-side.
 
+Before going into more details let's go over Django's built-in form system and some of its components.
+A form in \gls{html} is represented through the form tag and fields are represented through input tags.
+Each input tag has a type attribute that defines how the data will be inserted by the users, for example, to insert a date the user will be presented with a calendar where it can click on the desired date.
+These different ways to insert data are called widgets.
+To work with forms, Django only makes use of two \gls{http} request methods: GET and POST.
+GET is used by browsers to fetch the page/\gls{html} of an URL and it can also be used to fetch information.
+POST on the other side is used to send information to a server.
+On the backend side, Django has three main classes that handle the data around forms.
+The main one is the \textit{Form} class that defines how it works and how it will be presented to the user.
+Then there is the \textit{Field} class that describes a field of a form, which is in charge of performing field-specific validations.
+Django already has some implementations of this class for the most common field types such as number, text, choice, \dots
+Finally, the \textit{Widget} class is in charge of processing and transforming the raw data received and also preparing and restructure data to be presented to the user, and again Django already has some implementations of this class.
+Each \textit{Field} class has a widget class associated.
+The common development flow is to create a child class of Django's \textit{Form} class and then define its fields with \textit{Field} classes.
 
-\subsection{API}
+However, in the case of MONTRA, the number and type of the fields are dynamic, since both can be customizable by a community manager when he is building a questionnaire.
+A Submission form was created, child of Django's \textit{Form} class, where its constructor was overridden so the fields of the requested Question Set of a Questionnaire are defined in the form class.
+Additionally, several question types lead to the need of having to create and associate new \textit{Field} and \textit{Widget} child classes since they were too complex to be represented or validated with the ones that Django already has implemented.
+To build the widgets of such question types, existing implementations were ported to an associated Django template to then be used in its new widget class.
 
-Previously we have seen that the frontend used 
+Considering this, below are presented the endpoints used by the different variations to fetch the \gls{html} of a question set of a specific questionnaire:
 
 \begin{lstlisting}[basicstyle=\tiny]
 GET  [base url]/questions/[questionnaire id]/[section index]/preview/
@@ -821,32 +859,75 @@ GET  [base url]/questions/[fingerprint hash]/[section index]/  % edit
 GET  [base url]/questions/[fingerprint hash]/[section index]/show/
 \end{lstlisting}
 
-new api to send answers data which will be used for both the front end and the end users
+There are two different endpoints for the create variant, because certain installations are a single community, for that, the community is implicit, but for multi-community installations, the community slug is required, since the same questionnaire can be used on different communities.
 
-new api to retrieve the question sets html
-
-TODO:
-\begin{itemize}
-    \item is the cancel endpoint usefull. cancel only the client side on the last not saved qs?
-    \item the api to fetch answers is the same or a new one?
-\end{itemize}
+For edit and create variants, there needs to be additional endpoints that save the progress when the user changes from one question set to another.
+Bellow are such:
 
 \begin{lstlisting}[basicstyle=\scriptsize]
-Questionnaire information:
-GET  [base url]/api/questionnaire/info/[community slug]/[questionnaire id]/[section index]/
-GET  [base url]/api/questionnaire/info/[questionnaire id]/[section index]/
-
-Submissions management:
+Submissions Management:
 POST [base url]/api/submission/save/[community slug]/[questionnaire id]/[section index]/
 POST [base url]/api/submission/save/[questionnaire id]/[section index]/
-POST [base url]/api/submission/save/[fingerprint_hash]/[section index]/
+POST [base url]/api/submission/save/[fingerprint hash]/[section index]/
+
+Questionnaire Information:
+GET  [base url]/api/questionnaire/info/[community slug]/[questionnaire id]/[section index]/
+GET  [base url]/api/questionnaire/info/[questionnaire id]/[section index]/
 \end{lstlisting}
 
+Related to the Submissions Management endpoints, which are used to save answers data, the first two endpoints follow the same idea as the ones presented before, which on single community installations there is no need to provide the community slug.
+However, there is a third alternative.
+The first two should be used when there is not yet a fingerprint created, and which will return both the fingerprint hash of the created fingerprint and the current submission token.
+The fingerprint hash is the identifier of a fingerprint, the submission token is used to identify if different calls to the save endpoints are related to the same changes.
+With that, several changes can be grouped in the same Submission, instead of the previous implementation that would create a FingerprintHead record for each save of a question set.
+
+This also enforces that if the user performs several changes to the same question set with the same submission token, only the last changes will be kept, replacing (figure \ref{fig:submissions-new-answer2}), or even deleting (figure \ref{fig:submissions-remove-answer}), old answer values sent in the same submission.
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=.5\textwidth]{submissions-new-answer2}
+    \caption{When an answer change is submitted and there were already changes made to that question, then the previous one is deleted (New Answer 1) and a new one (New Answer 2) is associated with both the current Submission and the related Answer Change.}
+    \label{fig:submissions-new-answer2}
+\end{figure}
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=.45\textwidth]{submissions-remove-answer}
+    \caption{If the user either provides an empty value or no value to an answer that previously had a value on the current submission, associated Answer and Answer Change records are deleted.}
+    \label{fig:submissions-remove-answer}
+\end{figure}
+
+If no submission token or one that does not match the current one is provided, then it is assumed that the changes submitted are related to a new submission, thus the most recent submission is closed and the new provided answers are added to a new submission.
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=.3\textwidth]{submissions-new-answer}
+    \caption{Whenever new changes to the answer of a question in a specific submission are submitted, a new Answer model is created, and also an Answer Change record is created connecting with the previous answer.
+In the case the provided submission token does not match the current one stored in the fingerprint model, then a Submission record will also be created, and changes will be associated with this new Submission.}
+    \label{fig:submissions-new-answer}
+\end{figure}
+
+In such requests, data must be sent on the body encoded in a multipart/form-data format.
+Such requests are not so trivial to create by hand, however, there are tools and libraries such as Postman\footnote{https://www.postman.com/} or python's request library\footnote{https://docs.python-requests.org/en/master/index.html} that aid in the process of creating such requests.
+
+As mentioned previously, choice-based answers are stored as a foreign key to the choice(s) selected.
+This implies that the answer's data sent on the Submissions Management endpoints for such question types must be these foreign keys, avoiding misspellings and non-existing choices.
+However, one does not know the keys for each choice and also the available choice if the web view is not used.
+For that, the Questionnaire Information endpoints are used to get information of choice-based questions, so that the correct data is sent along with the Submissions Management endpoints.
+
 \subsection*{Draft}
+
+There were also some modifications to the endpoints to change the publish status of a fingerprint.
+Instead of having two different endpoints for different community settings (to auto-accept or not fingerprint publish requests), but for the same purpose, now only one exists.
 
 \begin{verbatim}
 POST [base url]/api/draft/[fingerprint hash]
 \end{verbatim}
+
+This endpoint expects the same data in the same format, though takes different actions according to the community of the fingerprint at issue.
+Also, on the previous versions of publishing endpoints, there was a possibility to publish fingerprints that weren't complete, not having answers to required answers.
+Now, a validation is implemented when the user wants to publish its fingerprint, not completing the change on the publish status if the fingerprint is not complete.
+This avoids notifications being sent to the community manager telling that a user wants to publish a fingerprint, although such fingerprints might be incomplete.
 
 \subsection{Excel}
 \begin{itemize}
