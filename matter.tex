@@ -85,9 +85,10 @@
 \usepackage{bookmark} % New Bookmarks
 
 %For Multiple columns in Glossary
-%\usepackage{multicol}
+%\usepackage{multicol} 
 \usepackage[nonumberlist,acronym]{glossaries}
 \renewcommand{\glossarysection}[2][]{}  % So it doesn't print glossary package titles
+\include{glossary}
 \makeglossaries
 
 %Math symbols
@@ -290,7 +291,7 @@
 \cleardoublepage
 
 %Table of contents
-%{\small\tableofcontents}
+{\small\tableofcontents}
 \cleardoublepage
 
 %List of figures
@@ -302,7 +303,16 @@
 %%{\small\listoftables}
 
 %Print Glossary
-{\small \include{glossary}}
+{
+    \small
+
+    \chapter{Glossary}
+
+    \footnotesize
+    \SingleSpacing
+
+    \printglossaries
+}
 
 
 %
@@ -317,9 +327,9 @@
 \OnehalfSpacing
 
 %\include{chapters/01-intro}
-%\include{chapters/02-background}
+\include{chapters/02-background}
 \include{chapters/03-exposition}
-%\include{chapters/04-extraction-update}
+\include{chapters/04-extraction-update}
 %\include{chapters/05-evaluation}
 %\include{chapters/06-conclusion}
 
