@@ -73,36 +73,37 @@ Next is presented the available question types which can be used to build a ques
 
 \begin{longtable}[c]{|c|c|}
 \hline
-\textbf{Type}             & \textbf{Description}                                        \\ \hline
+\textbf{Type}                     & \textbf{Description}                                        \\ \hline
 \endhead
-choice                    & single choice (radio box)                                   \\ \hline
-choice-freeform           & single choice with an open text fields                      \\ \hline
-choice-multiple           & multiple choice (checkbox)                                  \\ \hline
-choice-multiple-freeform  & multiple choice with and open text fields                   \\ \hline
-choice-tabular            & creates a table with single, multiple choices or text by row      \\ \hline
-choice-yesno              & single choice with yea and no choices                       \\ \hline
-choice-yesnodontknow      & single choice with yes, no and don't know choices           \\ \hline
-comment                   & used to separate groups of questions                        \\ \hline
-custom                    & mirrors another question by its                             \\ \hline
-datepicker                & field with date picker widget                               \\ \hline
-email                     & text input with email validation                            \\ \hline
-location                  & set of select elements to choose                            \\ \hline
-numeric                   & numeric input                                               \\ \hline
-open                      & text field with no validation                               \\ \hline
-open-button               & text input with backend validation                          \\ \hline
-open-location             & text input with autocomplete sugestions                     \\ \hline
-open-multiple             & allows to record an history of a value overtime             \\ \hline
-open-multiple-composition & allows to record an history of several values overtime              \\ \hline
-open-textfield            & same as open but a textarea html tag is used                \\ \hline
-open-upload-image         & image upload                                                \\ \hline
-open-validated            & text input with a regex validation                          \\ \hline
-publication               & a custom widget that allows to attach a set of publications \\ \hline
-range                     & allows to define a range of numeric values                  \\ \hline
-sameas                    & mirrors another question by its number                      \\ \hline
-timeperiod                & numeric input + select to choose numeric unit               \\ \hline
-url                       & text input with url validation                              \\ \hline
+choice                            & Single choice (radio box)                                   \\ \hline
+choice-freeform                   & Single choice with an open text fields                      \\ \hline
+choice-multiple                   & Multiple choice (checkbox)                                  \\ \hline
+choice-multiple-freeform          & Multiple choice with and open text fields                   \\ \hline
+choice-multiple-freeform-options  & Multiple choice with and open text fields                   \\ \hline
+choice-tabular                    & Creates a table with single, multiple choices or text by row      \\ \hline
+choice-yesno                      & Single choice with yea and no choices                       \\ \hline
+choice-yesnodontknow              & Single choice with yes, no and don't know choices           \\ \hline
+comment                           & Used to separate groups of questions                        \\ \hline
+custom                            & Mirrors another question by its type                        \\ \hline
+datepicker                        & Field with date picker widget                               \\ \hline
+email                             & Text input with email validation                            \\ \hline
+%location                          & Set of select elements to choose a location                 \\ \hline
+numeric                           & Numeric input                                               \\ \hline
+open                              & Text field with no validation                               \\ \hline
+open-button                       & Text input with backend validation                          \\ \hline
+open-location                     & Text input with autocomplete sugestions                     \\ \hline
+open-multiple                     & Allows to record an history of a value overtime             \\ \hline
+open-multiple-composition         & Allows to record an history of several values overtime      \\ \hline
+open-textfield                    & Same as open but a textarea html tag is used                \\ \hline
+open-upload-image                 & Image upload                                                \\ \hline
+open-validated                    & Text input with a regex validation                          \\ \hline
+publication                       & A custom widget that allows to attach a set of publications \\ \hline
+%range                             & Allows to define a range of numeric values                  \\ \hline
+sameas                            & Mirrors another question by its number                      \\ \hline
+timeperiod                        & Numeric input + select to choose numeric unit               \\ \hline
+url                               & Text input with url validation                              \\ \hline
 \caption{All available question types that can be used to build a questionnaire}
-\label{tab:my-table}\\
+\label{tab:original-question-types}\\
 \end{longtable}
 
 \subsection{Fingerprints}
@@ -117,7 +118,7 @@ A fingerprint is a name given to the set of answers to the questions of a questi
 In other words, it is the metadata that betters describes the original data of the associated data source.
 Data owners can start to answer the questions to build the profile of their data sources once there are communities on the platform and, these have at least a questionnaire associated.
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=\textwidth]{listings}
     \caption{The user interface displayed after selecting a community, which shows the list of the fingerprints of the chosen community}
@@ -140,11 +141,11 @@ Besides the input widget where the data owner can insert its answers, the user a
 \begin{enumerate}
     \item Allows to Hide or Show Questions that have been answered or that are empty. Besides being an interesting feature is important to note that on the last version it does not work, as clicking on the presented options will result in no visual effect
     \item Allows to collapse or expand all questions or question groups containers
-    \item Allows the data owners to set permissions at the question set level 
+    \item Allows the data owners to set permissions at the question set level
         \begin{itemize}
             \item Visibility: Let plugins have access to answers data
             \item Allow printing: On the fingerprints list page, showed in figure \ref{fig:listings}, there is a dropdown with tools, being the only one the "Print" tool (\ref{fig:listings-tools}). However, this feature is not correctly implemented since it calls the browser's built-int printing function on the fingerprint list page, so no actual fingerprint data will be printed. This permission ends up being useless. Additionally, if a user calls the browser's print function (e.g. hitting Ctrl+P) when viewing the data of a fingerprint, the platform will not block the action.
-                \begin{figure}[h]
+                \begin{figure}
                     \center
                     \includegraphics[width=.2\linewidth]{listings-tools}
                     \caption{Available tools on the fingerprint selection}
@@ -157,7 +158,7 @@ Besides the input widget where the data owner can insert its answers, the user a
     \item Permits to save or cancel all the changes made to the current question set
 \end{enumerate}
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=\textwidth]{fingerprint-new}
     \caption{User interface to create a fingerprint}
@@ -193,7 +194,7 @@ Similar to the create view, it is presented with some control buttons:
         \end{itemize}
 \end{enumerate}
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=\textwidth]{fingerprint-show-detailed}
     \caption{A detailed version user interface to view and analyze fingerprints}
@@ -203,7 +204,7 @@ Similar to the create view, it is presented with some control buttons:
 On the show view, if the user enters the summary view (Figure \ref{fig:fingerprint-show-summary}), the user is presented with a table with three columns where each row contains the question number, name and the answer given.
 On this view, by hovering over an empty answer container the user can send a request to the database owner to answer the specific question.
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=\textwidth]{fingerprint-show-summary}
     \caption{A summary version user interface to view and analyze fingerprints}
@@ -215,7 +216,7 @@ The overall interface used is identical to the ones presented above, where the u
 The main difference to the other versions of the fingerprint view is that the only control buttons available are just the navigation ones, and all the questions don't have any validation.
 Additionally, at the bottom of the page, it is provided to the user a way to customize the search query, allowing to create complex search criteria through a drag and drop interface, as is presented in figure \ref{fig:boolean-query}.
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=\textwidth]{boolean-query}
     \caption{Interface to customize the fingerprint search query}
@@ -242,14 +243,14 @@ As an example, on figure \ref{fig:montra-xss-create} on the Database Name field,
 Once a user opens the fingerprint to check the data, the code will execute but the dummy name will render on the Database Name field.
 This can be further exploited, where the user visiting the fingerprint will not notice that malicious code was executed.
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=0.75\textwidth]{montra-xss-create}
     \caption{Example of how an \gls{xss} attack could be done on MONTRA}
     \label{fig:montra-xss-create}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=0.75\textwidth]{montra-xss}
     \caption{Victim of a simple \gls{xss} attack}
@@ -280,7 +281,7 @@ To show these features I wrote a simple HTML file with a simple form that expect
 
 If I try to submit the form with invalid values, error messages are presented as shown in figure \ref{fig:html-form-validation}.
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=.3\textwidth]{html-form-validation}
     \caption{Error messages that appear after submitting the form on a chromium based browser}
@@ -308,7 +309,7 @@ For a regular user to use, there are other set o \gls{api} endpoints that are mo
 First, we will go over the \gls{api} used by the fingerprint views.
 But before showing the available endpoints, let's go over how the fingerprint views are organized and how they show only the questions of a certain question set at a time.
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=\textwidth]{fingerprint-hidden-question-sets}
     \caption{Each question set has its container.
@@ -451,7 +452,7 @@ The column defined in the template are the following:
 From the previous list, question groups were mentioned both when the type column has the Category value and on the Level part of the Level/Number column.
 The former is used to add a title with no question associated, resulting in what is presented in figure \ref{fig:question-group-category}.
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=\textwidth]{category}
     \caption{Create a group of questions with a title}
@@ -460,7 +461,7 @@ The former is used to add a title with no question associated, resulting in what
 
 On the latter, the text of the question in the most upper level is used as the title of the questions group, resulting in an output similar to the one in figure \ref{fig:question-group-levels}.
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=\textwidth]{levels}
     \caption{Create a group of questions using a question's text as the title}
@@ -470,7 +471,7 @@ On the latter, the text of the question in the most upper level is used as the t
 It's important to highlight that the category way to create question groups is not independent of levels.
 If both a category row and a question are on the most upper level, MONTRA will render two separate collapsable containers, where the first one will be empty, as is shown in figure \ref{fig:question-group-category-wrong-levels}.
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=\textwidth]{category-levels}
     \caption{Example to show that the category way to create question groups also depends on the values that are set on the level column}
@@ -486,7 +487,7 @@ To avoid having a spreadsheet with several columns that will not be used for all
 For choice-based questions, the value list column is used to define the possible choices and to add an extra text field associated with a given choice.
 Choices are separated by a ``|'' character and the extra text field can be set by appending ``\{...\}'' after the target choice's text.
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=\textwidth]{choice-freeforms}
     \caption{Multiple choice question with some extra text fields associated with the several choices}
@@ -512,7 +513,7 @@ The configuration of such widget, expects an array of \gls{json} objects, each s
 To configure the open multiple composition question type, the value list column expects these \gls{json} objects, where the date column is implicit.
 The MONTRA framework will then put the provided objects on the configuration array that the Tabulator widgets expects, adding the configuration for the date column.
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=\textwidth]{open-multiple}
     \caption{How an open-multiple-composition question type is specified on the spreadsheet and how it is rendered}
@@ -539,7 +540,7 @@ The components are the following:
     \item type of the information: available values are choice, multiple-choice and text
 \end{itemize}
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=\textwidth]{choice-tabular}
     \caption{How a tabular-choice question type is specified on the spreadsheet and how it is rendered}
@@ -555,7 +556,7 @@ E.g. If a user answers ``Yes'' to the Question ``Have you visited Aveiro?'', the
 
 MONTRA supports this kind of dependencies, which should be defined on the Dependencies column of the questionnaire spreadsheet.
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=\linewidth]{dependencies-excel}
     \caption{An example of both a question and a category that depend on the selected value for another question.}
@@ -566,14 +567,14 @@ As shown in figure \ref{fig:dependencies-excel}, first you should indicate the s
 Then, separated by a ``|'' character, it must be specified which choice has to be selected for the dependency to be fulfilled, using its index, starting at 1.
 On figure \ref{fig:dependencies-excel}, since a choice-yesnodontknow question type has three implicit choices, by having a dependency with the value ``Any\_blood\_collected|1'', both the \textit{Blood collection} category and the \textit{Plasma} question will only be displayed to the user once the choice \textit{Yes} of the \textit{Any Blood Collection?} question is selected.
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=0.75\linewidth]{dependencies-no}
     \caption{The questions with dependencies are not rendered if the specific choice is not selected}
     \label{fig:dependencies-no}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=0.75\linewidth]{dependencies-yes}
     \caption{Once the dependency of a specific question is meet it will be rendered}
@@ -597,7 +598,7 @@ These Model classes belong to different applications, which are associated with 
 In figure \ref{fig:old-models} is presented the class diagram of the classes that are related to features and/or concepts that were mentioned in previous sections.
 Classes with the same color belong to the same Django application, dividing them into specific purposes.
 
-\begin{figure}[h]
+\begin{figure}
     \includegraphics[width=\textwidth]{old-models}
     \caption{Class diagram of MONTRA's Model classes. Each color has a Django application associated. Gray: Community; Purple: Questionnaire; Orange: Fingerprint; Light Blue: Plugin; Blue: Django Auth. MONTRA's data model is much more complex, however, it is just presented the ones that impact the features and/or concepts mentioned previously.}
     \label{fig:old-models}
@@ -617,7 +618,7 @@ Classes with the same color belong to the same Django application, dividing them
 
 Going into more detail on some models we can see some poor design decisions.
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=.4\linewidth]{answer-model}
     \caption{Detailed information of the Answer model of the Fingerprint application}
@@ -637,7 +638,7 @@ Although this approach is much simpler in terms of data models, it leads to two 
 
 Related to MONTRA itself, when a user provides no data to a specific question, an empty string will still be sent for that question on the submission of the answers to a question set, which will create unnecessary records on the database.
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=.6\linewidth]{answer-changes-models}
     \caption{Models that store the changes to answers of fingerprint}
@@ -651,7 +652,7 @@ In this model, we can get the answers data duplicated three times since it is al
 
 % ---
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=.6\linewidth]{fingerprint-pending-models}
     \caption{The Model that stores the information telling if a fingerprint is waiting to be approved to be published}
@@ -669,7 +670,7 @@ However, this value is not required to be stored on the database since after a f
 
 % ---
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=.6\textwidth]{questionnaire-import-models}
     \caption{Questionnaire model and the model where questionnaire imports information is stored}
@@ -690,7 +691,7 @@ If there are some user input errors, it could lead to unexpected behavior or int
 
 % ---
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=.4\textwidth]{question-model}
     \caption{Question model and its extensive number of fields}
@@ -742,7 +743,7 @@ Regarding the Fingerprint application, the fingerprint model is one of the main 
 However, the remaining models associated with the answers of a fingerprint and submissions will have a new models design.
 Respecting the Questionnaire application both the Questionnaire and QuestionSet models are represent well-defined concepts and don't require any changes, yet, the remaining models, mainly the models storing the structure of the questions, their dependencies, choices, etc.\, will also have a new design.
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=\textwidth]{new-models}
     \caption{Model Diagram of the new models}
@@ -930,8 +931,131 @@ Now, a validation is implemented when the user wants to publish its fingerprint,
 This avoids notifications being sent to the community manager telling that a user wants to publish a fingerprint, although such fingerprints might be incomplete.
 
 \subsection{Excel}
+
+%\begin{itemize}
+%    \item mais concreto, e tem mais em conta o contexto em volta das questoes
+%    \item entanto é mais estenso
+%    \item tipos de perguntas novos e deprecated
+%\end{itemize}
+
+The previously presented version of the spreadsheet used to define a questionnaire, had some problems in terms of clutter due to the overuse of the ``Value list'' column to define the extra configuration of specific questions types.
+The column was used to define all choices and their extra information of choice-based questions, to define columns and their settings of open multiple question and columns, rows, and type of choice tabular questions.
+
+To fix those clutter problems, improvements were done to the spreadsheet by deleting some useless columns that were related to deprecated features and adding new types of rows that define the extra configurations for those questions types that require.
+
+Starting by the columns of the actual spreadsheet now are the following:
+
 \begin{itemize}
-    \item mais concreto, e tem mais em conta o contexto em volta das questoes
-    \item entanto é mais estenso
-    \item tipos de perguntas novos e deprecated
+    \item Type
+    \item Text/Question
+    \item Data Type
+    \item Help Text/Description
+    \item Slug
+    \item Dependencies
+    \item Constraints
+    \item Tooltip
+    \item Include in Advanced Search
 \end{itemize}
+
+Most of the columns are already known from the previous version, ``Constraints'' being the only one that was added to this new version.
+The columns that were removed are Stats, Comments Stats, Disposition (all associated with deprecated features), Level/Number (the number is now automatically retrieved according to the order of how the rows are defined), and Value List (brought the clutter problem to the table).
+
+\subsection*{Type}
+
+On this column, the only possible values available were QuestionSet, Question, and Category.
+The new version has now eleven possible types of rows for the spreadsheet:
+
+\begin{table}[H]
+\centering
+    \begin{tabular}{| p{.2\linewidth} | p{.8\linewidth} |}
+\hline
+\textbf{Type}                 & \textbf{Description}                                                                       \\ \hline
+\multirow{2}{*}{IntroSection} &
+  \multirow{7}{=}{These represent the same concept as QuestionSet. \\ In the previous version, it was possible to add hidden question sets to both the beginning of the end of the questionnaire. This was achieved by setting the Level/Number column to either 0 or 99 respectively. Since the Number portion of that column was removed, such Question Sets must be represented with the IntroSection and CloseSection rows.} \\
+                              &                                                                                            \\ \cline{1-1}
+\multirow{3}{*}{Section}      &                                                                                            \\
+                              &                                                                                            \\
+                              &                                                                                            \\ \cline{1-1}
+\multirow{2}{*}{CloseSection} &                                                                                            \\
+                              &                                                                                            \\ \hline
+Group                         & This is a replacement to the category row type plus the comment question type.             \\ \hline
+Question                      & The old and unchanged Question row type                                                    \\ \hline
+Choice                        & This row indicates a choice of the previously defined Question                             \\ \hline
+ChoiceInfo &
+  Allows adding an extra question that can be answered if a specific choice is selected. Such a question will be rendered right below the choice.
+
+        Note that this is different from the dependencies column. \\ \hline
+TabularChoice                 & \multirow{2}{*}{Row types to define the configuration of choice tabular question types}    \\ \cline{1-1}
+TabularRow                    &                                                                                            \\ \hline
+Column                        & \multirow{2}{*}{Row types to define the configuration of the open multiple question types} \\ \cline{1-1}
+ColumnChoice                  &                                                                                            \\ \hline
+\end{tabular}
+\caption{Available values to use on the ``Type'' Column of the new version of the spreadsheet to define a questionnaire.}
+\label{tab:excel-row-types}
+\end{table}
+
+Using the new row types described in table \ref{tab:excel-row-types} the spreadsheet it self will be longer, containing more lines, however will be easier to read.
+On figures \ref{fig:choice-tabular-neu}, \ref{fig:open-multiple-neu} and \ref{fig:choice-neu}, it is presented some before and after of how question that require extra configuration will be represented on the new spreadsheet version.
+
+\begin{figure}
+    \center
+    \includegraphics[width=.75\textwidth]{choice-tabular-neu}
+    \caption{The differences between how a choice tabular question is defined on the old versus the new version of the questionnaire spreadsheet.}
+    \label{fig:choice-tabular-neu}
+\end{figure}
+
+\begin{figure}
+    \center
+    \includegraphics[width=.75\textwidth]{open-multiple-neu}
+    \caption{The differences between how a open multiple question is defined on the old versus the new version of the questionnaire spreadsheet.}
+    \label{fig:open-multiple-neu}
+\end{figure}
+
+\begin{figure}
+    \center
+    \includegraphics[width=.75\textwidth]{choice-neu}
+    \caption{The differences between how a choice-based with extra information is defined on the old versus the new version of the questionnaire spreadsheet.
+    Note that now it is possible to specify the data type of the extra information that is attached to the extra information of a choice.}
+    \label{fig:choice-neu}
+\end{figure}
+
+It was considered to also remove the Level part of the Level/Number column, adding an EndGroup row type.
+Then whenever the user wanted to create a subgroup of question after a question would create a Group with empty text and the framework would move the question of that group to a depper level with no group label.
+This however would make the spreadsheet even longer for certain questionnaires that make use of categories to group questions that have some dependency to another question.
+On figure \ref{fig:excel-end-group} is shown how the change would affect the spreadsheet.
+
+\begin{figure}[h]
+    \center
+    \includegraphics[width=\textwidth]{excel-end-group}
+    \caption{}
+    \label{fig:excel-end-group}
+\end{figure}
+
+Even with colors, the user editing has to look several rows above to know at each level it his so he can match the ``EndGroud'' rows with the respective ``Group'' rows.
+This is the same problem as matching if open and closing brackets on C-like programming languages.
+Such problem does not exist there before indentation is allowed, which it can't be achieved on a spreadsheet.
+For those reasons, the Level column was kept, however, when a questionnaire is imported, whenever there are nested level the framework will create groups with empty text.
+
+\subsection*{Data Type}
+
+\begin{itemize}
+    \item short text:
+    \item long text:
+    \item single choice:
+    \item multiple choice:
+    \item integer:
+    \item date:
+    \item email:
+    \item url:
+    \item numeric:
+    \item publication:
+    \item image:
+    \item choice tabular:
+    \item open multiple:
+\end{itemize}
+
+\ref{tab:original-question-types}
+
+\subsection*{Slug and Dependencies}
+
+\subsection*{Constraints}
