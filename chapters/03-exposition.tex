@@ -994,68 +994,106 @@ ColumnChoice                  &                                                 
 \label{tab:excel-row-types}
 \end{table}
 
-Using the new row types described in table \ref{tab:excel-row-types} the spreadsheet it self will be longer, containing more lines, however will be easier to read.
-On figures \ref{fig:choice-tabular-neu}, \ref{fig:open-multiple-neu} and \ref{fig:choice-neu}, it is presented some before and after of how question that require extra configuration will be represented on the new spreadsheet version.
+Using the new row types described in table \ref{tab:excel-row-types}, the spreadsheet itself will be longer, however, it will be easier to read.
+In figures \ref{fig:choice-tabular-neu}, \ref{fig:open-multiple-neu} and \ref{fig:choice-neu}, it's presented three before and after of how questions that require extra configuration were and are now defined with the new spreadsheet version.
 
 \begin{figure}
     \center
     \includegraphics[width=.75\textwidth]{choice-tabular-neu}
-    \caption{The differences between how a choice tabular question is defined on the old versus the new version of the questionnaire spreadsheet.}
+    \caption{Differences between how a choice tabular question was versus how is now defined on the questionnaire spreadsheet.}
     \label{fig:choice-tabular-neu}
 \end{figure}
 
 \begin{figure}
     \center
     \includegraphics[width=.75\textwidth]{open-multiple-neu}
-    \caption{The differences between how a open multiple question is defined on the old versus the new version of the questionnaire spreadsheet.}
+    \caption{Differences between how a open multiple question was versus how is now defined on the questionnaire spreadsheet.}
     \label{fig:open-multiple-neu}
 \end{figure}
 
 \begin{figure}
     \center
     \includegraphics[width=.75\textwidth]{choice-neu}
-    \caption{The differences between how a choice-based with extra information is defined on the old versus the new version of the questionnaire spreadsheet.
+    \caption{Differences between how a open multiple question was versus how is now defined on the questionnaire spreadsheet.
     Note that now it is possible to specify the data type of the extra information that is attached to the extra information of a choice.}
     \label{fig:choice-neu}
 \end{figure}
 
 It was considered to also remove the Level part of the Level/Number column, adding an EndGroup row type.
-Then whenever the user wanted to create a subgroup of question after a question would create a Group with empty text and the framework would move the question of that group to a depper level with no group label.
-This however would make the spreadsheet even longer for certain questionnaires that make use of categories to group questions that have some dependency to another question.
-On figure \ref{fig:excel-end-group} is shown how the change would affect the spreadsheet.
+Then whenever the user wanted to create a subgroup of questions after a question would create a Group with empty text and the framework would move the question of that group to a deeper level with no group label.
+This however would make the spreadsheet even longer for certain questionnaires that make use of categories to group questions that have some dependency on another question.
+Figure \ref{fig:excel-end-group} shows how the change would affect the spreadsheet.
 
 \begin{figure}[h]
     \center
     \includegraphics[width=\textwidth]{excel-end-group}
-    \caption{}
+    \caption{A possible solution to avoid relying on the Level column to create subgroups of questions. On the new solution proposed it's much difficult to know at which level the specific question is located, without looking at the rows above.}
     \label{fig:excel-end-group}
 \end{figure}
 
-Even with colors, the user editing has to look several rows above to know at each level it his so he can match the ``EndGroud'' rows with the respective ``Group'' rows.
+Even with colors, the user editing has to look several rows above to know at each level it is so he can match the ``EndGroud'' rows with the respective ``Group'' rows.
 This is the same problem as matching if open and closing brackets on C-like programming languages.
-Such problem does not exist there before indentation is allowed, which it can't be achieved on a spreadsheet.
-For those reasons, the Level column was kept, however, when a questionnaire is imported, whenever there are nested level the framework will create groups with empty text.
+Such a problem is alleviated since indentation is allowed, which can't be achieved on a spreadsheet.
+For those reasons, the Level column was kept, however, when a questionnaire is imported, whenever there are nested levels the framework will create groups with empty text.
 
 \subsection*{Data Type}
 
+As it was possible to see in figures \ref{fig:choice-tabular-neu}, \ref{fig:open-multiple-neu} and \ref{fig:choice-neu}, the Data Type column is used to detail the type of data that will be stored and how it will be requested to the user in terms of HTML widgets.
+
+Table \ref{tab:original-question-types} contains all the previously allowed question types, a total of twenty-five different types.
+On the new version, this list was reduced, where some questions can now be achieved using simple question types in conjunction with the new row types that extend their base functionality.
+
+Next is the list of question types available after the refactoring:
+
 \begin{itemize}
-    \item short text:
-    \item long text:
-    \item single choice:
-    \item multiple choice:
-    \item integer:
-    \item date:
-    \item email:
-    \item url:
-    \item numeric:
-    \item publication:
-    \item image:
-    \item choice tabular:
-    \item open multiple:
+    \item short text: Old open. It replaces the open-validated field by making use of the new Constraints column;
+    \item long text: Old open-textfield
+    \item single choice: Used to achieved any old single-choice question type. The extra information input can now be achieved with the ChoiceInfo row type;
+    \item multiple choice: Used to achieved any old multiple-choice question type. The extra information input can now be achieved with the ChoiceInfo row type;
+    \item integer: Old integer;
+    \item date: Old datepicker;
+    \item email: Old email;
+    \item url: Old url;
+    \item numeric: Old numeric;
+    \item publication: Old publication;
+    \item image: Old open-upload-image;
+    \item choice tabular: Old choice-tabular;
+    \item open multiple: Can achieve both the old open-multiple and open-multiple composition
 \end{itemize}
 
-\ref{tab:original-question-types}
+Open-location and timeperiod were removed since they weren't being used on any of the active installations of the MONTRA framework.
+The same happened with sameas and custom as additionally, they were shortcut type questions.
 
 \subsection*{Slug and Dependencies}
 
+Previously the dependencies between questions were detailed by providing the id of the target question and the order of the choice that was needed to be selected, but since now the choices are described by row, the user can also detail an id for them, which such id can then be used on the Dependencies column of the questions that depend on such choice.
+
 \subsection*{Constraints}
+
+The old Question model allowed to add custom checks, however, this feature was not possible to make use of through the spreadsheet, it was only possible to define them once the questionnaire was imported.
+This ``Constraints'' column intends to enable configuring such additional checks.
+Checks were previously stored in a custom format, where each check was separated by a space, defined as $name="value"$.
+To avoid having to parse a string every time we want to load the constraints, they are now stored in a \gls{json} field.
+In terms of the spreadsheet, the format chosen was \gls{yaml}~\cite{yaml} since the previously used format deals with values in strings, which makes the validation of the import process much harder.
+\gls{json} was also considered, however it was too much verbose to put on a spreadsheet cell, emerging the clutter problem.
+Besides \gls{yaml} being more user-friendly, it easily maps to a \gls{json} object to them be stored along with the new Question model.
+
+Currently, the supported constraints are the following:
+
+\begin{table}[]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Question Type(s)}                                                       & \textbf{Constraint} \\ \hline
+any                   & required    \\ \hline
+\multirow{3}{*}{\begin{tabular}[c]{@{}l@{}}short text\\ long text\end{tabular}} & min\_length         \\ \cline{2-2}
+                      & max\_length \\ \cline{2-2}
+                      & regex       \\ \hline
+\multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}integer\\ numeric\end{tabular}}      & min\_value          \\ \cline{2-2}
+                      & max\_value  \\ \hline
+\multirow{3}{*}{date} & min\_date   \\ \cline{2-2}
+                      & max\_date   \\ \cline{2-2}
+                      & format      \\ \hline
+\end{tabular}
+\caption{Newly available constraints to apply to a question}
+\end{table}
