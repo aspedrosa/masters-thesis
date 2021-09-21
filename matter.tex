@@ -219,7 +219,7 @@
 
 \begin{document}
 %\ifthenelse{\equal{\useoverleaf}{0}}{}{\makecoverfile{}}%
-%\includepdf[pages=-]{cover.pdf}
+\includepdf[pages=-]{cover.pdf}
 
 %
 %Front matter
@@ -288,21 +288,20 @@
 \setcounter{secnumdepth}{4} %subsubsections are numbered
 
 
-\cleardoublepage
-
 %Table of contents
-{\small\tableofcontents}
 \cleardoublepage
+{\small\tableofcontents}
 
 %List of figures
+%\cleardoublepage
 %{\small\listoffigures}
 
-
 %List of tables
-%%\cleardoublepage
-%%{\small\listoftables}
+%\cleardoublepage
+%{\small\listoftables}
 
 %Print Glossary
+\cleardoublepage
 {
     \small
 
@@ -326,12 +325,12 @@
 %Line spacing: 1.5 pt
 \OnehalfSpacing
 
-%\include{chapters/01-intro}
+\include{chapters/01-intro}
 \include{chapters/02-background}
 \include{chapters/03-exposition}
 \include{chapters/04-extraction-update}
-%\include{chapters/05-evaluation}
-%\include{chapters/06-conclusion}
+\include{chapters/05-evaluation}
+\include{chapters/06-conclusion}
 
 % End of Thesis text ---------------------------------------------------------
 % Including files is advised:
