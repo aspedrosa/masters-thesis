@@ -1,5 +1,47 @@
 \chapter{Automatic Metadata Extraction and Update}
 \label{chapter:metadata-visualization}
+\graphicspath{{figs/04-extraction-update/}}
+
+At this stage we have a that is functional and ready to store and display metadata related to a medic database.
+We move now to the process around extracting metadata from a \gls{cdm} database and then then this gathered data to the applications that need update, such as the MONTRA framework.
+
+\section{Requirement Analysis}
+
+\begin{itemize}
+    \item nem sempre vamos ter acesso direto à base de dados
+        \item melhor optar por uma opção em que o tal agente apenas está à escuta de ficheiros num diretorio especifico
+    \item Comunicação com os agentes pode ser necessario para obter feadback. no entanto, segundo a literatura, ter portas aberta não é algo que devemos ter de pedir aos data owners, pois pode implicar alterações na sua firewal e afins.
+    \item existe a possiblidade de criar uma solução p2p, no entanto podemos estar a colocar responsabilidades nos agentes que os data owners podem não querer ter. uma melhor aproximação para garantir que a solução é mais apropriada para os data owners é uma entidade central que se encarrega das várias tarefas da rede.
+    \item o cargo do agente passa a ser apenas ler dados e enviar para um entidade central
+    \item data might not come in the desired format. need to transform
+    \item application might not want all the data extracted from a database. need to filter
+\end{itemize}
+
+\subsection{Functional Requirements}
+
+\subsubsection*{Acess to a directory only}
+
+\subsubsection*{Register a database}
+\subsubsection*{See history/logs of a database}
+\subsubsection*{Create Filtering+Mapping pipelines}
+\subsubsection*{Customize how the data will reach the application through REST}
+\subsubsection*{See history/logs of received data by an application}
+\subsubsection*{Status of agents, pipelines and senders}
+
+\subsection{Non-Functional Requirements}
+
+\subsubsection*{Easily deployable}
+the instalations of the agents by the admin of data owner's data center should be a smoth process
+
+\subsubsection*{Scallable}
+As more databases are connected to the network, the system should allow to increase resources so that is processes faster
+
+\subsubsection*{Micro service architecture}
+The system should be composed by simple and replacable components that deal with well defined tasks
+
+\subsubsection*{Agents should do only the necessary}
+
+\subsection{Use Cases}
 
 \section{Extraction}
 
@@ -60,7 +102,7 @@
 \end{itemize}
 \subsection{Admin Dashboard}
 \begin{itemize}
-    \item Allows to create new pipelines and add aplications 
+    \item Allows to create new pipelines and add aplications
 \end{itemize}
 
 \section{Network Data Flow}
