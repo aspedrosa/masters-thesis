@@ -395,6 +395,7 @@ With the PUT request, a fingerprint owner can update data of specific answers wh
 Existing two different types of endpoints to retrieve answers data makes sense since the returned format is returned in a way that is easier to handle data by the target entity that will consume that endpoint.
 If the fingerprint pages receive the data in \gls{html} format they can just put the \gls{html} in the determined container instead of having to build the entire container and insert the data on each input.
 Accordingly, if data is returned in a \gls{json} format it can easily access the data and perform some data processing avoiding going transverse the \gls{html} and retrieve the data from each input.
+\textit{TODO têm de existir pelo menos mais um endpoint para permitir atualizar perguntas pontualmente, não tendo a necessidade de apresentar os dados de todas as outras perguntas do mesmo question set como é o caso dos novos /submission/save endpoinsts. portanto o argumento aqui deve ser que os dois tipos de endpoints usam codigo diferente para fazer validação}
 However, having two different endpoints to update data doesn't make that much sense since current \gls{http} requests libraries offer an easy way to build a request in the required format as the one's browsers automatically build whenever a form is submitted.
 
 \subsection*{Draft}
@@ -717,9 +718,14 @@ Finally, a question supports for the user to define additional checks which are 
 %    \item o que necessita de, ou vai, ser alterado
 %\end{itemize}
 
+\textit{TODO pode ser interessante ter aqui um paragrafo e uma citação para o que é e o que custuma acontercer num processo de refactoring}
+
 Until now it was shown how the MONTRA framework was designed around databases, their metadata, and how that metadata can be shared among the platform users.
 For regular users the framework provides a good user experience, however, for power users, that make use of \gls{api}s, might make some errors which the framework will not prevent, leading to inaccurate data to be stored and presented.
 Also for developers, such flaws and bad design choices make the maintainability process of MONTRA instance a demanding and tedious process.
+
+With this, there is a clear opportunity to perform a refactoring process over the framework to correct such problems and the issues that have been emphasized in this chapter.
+The goal of this refactoring process is not to change the framework in a way to transform existing use cases, but to improve its internal structure to make the framework more stable, easier to maintain, and easier for an external tool to communicate with it, mainly to publish database data.
 
 Next, we will propose several changes to be applied to the framework, beginning from the data models, regarding how fingerprint answers data is stored, how questionnaires structure is stored and some other fixes for some defects explained previously.
 Such refactoring will imply changes on other components, one of them being the rendering of questionnaires and how input validation is done.
@@ -869,7 +875,7 @@ Bellow are such:
 Submissions Management:
 POST [base url]/api/submission/save/[community slug]/[questionnaire id]/[section index]/
 POST [base url]/api/submission/save/[questionnaire id]/[section index]/
-POST [base url]/api/submission/save/[fingerprint hash]/[section index]/
+PUT [base url]/api/submission/save/[fingerprint hash]/[section index]/
 
 Questionnaire Information:
 GET  [base url]/api/questionnaire/info/[community slug]/[questionnaire id]/[section index]/
@@ -908,6 +914,7 @@ In the case the provided submission token does not match the current one stored 
     \label{fig:submissions-new-answer}
 \end{figure}
 
+\textit{TODO vou ter de mencionar também os answers/<question-slug> endpoints pois permitem atualizar respostas sem ter de apresentar as respostas as restantes perguntas do mesmo question set. o que é necessario, tanto para manter o api para os utilizadores como para as aplicações do proximo capitulo}
 In such requests, data must be sent on the body encoded in a multipart/form-data format.
 Such requests are not so trivial to create by hand, however, there are tools and libraries such as Postman\footnote{https://www.postman.com/} or python's request library\footnote{https://docs.python-requests.org/en/master/index.html} that aid in the process of creating such requests.
 
@@ -1070,6 +1077,8 @@ Previously the dependencies between questions were detailed by providing the id 
 
 \subsection*{Constraints}
 
+\textit{TODO afinal yaml não é muito indicado pois "asdf:asdf" é considerado um escalar e "asdf: asdf" já é considerado um entrada key:value valida. Acho que estar estar a falhar a importação e dizer ao utilizador "mete um espaço" não é muito nice}
+
 The old Question model allowed to add custom checks, however, this feature was not possible to make use of through the spreadsheet, it was only possible to define them once the questionnaire was imported.
 This ``Constraints'' column intends to enable configuring such additional checks.
 Checks were previously stored in a custom format, where each check was separated by a space, defined as $name="value"$.
@@ -1097,3 +1106,5 @@ any                   & required    \\ \hline
 \end{tabular}
 \caption{Newly available constraints to apply to a question}
 \end{table}
+
+\textit{TODO closing notes}
