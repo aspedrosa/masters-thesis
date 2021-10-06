@@ -107,6 +107,7 @@ url                               & Text input with url validation              
 \end{longtable}
 
 \subsection{Fingerprints}
+\label{sec:fingerprints}
 
 %\begin{itemize}
 %    \item Views
@@ -293,6 +294,15 @@ With this, when building a form in Django the developer only needs to specify wh
 
 Finally, \gls{xss} attacks are prevented because Django escapes the values that were previously provided by users when filling the input tags, e.g. the character ``<'' is transformed in ``\&lt;'', avoiding the browser to interpret user's input as \gls{html} code.
 
+Another problem associated with the views of the MONTRA framework is how the management of javascript dependencies is done.
+There is no consistency on how such dependencies are imported.
+Some are imported directly on the template through \textit{script} tags making use of a \gls{cdn}, as others their entire source were added to the repository and are then referenced based on their location.
+The first approach has the advantage that an upgrade is simply changing the URL attribute of the \textit{script} tag and also reduces bandwidth from the Django server handling the user requests.
+The second approach increases the overall size of the repository, and the upgrade process will lead to more changes on the repository.
+These processes, however, have the problem that easily unnecessary dependencies will still be present on the Django templates after being used on the application.
+Currently, there are tools such as \gls{npm}\footnote{https://www.npmjs.com/} that help to manage these dependencies by defining, on a single file, the dependency and its version.
+This software will then download the dependency and subsequent dependencies.
+
 \subsection*{API}
 
 %\begin{itemize}
@@ -395,7 +405,6 @@ With the PUT request, a fingerprint owner can update data of specific answers wh
 Existing two different types of endpoints to retrieve answers data makes sense since the returned format is returned in a way that is easier to handle data by the target entity that will consume that endpoint.
 If the fingerprint pages receive the data in \gls{html} format they can just put the \gls{html} in the determined container instead of having to build the entire container and insert the data on each input.
 Accordingly, if data is returned in a \gls{json} format it can easily access the data and perform some data processing avoiding going transverse the \gls{html} and retrieve the data from each input.
-\textit{TODO têm de existir pelo menos mais um endpoint para permitir atualizar perguntas pontualmente, não tendo a necessidade de apresentar os dados de todas as outras perguntas do mesmo question set como é o caso dos novos /submission/save endpoinsts. portanto o argumento aqui deve ser que os dois tipos de endpoints usam codigo diferente para fazer validação}
 However, having two different endpoints to update data doesn't make that much sense since current \gls{http} requests libraries offer an easy way to build a request in the required format as the one's browsers automatically build whenever a form is submitted.
 
 \subsection*{Draft}
@@ -718,8 +727,6 @@ Finally, a question supports for the user to define additional checks which are 
 %    \item o que necessita de, ou vai, ser alterado
 %\end{itemize}
 
-\textit{TODO pode ser interessante ter aqui um paragrafo e uma citação para o que é e o que custuma acontercer num processo de refactoring}
-
 Until now it was shown how the MONTRA framework was designed around databases, their metadata, and how that metadata can be shared among the platform users.
 For regular users the framework provides a good user experience, however, for power users, that make use of \gls{api}s, might make some errors which the framework will not prevent, leading to inaccurate data to be stored and presented.
 Also for developers, such flaws and bad design choices make the maintainability process of MONTRA instance a demanding and tedious process.
@@ -800,35 +807,56 @@ Meanwhile, there are previously existing models that have undergone changes to f
 
 \subsection{Views}
 
-Deixo isto mais para o fim pois ainda vou fazer alterações nas views
+When the MONTRA framework was presented it was highlighted that the different variations of the fingerprint view (create, show, edit, search, preview) were all using a different Django template.
+Once again, this brings the problem that one change will entail that the same change has to be applied on the remaining fingerprint view variations.
+On the refactoring process, these views were adapted so all the different pages use a shared fingerprint template which then renders the necessary components according to the page where are being rendered.
 
-\begin{itemize}
-    \item Agora todas a variantes da fingerprint view usa o mesmo template. Uma alteração implica apenas uma alteração
-    \item Falar nos vários componentes da pagina de fingerprint E em que variantes da view eles aparecem:
-        \begin{itemize}
-            \item draft checkbox
-            \item Question sets menu (vai ser detalhado na secção do API)
-            \item inputs das questões
-            \item butões de questionario (summary, detailed, collapse, show)
-            \item butões de question set (show, collapse, permissions)
-            \item progress bar
-            \item hitcount stats
-        \end{itemize}
-    \item falar nas versão de apenas uma e duas colunas. Criar imagens com retangulos com transparencia
-\end{itemize}
+The first step of this process is to put different components into separate templates, which will then allow the creation of different arrangements of such components according to the fingerprint view variation being displayed.
+Note that even within these new separate components, some parts of them might be rendered differently according to the fingerprint view variation where they are being inserted into.
+In figures \ref{fig:fingerprint-new} and \ref{fig:fingerprint-show-detailed} we can see that some components are present on both views.
+The question set title, the questions, the question set menu, the fill progress bar, and the navigation buttons.
+However, we can also see some components in figure \ref{fig:fingerprint-show-detailed} which are not present on the on figure \ref{fig:fingerprint-new} such as the fingerprint statistics (hits, unique views and fill percentage), there are no fingerprint-related buttons, which are now questionnaire-wide buttons.
+Note that the name of the fingerprint (DemoAveiro), the several tabs (Fingerprint, Documents, ...), and the subscribe and Manage buttons are specific to the show Page.
+The new fingerprint template will only contain components to display within the Fingerprint tab.
 
-\subsection{API}
+\begin{figure}[H]
+    \center
+    \includegraphics[width=\textwidth]{fingerprint-other-after-diagram}
+    \caption{New fingerprint template for the create, edit, search and preview fingerprint views variations.}
+    \label{fig:fingerprint-other-after-diagram}
+\end{figure}
 
-%\begin{itemize}
-%    \item UI changes
-%    \item consequencia da alteração do front end devido à alateração do backend
-%    \item passar toda a verificação para o backend, passando a usar a validação built in do Django
-%    \item tentar reutilizar os modulos existentes
-%\end{itemize}
+In Figure \ref{fig:fingerprint-other-after-diagram} is presented a two-column layout for the create, edit, search and preview variations of the fingerprint view.
+Although, some components are not displayed in certain variations, such as the Cancel and Save buttons.
+The Cancel button is not displayed on the preview variation, and both Cancel and Save buttons are replaced by a Search button on the search button.
+Additionally, different buttons appear on the question set buttons component according to the fingerprint view variation.
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=\textwidth]{fingerprint-show-detailed-after-diagram}
+    \caption{New fingerprint template layout for the detailed show fingerprint view variation}
+    \label{fig:fingerprint-show-detailed-after-diagram}
+\end{figure}
+
+The show variation, as shown in figure \ref{fig:fingerprint-show-detailed-after-diagram}, uses a single column with two rows layout.
+Previously the show variant had no Question set buttons, however, to keep consistency with the other variants, the Collapse and Show buttons were moved to the Question Set Buttons where they were being displayed on the other variants.
+By default, the only button visible on the Questionnaire buttons is the Summary, which will hide the current detailed view and show an alternative summary layout, where answers are displayed in several tables, one for each question set.
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=\textwidth]{fingerprint-show-summary-after-diagram}
+    \caption{New fingerprint template layout for the summary show fingerprint view variation}
+    \label{fig:fingerprint-show-summary-after-diagram}
+\end{figure}
+
+As can be observed in figure \ref{fig:fingerprint-show-summary-after-diagram}, when the user switches to the summary view, by clicking on the Summary Questionnaire button, the detailed view container is hidden, and the summary view container is displayed.
+
+It's important to note again that the overall aesthetics and workflow of the page were not changed.
+The only major change was to divide the fingerprint view into several, reusable components.
 
 When we went over how question sets were rendered, we saw that each question set had its container and they are only rendered when is accessed for the first time.
 When it needs to be rendered, \gls{api} endpoints are used to fetch the \gls{html} of a specific question set.
-On this \gls{html} returned, each question has attached their client-side validation code.
+On this \gls{html} returned, each question had attached their client-side validation code.
 The goal is to remove all existing code of client-side validation, making use of only simple built-in \gls{html} validations on the client-side and use Django's forms framework to have all remaining validations on the server-side.
 
 Before going into more details let's go over Django's built-in form system and some of its components.
@@ -851,24 +879,41 @@ A Submission form was created, child of Django's \textit{Form} class, where its 
 Additionally, several question types lead to the need of having to create and associate new \textit{Field} and \textit{Widget} child classes since they were too complex to be represented or validated with the ones that Django already has implemented.
 To build the widgets of such question types, existing implementations were ported to an associated Django template to then be used in its new widget class.
 
-Considering this, below are presented the endpoints used by the different variations to fetch the \gls{html} of a question set of a specific questionnaire:
+By removing all validations from the front end, client-side code is now only used to make \gls{api} calls to the backend, to validate the data inserted by the user, and to add functionality to the page itself, such as hide and/or show elements on the page after a button is clicked.
+All client-side code related to the fingerprint was either migrated or newly implemented using, as much as possible, plain javascript, avoiding any external library.
+It avoids adding yet another dependency to the project, and if in the future, upgrades are done to libraries such as JQuery\footnote{https://jquery.com/}, the code implemented here is not affected and does not require any refactoring.
+
+\subsection{API}
+
+%\begin{itemize}
+%    \item UI changes
+%    \item consequencia da alteração do front end devido à alateração do backend
+%    \item passar toda a verificação para o backend, passando a usar a validação built in do Django
+%    \item tentar reutilizar os modulos existentes
+%\end{itemize}
+
+As all the validations were moved to the backend, it was necessary to create several \gls{api} endpoints that perform them.
+Such validations take advantage of Django's form system, so in the implementation of each endpoint, it is only necessary to build a SubmissionForm then add the data provided by the user and then call its validation method, which will validate all the fields that were defined in the form.
+
+Besides the user input validation, there need to be new endpoints that render the \gls{html} of a question set of a questionnaire using the new questions models and Django's forms system.
+As different fingerprint view variations might present the questions and answers differently, there are different endpoints for each fingerprint variant:
 
 \begin{lstlisting}[basicstyle=\tiny]
 GET  [base url]/questions/[questionnaire id]/[section index]/preview/
 
 GET  [base url]/questions/[community slug]/[questionnaire id]/[section index]/search/
 
-GET  [base url]/questions/[community slug]/[questionnaire id]/[section index]/  % create
-GET  [base url]/questions/[questionnaire id]/[section index]/  % create
+GET  [base url]/questions/[community slug]/[questionnaire id]/[section index]/create/
+GET  [base url]/questions/[questionnaire id]/[section index]/create/
 
-GET  [base url]/questions/[fingerprint hash]/[section index]/  % edit
+GET  [base url]/questions/[fingerprint hash]/[section index]edit/
 
 GET  [base url]/questions/[fingerprint hash]/[section index]/show/
 \end{lstlisting}
 
 There are two different endpoints for the create variant, because certain installations are a single community, for that, the community is implicit, but for multi-community installations, the community slug is required, since the same questionnaire can be used on different communities.
 
-For edit and create variants, there needs to be additional endpoints that save the progress when the user changes from one question set to another.
+For the edit and create variants, there need to be additional endpoints that are in charge of performing all the validations associated with each field and saving the progress when the user changes from one question set to another if no error is found.
 Bellow are such:
 
 \begin{lstlisting}[basicstyle=\scriptsize]
@@ -914,11 +959,12 @@ In the case the provided submission token does not match the current one stored 
     \label{fig:submissions-new-answer}
 \end{figure}
 
-\textit{TODO vou ter de mencionar também os answers/<question-slug> endpoints pois permitem atualizar respostas sem ter de apresentar as respostas as restantes perguntas do mesmo question set. o que é necessario, tanto para manter o api para os utilizadores como para as aplicações do proximo capitulo}
-In such requests, data must be sent on the body encoded in a multipart/form-data format.
-Such requests are not so trivial to create by hand, however, there are tools and libraries such as Postman\footnote{https://www.postman.com/} or python's request library\footnote{https://docs.python-requests.org/en/master/index.html} that aid in the process of creating such requests.
+Previously it was possible to update an answer of a single question through endpoint \textit{/api/fingerprints/[fingerprint hash]/answers/[question slug]/}, mentioned in the \gls{api} portion of section \ref{sec:fingerprints}, which was a more user-oriented alternative to the ones that were used on the old fingerprints views.
+On the new endpoints to validate and save the answers of a question set, if a single answer is sent, Django's form system will consider the rest of the answers to the other questions of the question set as empty.
+With this, the user is forced to always send the previous answers to all other questions plus the updated answer of the specific question.
+To avoid this, the \textit{/api/fingerprints/[fingerprint hash]/answers/[question slug]/} endpoints were kept, refactoring them to use the new models and Django's form system, but in these, the form used to perform the validation only contains one question instead of all questions of a question set.
 
-As mentioned previously, choice-based answers are stored as a foreign key to the choice(s) selected.
+With all this changes to the endpoints, choice-based answers are stored as a foreign key to the choice(s) selected.
 This implies that the answer's data sent on the Submissions Management endpoints for such question types must be these foreign keys, avoiding misspellings and non-existing choices.
 However, one does not know the keys for each choice and also the available choice if the web view is not used.
 For that, the Questionnaire Information endpoints are used to get information of choice-based questions, so that the correct data is sent along with the Submissions Management endpoints.
@@ -1077,19 +1123,26 @@ Previously the dependencies between questions were detailed by providing the id 
 
 \subsection*{Constraints}
 
-\textit{TODO afinal yaml não é muito indicado pois "asdf:asdf" é considerado um escalar e "asdf: asdf" já é considerado um entrada key:value valida. Acho que estar estar a falhar a importação e dizer ao utilizador "mete um espaço" não é muito nice}
-
-The old Question model allowed to add custom checks, however, this feature was not possible to make use of through the spreadsheet, it was only possible to define them once the questionnaire was imported.
+The old Question model allowed to add custom checks, however, this feature was not possible to make use of through the spreadsheet, it was only possible to define them after the questionnaire was imported.
 This ``Constraints'' column intends to enable configuring such additional checks.
 Checks were previously stored in a custom format, where each check was separated by a space, defined as $name="value"$.
 To avoid having to parse a string every time we want to load the constraints, they are now stored in a \gls{json} field.
-In terms of the spreadsheet, the format chosen was \gls{yaml}~\cite{yaml} since the previously used format deals with values in strings, which makes the validation of the import process much harder.
+Regarding the spreadsheet, the format chosen was a modified version of the original checks, supporting several types instead of interpreting every value as a string, allowing flexibility on the whitespace between each and within a check.
+Next is presented some examples:
+
+\begin{verbatim}
+name: "value"  -> string
+name: true     -> boolean
+name: 1        -> integer
+name: 1.5      -> numeric
+name: value2   -> also a string
+\end{verbatim}
+
 \gls{json} was also considered, however it was too much verbose to put on a spreadsheet cell, emerging the clutter problem.
-Besides \gls{yaml} being more user-friendly, it easily maps to a \gls{json} object to them be stored along with the new Question model.
 
 Currently, the supported constraints are the following:
 
-\begin{table}[]
+\begin{table}[H]
 \centering
 \begin{tabular}{|l|l|}
 \hline
@@ -1107,4 +1160,10 @@ any                   & required    \\ \hline
 \caption{Newly available constraints to apply to a question}
 \end{table}
 
-\textit{TODO closing notes}
+
+\section{Summary}
+In this chapter, a metadata storing and visualization tool, the MONTRA framework, was detailed and analyzed, highlighting some of its poor design choices, which impact its usability and maintainability.
+A refactoring process was performed to fix such problems, preventing and giving feedback on user error when submitting data and improving the overall maintainability of components related to the metadata displaying.
+
+The next chapter will go over the remaining part of the process regarding metadata.
+Extracting it from a database and then send it to update tools that store and display it, such as an installation of the MONTRA framework.
