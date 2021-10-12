@@ -153,7 +153,7 @@ Authorized users are then given the possibility to access and download all datas
 To become an authorized user, the platform requires that users send an application with their background and an agreement to the terms of use.
 Having these processes of sharing and getting data, prevents researchers from making different applications for each data set and allows having a more diverse data pool which can improve results from their analysis.
 
-As of January 2021, the \gls{pds} website had available cancer trial data from over 150 trials including over 100,000 subjects~\cite{datasphere-site}.
+As of October 2021, the \gls{pds} website had available cancer trial data from over 200 trials including over 240,000 subjects~\cite{datasphere-site}.
 
 \subsection*{Molgenis}
 For biologists to efficiently capture, exchange and exploit big amounts of molecular data, user-friendly and scalable software infrastructures are needed.
@@ -165,7 +165,7 @@ The creators of MOLGENIS saw an improvement of up to 30 times in terms of effici
 With the goal of developing new biomarkers and drugs, the \gls{bbmri-eric} project~\cite{bbmrieric} enables the research of basic mechanisms underlying diseases, by providing fair access to human biological samples and their associated biomedical and biomolecular data.
 Here MOLGENIS is used to develop their Directory 1.0 which presents an overview of the \gls{bbmri-eric} ecosystem with its distributed structure and helps users find biobanks of their interest.
 
-To create a centralized research resource for \gls{rd}, the RD-Connect~\cite{rdconnect} project links genomic data with patient registries, biobanks, and bioinformatics tools.
+To create a centralized research resource for \gls{rd}, the RD-Connect~\cite{rdconnect} project associates genomic data to subject registries, biobanks, and bioinformatics software.
 To help \gls{rd} researchers to search for \gls{rd} biobanks and registries and also inform availability and accessibility on each database's content, the RD-Connect project has the D-Connect Registry \& Biobank Finder tool, which is also a portal to other of their tools. One of them is the RD-Connect Sample Catalogue, which was developed using MOLGENIS, having an inventory of \gls{rd} biological samples available in associated biobanks.
 
 \subsection*{Cafe Variome}
@@ -198,7 +198,7 @@ After Mica is populated with study metadata, researchers can use the built-in se
 Furthermore, on multi-study instances, studies with a certain profile, that gather data of the desired health outcomes, risk factors and/or confounding factors are easily identified and gathered by users.
 Combining Mica with one or more Opal database(s) enables users to safely query actual study data, present on remote servers, applying searches exceeding the metadata.
 
-Besides developing these two tools, Maelstrom Research and its partners used them to develop the Maelstrom Research Catalogue~\cite{maelstrom}, a flexible collection of epidemiological studies worldwide that offer a user-friendly web-based solution for data discovery.
+Besides developing these two tools, Maelstrom Research and its partners adopted them to produce the Maelstrom Research Catalogue, a flexible collection of epidemiological studies which offer an intuitive web solution for data discovery.
 
 \subsection*{BioSharing}
 Another interesting tool to promote data dissemination and discoverability is BioSharing~\cite{biosharing}, recently known as FAIRSharing~\cite{fairsharing}, a portal of connected, informative and discoverable information about standards, databases, and journal and funder data policies in the life sciences.
@@ -248,18 +248,26 @@ processes are relevant for the task of extracting/profiling datasets.
 Next are presented such tools:
 
 \subsection*{Search Method}
+
+\textit{TODO describe this}
+
 search terms: metadata (extration or creation),
+
 "metadata" (extraction or creation) from database,
+
 extraction from database,
+
 metadata fingerprinting a database,
+
 metadata updating,
 
 \subsection*{ACHILLES}
 The \gls{ohdsi} project, already mentioned at the beginning of this chapter, offers a variety of open-source tools~\cite{ohdsi-tools} that can be used on several data-analytics use cases on observational patient-level data.
-A common aspect of such tools is that they can all interact with one or more databases if they had adhered to the \gls{omop} \gls{cdm}, which enables them to homogenize the analytics for diverse use cases.
+Such tools can communicate with several databases that have adhered to the OMOP CDM, enabling them to homogenize the analytics for different use cases.
 With this, instead of having to build an analysis from scratch, a standard template can be used, turning the process of building analyses easier, and also enhancing transparency and reproducibility.
 
-\gls{achilles}~\cite{achilles-github} is a software tool that provides summaries and metadata of a database conforming to the \gls{cdm}, where such can be used for characterization and quality assessment of observational health databases.
+One of such tools, \gls{achilles}~\cite{achilles-github}, can produce summaries and metadata of \gls{cdm} databases.
+These allow for characterization and quality assessment of observational health databases.
 It is implemented as a package written in R~\footnote{https://www.r-project.org/}, which executes a series of SQL queries over the original \gls{cdm} database to calculate all the specific summaries, which in the context of \gls{achilles}, are called analyses.
 The result of these queries is then placed on a target database schema chosen by the user.
 The resulting summaries are not study-specific but can be used by researchers to explore and evaluate if the contents of databases can be used on studies that they intend to perform.
@@ -411,7 +419,7 @@ A possible configuration is to receive data over HTTP, then send the result of t
 \begin{table}[H]
     \center
     \begin{tabular}{|*{6}{c |}}
-\hline 
+\hline
         \multirow{2}{*}{Tool Name} & \multirow{2}{*}{Open Source} & \multicolumn{2}{c|}{Visualization/Interaction} & \multirow{2}{*}{Extraction} & \multirow{2}{*}{Network} \\
 \cline{3-4}
         & & Data protection  & FAIR & &   \\
@@ -424,7 +432,7 @@ A possible configuration is to receive data over HTTP, then send the result of t
 \hline
         Data Sphere \cite{datasphere} & {\color{red} \xmark} & {\color{green} \cmark} (Authorized Users Only) & {\color{red} \xmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
 \hline
-        MOLGENIS \cite{molgenis} & {\color{green} \cmark} \repo{https://github.com/molgenis/molgenis} & {\color{green} \cmark} (Role based) & {\color{red} \xmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
+        MOLGENIS \cite{molgenis} & {\color{green} \cmark} \repo{https://github.com/molgenis/molgenis} & {\color{green} \cmark} (Role based) & {\color{green} \xmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
 \hline
         Cafe Variome \cite{cafevariome} & {\color{red} \xmark} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
 \hline
@@ -441,6 +449,12 @@ A possible configuration is to receive data over HTTP, then send the result of t
 \hline
         DataMed \cite{datamed} & {\color{green} \cmark} \repo{https://github.com/biocaddie} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} \\
 \hline
+        Xtract \cite{xtract} & {\color{red} \xmark} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{green} \cmark} & {\color{green} \cmark} \\
+\hline
+        MetaExtractor \cite{metaextractor} & {\color{red} \xmark} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} \\
+\hline
+        Skluma \cite{skluma} & {\color{green} \cmark} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{green} \cmark} & {\color{red} \xmark} \\
+\hline
 \hline
         GAAIN \cite{gaain} & {\color{red} \xmark} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
 \hline
@@ -456,3 +470,5 @@ A possible configuration is to receive data over HTTP, then send the result of t
 % Similarity between extraction tools -> all converge different data model to a comon one
 
 As we can see there is no tool that all the cheks ...
+
+\textit{TODO closing notes}

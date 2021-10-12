@@ -64,28 +64,108 @@ Some use all the data, others only need a value of such data.
 
 \subsection{Functional Requirements}
 
-\subsubsection*{Acess to a directory only}
-\subsubsection*{Register a database}
-\subsubsection*{See history/logs of a database}
-\subsubsection*{Create Filtering+Mapping pipelines}
-\subsubsection*{Customize how the data will reach the application through REST}
-\subsubsection*{See history/logs of received data by an application}
-\subsubsection*{Status of agents, pipelines and senders}
+\begin{enumerate}
+    % extraction tool
+    \item The extraction tool used should either be one already built and
+
+    % agents
+    \item The agents muts not have direct access to the data
+
+        \begin{list}{}{}
+            \item This option assumes the least amount of access to the user's data so data owners are receptive to allow agents to be ran on their local deployments.
+                This will require that an agent has access to at least a shared storage where agents check for new writes and data owners post their extracted metadata.
+        \end{list}
+
+    % central unit
+    \item The central component must allow to register new databases
+
+        \begin{list}{}{}
+            \item cenas
+        \end{list}
+
+    \item The central component must allow to check if databases are active
+
+        \begin{list}{}{}
+            \item
+        \end{list}
+
+    \item The central component must allow check the amount of data a database has sent
+
+        \begin{list}{}{}
+            \item
+        \end{list}
+
+    \item The central components must alow to filter and select portions of the received data
+
+        \begin{list}{}{}
+            \item
+        \end{list}
+
+    % aplications
+    \item The central components must allow to register new applicaitons
+
+        \begin{list}{}{}
+            \item
+        \end{list}
+
+    \item The format of the data when being received by aplications must be cutomizable
+
+        \begin{list}{}{}
+            \item
+        \end{list}
+
+    \item The central components must allow to see the amounts of data that was sent to the aplications
+
+        \begin{list}{}{}
+            \item
+        \end{list}
+
+\end{enumerate}
 
 \subsection{Non-Functional Requirements}
 
-\subsubsection*{Easily deployable}
-the instalations of the agents by the admin of data owner's data center should be a smoth process
+\begin{enumerate}
+    \item Easily deployable
 
-\subsubsection*{Scallable}
-As more databases are connected to the network, the system should allow to increase resources so that is processes faster
+        \begin{list}{}{}
+            \item the instalations of the agents by the admin of data owner's data center should be a smoth process
+        \end{list}
 
-\subsubsection*{Micro service architecture}
-The system should be composed by simple and replacable components that deal with well defined tasks
+    \item agents should spend few resources
 
-\subsubsection*{Agents should do only the necessary}
+        \begin{list}{}{}
+            \item
+        \end{list}
+
+    \item Scallable
+
+        \begin{list}{}{}
+            \item
+        \end{list}
+
+    \item Micro service architecture
+
+        \begin{list}{}{}
+            \item As more databases are connected to the network, the system should allow to increase resources so that is processes faster
+        \end{list}
+
+    \item Agents should do only the necessary
+
+        \begin{list}{}{}
+            \item The system should be composed by simple and replacable components that deal with well defined tasks
+        \end{list}
+
+\end{enumerate}
 
 \subsection{Use Cases}
+
+actors:
+- data owners
+install agent
+stop agent
+
+admin
+- all other things
 
 \section{Extraction}
 
