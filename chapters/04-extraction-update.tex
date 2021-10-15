@@ -6,7 +6,7 @@ As we have an application ready to receive and display metadata, it is now cruci
 Figure \ref{fig:overall-arch-v1} presents a high-level architecture of the desired system that extracts data from databases and sends it to the applications that need their local data updated.
 Agents are software that runs on the data owner's deployment, in charge of extracting metadata from the database and sending this metadata to the applications.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \center
     \includegraphics[width=.6\textwidth]{overall-arch-v1}
     \caption{High-level architecture of the extraction and update process.}
@@ -27,7 +27,7 @@ The only difference is that we are not the ones executing it.
 As the extracting tool has direct access to the data, using an existing and widely known tool is a must, so data owners are inclined to use it.
 Additionally, making fewer to no changes is preferable to ensure that data owners don't discard the tool because they don't trust the changes.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \center
     \includegraphics[width=.6\textwidth]{overall-arch-v2}
     \caption{High-level architecture of the extraction and update process}
@@ -43,7 +43,7 @@ Since the agents are executed on the data owner's system, they should do only th
 
 A more executable solution is to have an intermediate component that receives the metadata from the agents and then distributes that data across the applications, following a centralized network architecture as it is presented in figure \ref{fig:overall-arch-v2}.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \center
     \includegraphics[width=.6\textwidth]{overall-arch-v3}
     \caption{High-level architecture of the extraction and update process, with a centralized network approach.}
@@ -56,10 +56,11 @@ However, it is also crucial that feedback is provided on the system's state, suc
 % aqui digo que percisamos de um componente intermedio. mais á frente vou dizer que percisamos um componente intermedio entre o kafka e as aplicações. coisas diferentes
 
 On the applications side, there are other important factors to consider before going forward on implementing the intermediary component mentioned before.
-First, the \gls{api}s of different applications expect the metadata in distinct arrangements.
+First, then we talk of application we are considering only web application that expect to receive metadata through a \gls{rest} \gls{api}.
+Second, the \gls{api}s of different applications expect the metadata in distinct arrangements.
 A way out of this would be to specify a set of endpoints that each application had to implement, yet that would lead the applications to have two sets of endpoints that do the same thing.
 On the other side, making a flexible option, where the requests where the data is sent are customizable, would be more appealing for the target applications, which would not have to make any changes.
-Second, not all applications require all metadata data that is extracted from a database.
+Third, not all applications require all metadata data that is extracted from a database.
 Some use all the data, others only need a value of such data.
 
 \subsection{Functional Requirements}
@@ -77,7 +78,8 @@ Some use all the data, others only need a value of such data.
 
     \item The system should allow managing the destination applications
         \begin{list}{}{}
-            \item The applications to where the data of the databases are sent, should not be hard-coded, for that, the network admin should be able to perform \gls{crud} operations on such applications
+            \item The applications to where the data of the databases are sent, should not be hard-coded, for that, the network admin should be able to perform \gls{crud} operations on such.
+                The term application should be interpreted as web applications that have \gls{rest} \gls{api} endpoints available to receive data.
         \end{list}
 
     \item The system should provide statistics on the data that has circulated
@@ -85,10 +87,12 @@ Some use all the data, others only need a value of such data.
             \item This is yet another feature to give feedback to the network admin about, now allowing to both check the amount of data that each database sent, and the amount of data that each application received.
         \end{list}
 
-    \item The format of the data sent to each application must be customizable
+    \item The format of the request sent with the metadata to each application must be customizable
         \begin{list}{}{}
             \item This is important since different applications expect to receive metadata in distinct formats since each application has a different \gls{api}.
         \end{list}
+
+    % eu não falo aqui das pipelines, que permitem filtrar os dados, pk isso foi algo que adicionei como consequencia consequencia em termos usado kafka
 
     \item The system should allow to group Databases
         \begin{list}{}{}
@@ -153,23 +157,79 @@ Some use all the data, others only need a value of such data.
 
 \subsection{Use Cases}
 
-actors:
-- data owners
-install agent
-stop agent
+From the previous requirements defined, there can be outlined two actors that will interact with the system:
 
-admin
-- all other things
+\begin{itemize}
+    \item Data owners, which maintain the agent on their local deployment;
+    \item System admin, that interacts with the central component to manage the whole system.
+\end{itemize}
+
+In figure \ref{fig:use-cases} is presented the use-case diagram, which shows the actions that each actor performs on the system.
+Such actions were divided into three groups: Agents, Metadata Extraction, actions on the central component related to receiving data from the agents, and Metadata Update, actions on the central component related to sending data to the applications.
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=\textwidth]{use-cases}
+    \caption{Use case diagram of the metadata extraction and update system}
+    \label{fig:use-cases}
+\end{figure}
+
+\begin{enumerate}
+    \item Set up the agent on the local deployment system
+        \begin{list}{}{}
+            \item Since it's not expected that data owners provide access to their deployment environment, the responsibility to set up the agent is imposed on them.
+        \end{list}
+
+    \item Stop the agent
+        \begin{list}{}{}
+            \item As Data owners control their data and the access to it at all times, them stopping the agent should be an action expected by the system.
+        \end{list}
+
+    \item Register a database
+        \begin{list}{}{}
+            \item As new databases enter the network and agents are deployed to gather their metadata, the system admin needs to register new databases on the central unit, so the data received is accepted into the system.
+        \end{list}
+
+    \item Create communities
+        \begin{list}{}{}
+            \item In a scenario where there are several databases from distinct projects, there is the need to group databases to treat their data separately.
+        \end{list}
+
+    \item Associate a database to a community
+        \begin{list}{}{}
+            \item Once there are databases and communities registered in the system, the system admin can do many-to-many associations between them.
+        \end{list}
+
+    \item Check active agents/databases
+        \begin{list}{}{}
+            \item At any time, the system admin can check the state of the network and verify which databases have an agent active.
+        \end{list}
+
+    \item Analyze statistics of data received from an agent/database
+        \begin{list}{}{}
+            \item As agents send data to the central component of the network, statistics can allow the system admin to see what databases contribute more data to the network and its frequency.
+        \end{list}
+
+    \item Register an application and customize how data is sent
+        \begin{list}{}{}
+            \item The system admin will also define the destination applications for the data received from the agents, setting also the format of the request that sends the data to such applications.
+        \end{list}
+
+    \item Analyze statistics of data sent to an application
+        \begin{list}{}{}
+            \item As metadata enters the system, having statistics of data sent to the application helps check if the system is working properly and if the applications are receiving the expected data.
+        \end{list}
+
+\end{enumerate}
 
 \section{Extraction}
 
-\begin{itemize}
-    \item a ideia geral em mente
-    \item diagrama high-level do data flow
-\end{itemize}
+First lets go over the portion of the system which runs in the part of the data owners
 
 \subsection{ACHILLES}
 \begin{itemize}
+    \item percisade de um vocab files
+    \item escolhemos principalmente por estar direcionada para bases de dados cdm
     \item organização interna
     \item implementado em R
     \item diferentes maneiras de exportação (json, csv ou diramente para db)
@@ -179,6 +239,8 @@ admin
 
 \subsection{Asynchronous Message Systems}
 
+isto é preciso para haver comunicação enter agents e a central unit
+
 \subsubsection{RabbitMQ}
 
 \subsubsection{Kafka}
@@ -186,8 +248,8 @@ admin
 
 \subsection{Kafka Source Connectors}
 \begin{itemize}
-    \item fetch from files
-    \item falar nas varias opcoes
+    \item fetch from files or from tables
+    \item falar nas varias opcoes consideradas. as the tables não davam tudo duma vez, e as alternativas de ficheiros não davam feedback de quando tudo ja tinah sido uploaded
     \item o que eu escolhi da feedback de quando todos os records estão kafka e quantos records foram escritos
 \end{itemize}
 
@@ -195,11 +257,12 @@ admin
 
 \subsection{agent final architecture}
 \begin{enumerate}
+    \item data owners should automatize (if they want) the process of achilles extracting data from their databases
     \item send data to kafka
     \item responde to health check messages
 \end{enumerate}
 
-\begin{figure}[h]
+\begin{figure}
     \center
     \includegraphics[width=\textwidth]{agent-architecture}
     \caption{agent arch}
@@ -226,6 +289,9 @@ data is in kafka. what do we have to do to reach the applications
 
 \subsection{Pipelines Workers}
 \begin{itemize}
+    \item lets do it in go cause lets explore
+    \item search for kafka library
+    \item ksql introduced. easily filter data with select \_ where \_
     \item select and filter the data comming from the databses
     \item only process data of a single database at a time. handling multiple is the same is hard to handle and hard to scale
     \item scalable: several pipeline worker applications
@@ -234,17 +300,23 @@ data is in kafka. what do we have to do to reach the applications
 \subsection{Orchestrator}
 \begin{itemize}
     \item To ensure multiple records of multiple databases are not processes at the same time, this component redirects the data from databases to the pipelines workers preventing the previous problem
+    \item why java? (only it contains a kstream api) and we use it to redirect messages from one topic to another
 \end{itemize}
 
 \subsection{Sender}
 \begin{itemize}
     \item sends/publishes the data resulting from the pipelines, to the application's endpoints
+    \item why python? cause jinja and pandas (people know how to use)
 \end{itemize}
 
 \subsection{Admin Dashboard}
+% nice implementation detail: only on the backend of this are topics created
+
 \begin{itemize}
+    \item search for tecnologies (first golang pls . https://github.com/qor/admin)
+    \item 2 components: api backend (django) + react frontend
     \item manage the whole thing
-    \item Allows to create new pipelines and add aplications
+    \item Allows to perform all the use cases
 \end{itemize}
 
 \subsection{Statistics Recorder}
