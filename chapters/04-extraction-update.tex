@@ -224,18 +224,51 @@ Such actions were divided into three groups: Agents, Metadata Extraction, action
 
 \section{Extraction}
 
-First lets go over the portion of the system which runs in the part of the data owners
+With the requirements analysis done, let's first go over the portion of the system which executes in data owners' space.
 
 \subsection{ACHILLES}
+
+%\begin{itemize}
+%    \item percisade de um vocab files
+%    \item escolhemos principalmente por estar direcionada para bases de dados cdm
+%    \item organização interna
+%    \item implementado em R
+%    \item diferentes maneiras de exportação (json, csv ou diramente para db)
+%    \item a query for each analaysis
+%    \item Catalogue Export
+%\end{itemize}
+
+Regarding the extracting tool, from the ones presented in chapter \ref{chapter:background}, the most indicated for our use case is \gls{achilles}, developed by \gls{ohdsi}, or a variation of such.
+This choice was mainly because of its database, instead of the dataset, focused design, and because it was built to extract metadata from databases that follow the \gls{omop} \gls{cdm}.
+
+The most adequate option is Catalogue Export~\cite{peters-tool} which was built using \gls{achilles} as the base, the main difference being that it only exports the required data to the \gls{ehden} project.
+
+These tools are distributed as an R\footnote{https://www.r-project.org/} package, which uses a set of third-party packages that allow the extraction of metadata from different \gls{rdbms}s.
+Metadata is separated into analyses, where each one captures a specific metadata metric of the database.
+Each analysis is captured through a different \gls{sql} query, allowing to extract all analyses through a multithreading approach.
+To make use of the package, the user must provide the information to connect to the database, such as user and password, an output directory to export the results, and the name of three schemas, which are, in most \gls{rdbms}s, a way to group tables within a database within the \gls{rdbms}.
+The schemas to provide are:
+
 \begin{itemize}
-    \item percisade de um vocab files
-    \item escolhemos principalmente por estar direcionada para bases de dados cdm
-    \item organização interna
-    \item implementado em R
-    \item diferentes maneiras de exportação (json, csv ou diramente para db)
-    \item a query for each analaysis
-    \item Catalogue Export
+    \item \gls{cdm} Data: where the original \gls{cdm} data is stored;
+    \item Results: that contains the tables that store the results obtained from the execution of analyses queries;
+    \item Vocabularies: as each clinical database certainly will contain their distinct internal representation of clinical concepts, such as a database might encode sex with just a character (f, m, o), others might encode with the whole word (female, male, other), the \gls{omop} \gls{cdm} makes use of standardized vocabularies that allow creating a homogeneous representation for different databases.
+        Such vocabularies can be acquired on the \gls{ohdsi}'s ATHENA website\footnote{\url{https://athena.ohdsi.org/}}.
 \end{itemize}
+
+As this R package should only perform reads on the original data, the package should use a custom user that only has read permission on the \gls{cdm} data schema.
+This can also be applied to the vocabularies schemas, as the package will use it only to perform joins with the \gls{cdm} data.
+Regarding the results schema, read and write permissions are required to insert the results data of the analyses queries.
+
+The package also allows exporting the results data to a \gls{csv} file, which, on the \gls{ehden} project, is then uploaded into a plugin of \gls{ehden} Portal~\cite{ehden-portal}, which was built using the MONTRA framework, the main topic of the previous chapter, called Network Dashboards~\cite{dashboards}.
+This plugin makes use of the metadata from the uploaded file to build several dashboards (figure \ref{fig:dashboards}), which allow researchers to better analyze and compare the data of clinical databases.
+
+\begin{figure}
+    \center
+    \includegraphics[width=\textwidth]{dashboards}
+    \caption{Network Dashboards tool used as a plugin on the \gls{ehden} Portal}
+    \label{fig:dashboards}
+\end{figure}
 
 \subsection{Asynchronous Message Systems}
 
@@ -260,6 +293,7 @@ isto é preciso para haver comunicação enter agents e a central unit
     \item data owners should automatize (if they want) the process of achilles extracting data from their databases
     \item send data to kafka
     \item responde to health check messages
+    \item automação da extração está nas mão do data owner mas existem ferramentas simples como o crontab que executam commandos a determinadas horas
 \end{enumerate}
 
 \begin{figure}
@@ -272,6 +306,7 @@ isto é preciso para haver comunicação enter agents e a central unit
 \section{Publishing}
 
 data is in kafka. what do we have to do to reach the applications
+idealmente usamos o kafka e afins para tudo, não tendo de desenvolver nada
 
 \begin{itemize}
     \item need to send custom data on a CUSTOM FORMAT to a custom REST endpoint
@@ -279,7 +314,7 @@ data is in kafka. what do we have to do to reach the applications
     \item No known end on kafka topics/streams - require some management on top of kafka
 \end{itemize}
 
-\section{Network Manager}  % change name
+\section{Network Manager}  % TODO change name
 \begin{itemize}
     \item centralized entity
     \item transforms the data to the required format
