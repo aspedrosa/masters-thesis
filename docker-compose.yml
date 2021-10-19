@@ -86,24 +86,10 @@ services:
       - zookeeper
       - broker
       - schema-registry
-    ports:
-      - "8083:8083"
     environment:
-      CONNECT_CONFIG_STORAGE_TOPIC: test
-      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_OFFSET_STORAGE_TOPIC: test_offsets
-      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_STATUS_STORAGE_TOPIC: test_status
-      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
-      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      AGENT_DATABASE_IDENTIFIER: uniquehash
       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
-      CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
-      CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
-      CONNECT_GROUP_ID: test
       CONNECT_BOOTSTRAP_SERVERS: broker:9092
-      CONNECT_REST_ADVERTISED_HOST_NAME: connect
-      CONNECT_REST_PORT: 8083
       CONNECT_ZOOKEEPER_CONNECT: zookeeper:2181
     volumes:
       - ./achilles_files:/tmp/achilles_files

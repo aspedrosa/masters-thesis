@@ -14,13 +14,13 @@
   "file.filter.regex.pattern":".*\\.csv$",
   "offset.attributes.string": "name+hash",
   "skip.headers": "1",
-  "topic": "db_uniquehash",
+  "topic": "db_AGENT_DATABASE_IDENTIFIER",
   "tasks.reader.class": "io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalRowFileInputReader",
   "tasks.file.status.storage.class": "io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore",
-  "tasks.file.status.storage.bootstrap.servers": "broker:9092",
-  "tasks.file.status.storage.topic": "db_uniquehash_status",
+  "tasks.file.status.storage.bootstrap.servers": "BOOTSTRAP_SERVERS",
+  "tasks.file.status.storage.topic": "db_AGENT_DATABASE_IDENTIFIER_status",
   "tasks.file.status.storage.topic.partitions": 1,
   "tasks.file.status.storage.topic.replication.factor": 1,
   "tasks.max": 1,
-  "internal.kafka.reporter.bootstrap.servers": "broker:9092"
+  "internal.kafka.reporter.bootstrap.servers": "BOOTSTRAP_SERVERS"
 }
