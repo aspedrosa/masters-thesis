@@ -222,7 +222,7 @@ Such actions were divided into three groups: Agents, Metadata Extraction, action
 
 \end{enumerate}
 
-\section{Extraction}
+\section{Metadata Extraction}
 
 With the requirements analysis done, let's first go over the portion of the system which executes in data owners' space.
 
@@ -270,25 +270,116 @@ This plugin makes use of the metadata from the uploaded file to build several da
     \label{fig:dashboards}
 \end{figure}
 
-\subsection{Asynchronous Message Systems}
+\subsection{Publish-subscribe Systems}
 
-isto é preciso para haver comunicação enter agents e a central unit
+During the requirement analysis, one of the non-functional requirements was that ``The system should not require any open ports on the data owners’ deployment environment''.
+This implies that the request of communication must be from the agents to the central component, as the contrary can only be achieved if the agent is listening on an open port.
+However, data still has to flow from the central component to the agents, such as if the central component wants to know if an agent is active.
+One solution would be to have a persistent connection between both ends, however, this could overload the central component if a high number of databases enter the network and it would be continuously taking resources from the data owner's system.
+
+An alternative is to follow a pull philosophy.
+The central component can put requests on a message queue, the agent checks periodically this queue and if it finds any request, responds to it.
+This can be interpreted as following the publish-subscriber pattern.
+This solution also aids achieve the ``Microservice architecture'' non-function requirement as it helps decouple services since they do not require to be aware of each other.
+Additionally, the publisher service will not necessarily block waiting for the subscriber service to receive the message, also known as an asynchronous message system.
+
+There are two well know and widely used implementations of such systems: RabbitMQ and Kafka\cite{kafka-vs-rabbitmq}.
 
 \subsubsection{RabbitMQ}
 
+It is recognized implementation of the \gls{amqp} protocol, which this last appears appeared from the need to have interoperability between distinct asynchronous messaging systems.
+Before the specification of the \gls{amqp} protocol, there were already several standards for synchronous messaging, however, the asynchronous world did not have such standards.
+There was the open \gls{jms}, however, it was limited to java and was simply an interface standard, not specifying a standard protocol.
+\gls{amqp} defines a binary protocol implementation, ensuring interoperability between tools implementing the protocol individually.
+
+igure \ref{fig:rabbitmq} presents the architecture of RabbitMQ/\gls{amqp}.
+The message brokering responsibility is divided into exchanges and message queues:
+
+\begin{itemize}
+    \item Exchange: Accepts messages from the publishers and, based on a set of rules routes, messages to the indicated queues;
+    \item Message Queue: Holds messages and sends them to the consumers
+\end{itemize}
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=.9\textwidth]{rabbitmq}
+    \caption{RabbitMQ(AMQP) Architecture. Retrieved from \cite{kafka-vs-rabbitmq}}
+    \label{fig:rabbitmq}
+\end{figure}
+
 \subsubsection{Kafka}
 
+Kafka was built at LinkedIn, as its central event pipelining platform.
+Before developing it, the team tested alternatives, such as ActiveMQ, a popular messaging system based on \gls{jms}.
+However, two problems arose during production tests:
+\begin{enumerate}
+    \item If the queue started filling up to the point of not being able to store all the messages in memory, performance would sharply drop due to I/O;
+    \item To be able to send the same data to a different consumer implies duplicating that data in another queue.
+\end{enumerate}
+
+They concluded that the explored messaging systems were designed to target low-latency use cases instead of high-volume scale-out deployment that was needed at LinkedIn.
+The team decided to build their custom infrastructure that produces efficient persistence, supports several consumers with a low-performance penalty, and mainly supports distributed consumers while maintaining a real-time messaging abstraction usually obtained from messaging systems.
+
+As a result, the produced system is a scalable publish-subscribe messaging system designed around a distributed commit log.
+With this, high throughput is achieved due to data being written to log files with no immediate flush to disk, which allows to build the system with efficient I/O patterns.
+
+The high-level architecture of Kafka is presented in figure \ref{fig:kafka}.
+Producers send messages to a Kafka topic.
+Each topic is distributed over a cluster of Kafka brokers, with each broker holding zero or more partitions of a topic.
+A partition is an ordered append-only log of messages that are persisted in disk.
+All topics are accessible for reading by any number of consumers, and new consumers have no performance penalty.
+Due to its simple storage layout, every time a producer publishes a message to a topic, the broker simply appends the message to the file corresponding to the associated partition.
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=.8\textwidth]{kafka}
+    \caption{Kafka Architecture. Retrieved from \cite{kafka-vs-rabbitmq}}
+    \label{fig:kafka}
+\end{figure}
+
+In contrary to the regular publish-subscriber system, the concept of a consumer in Kafka is generalized to be a group of co-operating processes running as a cluster.
+Because of that, a message in a partition of a topic is delivered to only one consumer of a group.
+Then, partitions allow to control the level of parallelism of consumers, as different partitions of a topic are assigned to different consumers of a consumer group.
+
+In the end, to achieve the high-throughput requirements, Kafka went on a different road compared to the classic principles of messaging systems in several ways.
+
+\begin{itemize}
+    \item It partitions up data so that the production, brokering, and consumption of such can be handled by a cluster of entities that can be scaled as load increases;
+    \item Messages are not removed from the log, instead, they can be replayed by consumers;
+    \item Reader progress is maintained only by the consumers, so message deletion can only be managed based on a retention policy setting, based either on message count or age;
+\end{itemize}
+
+\par\noindent\hfil\rule{.6\textwidth}{0.4pt}\hfil
+
+Originally, the intent was to use a publish-subscriber system just for the communication between the agents and the central component.
+However, Kafka has some functionalities that appeal to use also to manage metadata, working as a central component.
+Having long-term message storage allows to easily build a fault-tolerant system since consumers can easily replay the message received on a topic.
+Furthermore, due to the popularity of Kafka, several libraries and frameworks were developed to extend their usage.
+One of them is Kafka Connect, a framework that allows to reliably and easily stream data between Kafka and external systems.
+There is also a Kafka Streams library to perform processing on streams of data on top of Kafka.
+As stated before, a different application might not be expecting the entire data from the databases, for that, stream processing features could be useful to filter the data before reaching the target applications.
+Finally, with its easily scalable modular architecture, Kafka is well suited to our use case.
 
 \subsection{Kafka Source Connectors}
+
+FileSytem Source connector
+FilePulse Source connector
+JDBC Source connector
+
 \begin{itemize}
+    \item to avoid using kafka just for healthchecks and because kafka contains kafka connect source connectors
+    \item ja que vamos usar o kafka, este tem algumas appllicação ja devenvolvida que tiram dados de uma source e metem mensagem no kafka
+    \item enviar todos os dados numa mensagem não é fiavel
     \item fetch from files or from tables
     \item falar nas varias opcoes consideradas. as the tables não davam tudo duma vez, e as alternativas de ficheiros não davam feedback de quando tudo ja tinah sido uploaded
     \item o que eu escolhi da feedback de quando todos os records estão kafka e quantos records foram escritos
+    \item a tabela implica ter esses dados guardados sempre. em differentes runs de achilles (em que os dados têm de ser apagados) eventos falsos de deleção seriam enviados
 \end{itemize}
 
+vamos com o de ficheiros
 % ---
 
-\subsection{agent final architecture}
+\subsection{Agent Final Architecture}
 \begin{enumerate}
     \item data owners should automatize (if they want) the process of achilles extracting data from their databases
     \item send data to kafka
@@ -299,16 +390,15 @@ isto é preciso para haver comunicação enter agents e a central unit
 \begin{figure}
     \center
     \includegraphics[width=\textwidth]{agent-architecture}
-    \caption{agent arch}
+    \caption{Agent + Catalogue Extractor architecture}
     \label{fig:agent-architecture}
 \end{figure}
 
 \section{Publishing}
 
-data is in kafka. what do we have to do to reach the applications
-idealmente usamos o kafka e afins para tudo, não tendo de desenvolver nada
-
 \begin{itemize}
+    \item data is in kafka. what do we have to do to reach the applications
+    \item idealmente usamos o kafka e afins para tudo, não tendo de desenvolver nada
     \item need to send custom data on a CUSTOM FORMAT to a custom REST endpoint
     \item Kafka Sink Connectors (The target REST API is not customizable, such as the data format ) - need for a sender application
     \item No known end on kafka topics/streams - require some management on top of kafka
@@ -317,6 +407,7 @@ idealmente usamos o kafka e afins para tudo, não tendo de desenvolver nada
 \section{Network Manager}  % TODO change name
 \begin{itemize}
     \item centralized entity
+    \item performs operations on top of kafka
     \item transforms the data to the required format
     \item sends to the specific application's endpoint
     \item 5 components
@@ -335,6 +426,7 @@ idealmente usamos o kafka e afins para tudo, não tendo de desenvolver nada
 \subsection{Orchestrator}
 \begin{itemize}
     \item To ensure multiple records of multiple databases are not processes at the same time, this component redirects the data from databases to the pipelines workers preventing the previous problem
+    \item why not use ksql? cant set offset to read from. either always read from start or always read from end
     \item why java? (only it contains a kstream api) and we use it to redirect messages from one topic to another
 \end{itemize}
 
@@ -348,7 +440,7 @@ idealmente usamos o kafka e afins para tudo, não tendo de desenvolver nada
 % nice implementation detail: only on the backend of this are topics created
 
 \begin{itemize}
-    \item search for tecnologies (first golang pls . https://github.com/qor/admin)
+    \item search for tecnologies (first: golang pls . https://github.com/qor/admin)
     \item 2 components: api backend (django) + react frontend
     \item manage the whole thing
     \item Allows to perform all the use cases
@@ -356,7 +448,9 @@ idealmente usamos o kafka e afins para tudo, não tendo de desenvolver nada
 
 \subsection{Statistics Recorder}
 \begin{itemize}
-    \item Listens to the kafka topics that are used along the system and transforms into persistent data (sql)
+    \item Listens to the kafka topics that are used along the system and transforms into persistent statistics data (sql)
+    \item removes this responsability from the other microservices
+    \item belongs to a separete consumer group
 \end{itemize}
 
 \section{Network Data Flow}
