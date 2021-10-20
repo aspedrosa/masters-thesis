@@ -1,5 +1,7 @@
 #!/bin/env bash
 
+set -x
+
 MANDATORY_ENVS=(
     "AGENT_DATABASE_IDENTIFIER"
     "CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL"
@@ -34,9 +36,25 @@ nc -vz 0.0.0.0 8083
 
 echo -e "\n--\n+> Creating Kafka AchillesResult source Connect"
 
+CLEANUP_POLICY_CLASS=LocalMoveCleanupPolicy
+
+if ! [ -z "$AGENT_DELETE_CLEANUP_POLICY" ] ; then
+    value=$(echo $AGENT_DELETE_CLEANUP_POLICY | tr '[:upper:]' '[:lower:]')
+    VALID_YES_OPTIONS=("yes" "y" "true" "1")
+    for VALID_YES_OPTION in "${VALID_YES_OPTIONS[@]}" ; do
+        if [ $VALID_YES_OPTION = "$value" ] ; then
+            CLEANUP_POLICY_CLASS=DeleteCleanupPolicy
+            break
+        fi
+    done
+fi
+
+sed -i "s/CLEANUP_POLICY_CLASS/$CLEANUP_POLICY_CLASS/g" /app/file_pulse/config.json
 sed -i "s/AGENT_DATABASE_IDENTIFIER/$AGENT_DATABASE_IDENTIFIER/g" /app/file_pulse/config.json
 sed -i "s/BOOTSTRAP_SERVERS/$CONNECT_BOOTSTRAP_SERVERS/g" /app/file_pulse/config.json
 
 curl -sX PUT http://localhost:8083/connectors/achillesresults/config -d @/app/file_pulse/config.json --header "Content-Type: application/json"
+
+# TODO start health check replier app
 
 tail -f /dev/null

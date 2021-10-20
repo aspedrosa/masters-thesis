@@ -87,6 +87,7 @@ services:
       - broker
       - schema-registry
     environment:
+      #AGENT_DELETE_CLEANUP_POLICY: y
       AGENT_DATABASE_IDENTIFIER: uniquehash
       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       CONNECT_BOOTSTRAP_SERVERS: broker:9092
