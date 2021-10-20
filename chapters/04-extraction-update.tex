@@ -362,32 +362,78 @@ Finally, with its easily scalable modular architecture, Kafka is well suited to 
 
 \subsection{Kafka Source Connectors}
 
-FileSytem Source connector
-FilePulse Source connector
-JDBC Source connector
+%\begin{itemize}
+%    \item kafka tem algumas appllicação ja devenvolvida que tiram dados de uma source e metem mensagem no kafka
+%    \item fetch from files or from tables
+%    \item falar nas varias opcoes consideradas. as the tables não davam tudo duma vez, e as alternativas de ficheiros não davam feedback de quando tudo ja tinah sido uploaded
+%    \item o que eu escolhi da feedback de quando todos os records estão kafka e quantos records foram escritos
+%    \item a tabela implica ter esses dados guardados sempre. em differentes runs de achilles (em que os dados têm de ser apagados) eventos falsos de deleção seriam enviados
+%\end{itemize}
+
+At this point, we need to find a way to move the data extracted from the database into Kafka.
+As mentioned previously, the Kafka Connect framework allows to easily import and export data between Kafka and third-party systems.
+Such framework provides plugins called connectors that can be of two types: source, which brings data into Kafka, and sink, which transports data from Kafka into another system.
+At this stage the source connectors are more important, however, the sink connectors will still come into use further in the system.
+
+Since the extraction of metadata through the Catalogue Export R package is a bulk process, in other words, a set of metadata metrics are extracted from the database at once, the source connector should handle the data in the same matter.
+As there is no way to know, on the central component side, when all the data is in Kafka, the connector should deal with metadata as a bounded source of data, providing some kind of feedback that all data was uploaded to Kafka.
+
+Confluent\footnote{\url{https://www.confluent.io/}}, a streaming platform based on Kafka that aims to aid in optimizing and managing Kafka clusters, has available a search engine, Confluent Hub\footnote{\url{https://www.confluent.io/hub/}}, that allows searching for Kafka connectors and more.
+The different connectors available range from known database systems (MongoDB, InfluxDB, ...) to internet protocols (\gls{http}, \gls{ftp}, ...)
+In our case, considering that no other application will be running along with the agents, the only storage options available are either a single table on the data owner's relational database or a directory on the disk where metadata is placed in files.
+
+After researching on the Confluent Hub, three connectors were found to suit the possible storage options:
 
 \begin{itemize}
-    \item to avoid using kafka just for healthchecks and because kafka contains kafka connect source connectors
-    \item ja que vamos usar o kafka, este tem algumas appllicação ja devenvolvida que tiram dados de uma source e metem mensagem no kafka
-    \item enviar todos os dados numa mensagem não é fiavel
-    \item fetch from files or from tables
-    \item falar nas varias opcoes consideradas. as the tables não davam tudo duma vez, e as alternativas de ficheiros não davam feedback de quando tudo ja tinah sido uploaded
-    \item o que eu escolhi da feedback de quando todos os records estão kafka e quantos records foram escritos
-    \item a tabela implica ter esses dados guardados sempre. em differentes runs de achilles (em que os dados têm de ser apagados) eventos falsos de deleção seriam enviados
+    \item \gls{jdbc} Source connector\footnote{\url{https://www.confluent.io/hub/confluentinc/kafka-connect-jdbc}}
+
+        \begin{list}{}{}
+            \item It has four different modes of capturing data from tables.
+                Three of them provide incremental information, sending a message to Kafka after a row of a table or a custom query is created or updated.
+                The difference between these three modes is from what columns the connector tries to infer that a row has changed.
+                These are not suitable for our use case, since it treats a table as an unbounded source of data.
+
+            \item The other mode available is bulk, which sends all the rows of a table in one go.
+                However, this process isn't performed based on updates on data, instead, it is executed periodically on a configured interval.
+                Furthermore, no feedback is provided after all the data is present in Kafka.
+        \end{list}
+
+    \item FileSytem Source connector\footnote{\url{https://github.com/mmolimar/kafka-connect-fs}}
+
+        \begin{list}{}{}
+            \item On the contrary to the first connector, this one uses file systems as the source to insert data into Kafka.
+                Not only supports fetching files from a local file system, but also widely used cloud storage solutions such as \gls{hdfs}, Google Cloud Storage, and others.
+                In our case, we would be using the local file system approach, whereby the data owner places the output files of the Catalogue Export R package on a specified directory.
+                As both the extracting tool supports extracting the gathered metadata into a \gls{csv} file and the connector has a specialized reader to parse files in that format, that would be the agreed format to use.
+                The connector also supports either moving or deleting files once they are entirely uploaded into Kafka.
+
+            \item As a downside, this connector does not provide any feedback once it finishes uploading the file.
+        \end{list}
+
+    \item FilePulse Source connector\footnote{\url{https://github.com/streamthoughts/kafka-connect-file-pulse}}
+
+        \begin{list}{}{}
+            \item This connector, is similar to the previous one, as it allows to load data from files into Kafka, having the possibility to also load from other file system solutions.
+                It supports reading \gls{csv} files, as it allows having a cleanup policy, which can move or delete files after they are uploaded.
+
+            \item However, contrary to the previous connector, this one sends messages regarding the progress of the upload of the file to a separate topic.
+                Not only sends when it ends but also sends the number of rows/messages that were sent into Kafka, which is ideal for our use case, as we can know when the whole file is processed if the rows go through a processing stream on Kafka.
+        \end{list}
+
 \end{itemize}
 
-vamos com o de ficheiros
 % ---
 
 \subsection{Agent Final Architecture}
 \begin{enumerate}
+    \item docker to facilitae deploymente of agent (will require a little intro to docker)
     \item data owners should automatize (if they want) the process of achilles extracting data from their databases
     \item send data to kafka
     \item responde to health check messages
     \item automação da extração está nas mão do data owner mas existem ferramentas simples como o crontab que executam commandos a determinadas horas
 \end{enumerate}
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{agent-architecture}
     \caption{Agent + Catalogue Extractor architecture}
@@ -401,6 +447,8 @@ vamos com o de ficheiros
     \item idealmente usamos o kafka e afins para tudo, não tendo de desenvolver nada
     \item need to send custom data on a CUSTOM FORMAT to a custom REST endpoint
     \item Kafka Sink Connectors (The target REST API is not customizable, such as the data format ) - need for a sender application
+        https://www.confluent.io/hub/confluentinc/kafka-connect-http
+        https://docs.confluent.io/kafka-connect-http/current/overview.html
     \item No known end on kafka topics/streams - require some management on top of kafka
 \end{itemize}
 
