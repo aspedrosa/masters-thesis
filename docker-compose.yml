@@ -90,7 +90,7 @@ services:
       #AGENT_DELETE_CLEANUP_POLICY: y
       AGENT_DATABASE_IDENTIFIER: uniquehash
     volumes:
-      - ./achilles_files:/tmp/achilles_files
+      - ./achilles_files:/app/catalogue_export_files
 
   db:
     image: postgres:13.3
