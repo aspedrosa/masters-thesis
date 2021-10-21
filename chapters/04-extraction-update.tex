@@ -422,16 +422,64 @@ After researching on the Confluent Hub, three connectors were found to suit the 
 
 \end{itemize}
 
-% ---
-
 \subsection{Agent Final Architecture}
-\begin{enumerate}
-    \item docker to facilitae deploymente of agent (will require a little intro to docker)
-    \item data owners should automatize (if they want) the process of achilles extracting data from their databases
-    \item send data to kafka
-    \item responde to health check messages
-    \item automação da extração está nas mão do data owner mas existem ferramentas simples como o crontab que executam commandos a determinadas horas
-\end{enumerate}
+
+%\begin{enumerate}
+%    \item docker to facilitae deploymente of agent (will require a little intro to docker)
+%    \item data owners should automatize (if they want) the process of achilles extracting data from their databases
+%    \item send data to kafka
+%    \item responde to health check messages
+%    \item automação da extração está nas mão do data owner mas existem ferramentas simples como o crontab que executam commandos a determinadas horas
+%\end{enumerate}
+
+At this point, we have all the building blocks to set up an agent and make it ready to deploy on the data owners' local system.
+The agent will have two internal components:
+
+\begin{itemize}
+    \item One will be the FilePulse Source Kafka connector, which will parse the files provided by the data owners and insert their data into Kafka.
+        The available \gls{csv} reader of this connector allows performing transformations on the data before sending it to Kafka.
+        Such transformations include ignoring empty rows, converting values on a row, among others.
+        One convenient transformation available transforms the string data of a row into a structure, so data sent in Kafka's messages values is a \gls{json} value instead of a string one.
+        This avoids further on the system having to parse strings received from this connector to get a specific field from the data.
+
+    \item The other component is the Health Check Handler.
+        It is in charge of sending messages periodically, telling that the agent is active, so when the admin checks the status of the agents it gets a more updated Last Time Active metric.
+        As this periodic send of ``I'm active'' messages will not be that regular, one to two times a month, the admin can request an agent to answer if it is active, and it will be this component in charge of sending a response.
+        Regarding this last component, as it needs to be developed from scratch, it is a great opportunity to test new technologies that are not so commonly taught on a regular Informatics Engineering course.
+        By technologies, we intend to refer to the programming languages used.
+        The most popular and used ones are Python and Java, however, other programming languages appeared and are starting to gain terrain on the wap app development.
+        Examples of such programming languages are Rust\footnote{\url{https://www.rust-lang.org/}} and Go\footnote{\url{https://golang.org/}}.
+        According to the 2020 Stack Overflow Developer Servey~\cite{so-survey}, Rust is the most loved language among developers, and Go, in terms of most popular languages, just stands behind equivalent languages such as Python, Java and C Sharp.
+        Besides behind the most loved language, Rust's ownership model, which increases memory safety with compile-time checks, is something that is not present in other languages, and newcomers will have a not-so-appealing learning curve.
+        For that, the decided language to use was Go, which will also be considered for other components of the system that eventually require to be built from scratch.
+        The popularity of Go mainly comes from its simplicity, as it has a C-like syntax, and for having concurrency mechanisms builtin in the language, not requiring an external library to implement such concepts.
+\end{itemize}
+
+Now the only missing part of the agent is how to deploy it.
+As said in the requirement analysis, the deployment of the agent should be an easy process.
+At its core, the FilePulse connector is a Java application.
+With that, the agent requires that the data owner has both Go and Java runtime dependencies available so that the agent could be deployed in their local system.
+This could cause problems for the data owners since he could already have these dependencies, but the wrong versions, and installing a new version could cause problems.
+Also, different data owners could use a different operating system, which could change the way dependencies have to be installed, so it's hard to create install instruction that covers all the possible deployment environments.
+With the emerge of cloud computing, virtualization solutions started to be used, allowing to use a single physical machine for several purposes, taking more advantage of the available hardware.
+To achieve this, a software called Hypervisor sits on top of the host machine, which divides the hardware resources so that they can be used by separate virtual machines~\cite{virtualization}.
+However, such virtualization technology emulates an entire operating system, on every virtual machine, which is a heavy option to deploy a simple agent.
+A more convenient virtualization technology is containerization.
+Such technology can be seen as a very lightweight virtual machine since a container is a package of software code with just the application to run and the necessary dependencies.
+Containers are also more efficient in taking advantage of the hardware available, as portions of the hardware are not statically allocated to each container~\cite{containers}.
+Containers run in an operating system as they were yet another process, but for the code running in a container, the appearance is that they are running in an isolated machine.
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=.6\textwidth]{virtualization}
+    \caption{Comparison between virtual machines and containers}
+    \label{fig:virtualization}
+\end{figure}
+
+Figure \ref{fig:virtualization} presents a visual comparison between virtual machines and containers.
+As can be seen, the virtual machine technology has to simulate two operating systems, in contrast to the container solution where there is only one operating system and the container engine.
+
+With a deployment strategy in mind, figure \ref{fig:agent-architecture} shows the final architecture around the agents and pieces that connect to the data owner's system.
 
 \begin{figure}[H]
     \center
@@ -439,6 +487,39 @@ After researching on the Confluent Hub, three connectors were found to suit the 
     \caption{Agent + Catalogue Extractor architecture}
     \label{fig:agent-architecture}
 \end{figure}
+
+Docker\footnote{\url{https://www.docker.com/}} is an industry standard that facilitates the process of creating, managing and sharing containers.
+Developers can share their built containers, called Docker Images, in Docker Hub\footnote{\url{https://hub.docker.com/}}, which then can be used to build more specialized containers.
+For example, there are official Docker images available with python pre-installed. These images can be used by developers that want to deploy their Python apps with Docker, not having to bother installing a specific python version.
+
+With that, the agent will be distributed to the data owners as a Docker image.
+However, data owners have to perform two tasks before starting the agent.
+One is to choose which directory will be shared with the agent's container.
+This can be achieved with the Docker's volume system, where a directory on the host operating system will be bound to another within the container.
+The second step is to define a set of environment variables that will be unique to this agent:
+
+\begin{itemize}
+    \item AGENT\_DELETE\_CLEANUP\_POLICY: defines whether or not files must be deleted after their data is uploaded into Kafka.
+        By default, the file is moved into a \textit{succed} directory, so this variable is optional.
+    \item AGENT\_DATABASE\_IDENTIFIER: an identifier provided by the admin once the database is registered in the system.
+\end{itemize}
+
+After getting the Docker image of the agent, the data owners only have to execute a simple run command where defines the previous decisions:
+
+\begin{verbatim}
+docker run
+  -v ./catalogue_export_files:/app/catalogue_export_files
+  -e AGENT_DATABASE_IDENTIFIER=unique_db_identifier
+  -d
+  AGENT_IMAGE
+\end{verbatim}
+
+Next is the description of each option:
+\begin{itemize}
+    \item -v: binds a host directory to the one inside the container where FilePulse will read files from;
+    \item -e: sets the AGENT\_DATABASE\_IDENTIFIER environment variable
+    \item -d: runs the container in daemon mode
+\end{itemize}
 
 \section{Publishing}
 
@@ -464,7 +545,6 @@ After researching on the Confluent Hub, three connectors were found to suit the 
 \subsection{Pipelines Workers}
 \begin{itemize}
     \item lets do it in go cause lets explore
-    \item search for kafka library
     \item ksql introduced. easily filter data with select \_ where \_
     \item select and filter the data comming from the databses
     \item only process data of a single database at a time. handling multiple is the same is hard to handle and hard to scale
