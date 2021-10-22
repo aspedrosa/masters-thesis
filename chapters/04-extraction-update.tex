@@ -227,7 +227,6 @@ Such actions were divided into three groups: Agents, Metadata Extraction, action
 With the requirements analysis done, let's first go over the portion of the system which executes in data owners' space.
 
 \subsection{ACHILLES}
-
 %\begin{itemize}
 %    \item percisade de um vocab files
 %    \item escolhemos principalmente por estar direcionada para bases de dados cdm
@@ -356,12 +355,11 @@ However, Kafka has some functionalities that appeal to use also to manage metada
 Having long-term message storage allows to easily build a fault-tolerant system since consumers can easily replay the message received on a topic.
 Furthermore, due to the popularity of Kafka, several libraries and frameworks were developed to extend their usage.
 One of them is Kafka Connect, a framework that allows to reliably and easily stream data between Kafka and external systems.
-There is also a Kafka Streams library to perform processing on streams of data on top of Kafka.
+There is also a Kafka Streams\footnote{\url{https://kafka.apache.org/documentation/streams/}} library to perform processing on streams of data on top of Kafka.
 As stated before, a different application might not be expecting the entire data from the databases, for that, stream processing features could be useful to filter the data before reaching the target applications.
 Finally, with its easily scalable modular architecture, Kafka is well suited to our use case.
 
 \subsection{Kafka Source Connectors}
-
 %\begin{itemize}
 %    \item kafka tem algumas appllicação ja devenvolvida que tiram dados de uma source e metem mensagem no kafka
 %    \item fetch from files or from tables
@@ -423,7 +421,6 @@ After researching on the Confluent Hub, three connectors were found to suit the 
 \end{itemize}
 
 \subsection{Agent Final Architecture}
-
 %\begin{enumerate}
 %    \item docker to facilitae deploymente of agent (will require a little intro to docker)
 %    \item data owners should automatize (if they want) the process of achilles extracting data from their databases
@@ -543,7 +540,6 @@ The task will execute on days 1 and 15 of every month at three in the morning.
 However, if it is preferable for the data owner, he can set up his automation, or no automation, of the extraction process.
 
 \section{Publishing}
-
 %\begin{itemize}
 %    \item data is in kafka. what do we have to do to reach the applications
 %    \item idealmente usamos o kafka e afins para tudo, não tendo de desenvolver nada
@@ -574,7 +570,6 @@ Additionally, the number of messages sent by a database is dynamic, which the \g
 This problem will always exist due to the nature of Kafka, where topics can be treated as streams of data, which do not have determined start and end, and there is always data flowing.
 
 \section{Metadata Manager}
-
 %\begin{itemize}
 %    \item centralized entity working on top of kafka, dealing with the unbounded format of data in Kafka
 %    \item performs operations on top of kafka
@@ -584,7 +579,7 @@ This problem will always exist due to the nature of Kafka, where topics can be t
 %\end{itemize}
 
 To takle the problems mentined previously, new components need to be developed.
-Such group of components will be called Metadata Manager, which will perform operation on top of Kakfa
+Such group of components will be called Metadata Manager, which will perform operations on top of Kakfa.
 The main issues that will be addressed are allowing to customize the requests that are sent to the applications and dealing with the unbounded factor of Kafka topics/streams.
 
 Figure \ref{fig:metadata-manager} presents an overall architecture of how internal components of this Metadata Manager will be organized.
@@ -597,14 +592,72 @@ For the communication between components, Kafka topics are used, however their o
     \label{fig:metadata-manager}
 \end{figure}
 
-\subsection{Pipelines Workers}
+As these components will be implemented from scratch, the programming language that will be used is Go, if applicable, for the same reason explained in the Health Check Handler component of the agent, try new emerging technologies beyond the most popular ones.
+
+\subsection{Filter Worker}
+%\begin{itemize}
+%    \item lets do it in go cause lets explore
+%    \item ksql introduced. easily filter data with select \_ where \_
+%    \item select and filter the data comming from the databses
+%    \item only process data of a single database at a time. handling multiple is the same is hard to handle and hard to scale
+%    \item scalable: several pipeline worker applications
+%\end{itemize}
+
+Data comes from the agents in several Kafka messages, which need to be gathered together to then be used to build the custom request for each application.
+As gathering all the uploaded data in memory is not a scalable option, and implementing a system with memory usage management is a complex task, the system must first filter out unnecessary data and only allow the user to build and send the request to the applications.
+
+That's what the Pipeline Worker component is supposed to do.
+Extract only the essential data from all the data uploaded by an agent and then send it to the Sender component, who will be in charge of building and sending the request to the applications.
+
+Since data is already in Kafka, we can take advantage of its stream processing features to filter data received from the agents.
+But, once again, streams imply an unbounded size of data, so additional processing has to be built on top of such stream processing.
+If a stream is created to get the data that satisfies a given condition, we need to make sure that all the uploaded data went through that given stream.
+This can be achieved by creating two streams with opposite filtering conditions (figure \ref{fig:filter-workers}).
+\begin{figure}[H]
+    \center
+    \includegraphics[width=.7\textwidth]{filter}
+    \caption{How Filter Workers process unbounded data received from agents}
+    \label{fig:filter}
+\end{figure}
+One will be used to get the actual data, the other, with the filtering condition negated, will be used just as an auxiliary.
+At the end of each stream, a component will count the number of records that went through.
+When both sum up to the number of messages sent by the agent, we can know for sure that all data was filtered and the Sender component can use the result data.
+As the stream with the negated filtering condition will be used to just get a counter, there is no need to send the actual data on that stream, for that a single byte is sent to avoid wasting memory resources.
+
+To develop these filtering streams, there are two options:
 \begin{itemize}
-    \item lets do it in go cause lets explore
-    \item ksql introduced. easily filter data with select \_ where \_
-    \item select and filter the data comming from the databses
-    \item only process data of a single database at a time. handling multiple is the same is hard to handle and hard to scale
-    \item scalable: several pipeline worker applications
+    \item Kafka Streams: A Java library to process and analyze data that is already present on Kafka.
+        Using it would imply implementing this Filter Worker component in Java, however, from the explanation of how a filter will be implemented, there will be several threads involved, requiring communication between them.
+        Developing such an environment in Go is much easier as concurrency mechanisms are built in the language itself, and also if the number of filters gets high, threads might start to slow and use a lot of memory, as each has its own address space.
+        Go, on the other hand, has goroutines, lightweight threads managed by the Go runtime, which run in the same address space.
+        Using Kafka Streams would also imply that the conditions defined by the Admin, would require to be written in Java code.
+    \item KsqlDB~\cite{ksql}: is a database that allows assembling stream processing applications on top of Kafka.
+        It combines the power of stream processing with the known feel of a relational database through a \gls{sql}-like syntax, so stream applications can be set up with just \gls{sql} statements.
+        As the data sent by the agents are messages extracted from a \gls{csv} file, the data can also be interpreted as a table, so the \gls{sql} language feats well in this case.
+        It provides a \gls{rest} \gls{api} interface, so using KsqlDB does not bound the implementation to a specific language.
 \end{itemize}
+
+We opted to go with KsqlDB as it allows us to build the application in Go, taking advantage of its lightweight goroutines, allowing the system to scale better and the system to receive data from more databases.
+
+Until now, it was assumed that each application has its filtering condition over the data.
+However, two distinct applications might benefit from the same filtering condition, for that, the relationship between filters on data for an application is a one-to-many relationship, so the data resulting from one filter might be used to build and send data to several applications.
+
+In terms of internal organization, displayed in figure \ref{fig:filter-workers}, the main goroutine is in charge of managing the several active Filters, stopping existing ones and starting new ones, according to the orders received from the Admin Portal component.
+Each filter runs in a separate goroutine, which by itself launches other two goroutines.
+One is in charge of counting and sending the data that comply with the filtering condition and the other is counting the number of messages that do not fit the filter condition.
+The count of messages filtered is monitored by the main goroutine of each filter.
+When it reaches the number of messages that the agent sent, it tells the other child goroutines that they can stop reading from the streams, and sends a notification to the Sender component telling that data is ready to be sent.
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=\textwidth]{filter-workers}
+    \caption{The internal organization of a Filter Worker}
+    \label{fig:filter-workers}
+\end{figure}
+
+Note that the "All Data" topic is unique to the Filter Worker application and the "Required Data 1" is unique to each filter goroutine, this means that on a Filter Worker application there can be several Filters running at the same time.
+Also, this means that a Filter Worker application will obtain the data to all the filter conditions that were defined, at the same time, for one single database.
+The system then allows scaling, by running several Filter Worker applications at the same time, with that, several Filters can be run for different databases at the same time.
 
 \subsection{Orchestrator}
 \begin{itemize}
