@@ -437,6 +437,8 @@ The agent will have two internal components:
 
 \begin{itemize}
     \item One will be the FilePulse Source Kafka connector, which will parse the files provided by the data owners and insert their data into Kafka.
+        It is important to note that both the metadata and the status of upload use different topics for each database.
+        This was decided because, otherwise, some processing would be required on gathering data of a specific upload from the main topic, that would contain messages from different uploads of different databases.
         The available \gls{csv} reader of this connector allows performing transformations on the data before sending it to Kafka.
         Such transformations include ignoring empty rows, converting values on a row, among others.
         One convenient transformation available transforms the string data of a row into a structure, so data sent in Kafka's messages values is a \gls{json} value instead of a string one.
@@ -521,26 +523,79 @@ Next is the description of each option:
     \item -d: runs the container in daemon mode
 \end{itemize}
 
+Regarding the extraction tool, we will also distribute a Docker image with the necessary dependencies preinstalled, where data owners will have to provide the necessary information for this tool to access the \gls{cdm} database and define a volume so files containing the metadata are accessible to the agent.
+Concerning the automation of the extraction process, the image will contain Linux's cron command-line utility, which allows to schedule tasks.
+The data owners will only have to provide the periodicity of the extraction process, using Cron's time and date syntax to define a cronjob.
+\begin{verbatim}
+.---------- minute
+| .-------- hour
+| | .------ day of month
+| | | .---- month
+| | | | .-- day of week
+| | | | |
+* * * * *
+\end{verbatim}
+If the extraction process were to run two times a month at three in the morning, the following configuration is used:
+\begin{verbatim}
+0 1 1,15 * *
+\end{verbatim}
+The task will execute on days 1 and 15 of every month at three in the morning.
+However, if it is preferable for the data owner, he can set up his automation, or no automation, of the extraction process.
+
 \section{Publishing}
 
-\begin{itemize}
-    \item data is in kafka. what do we have to do to reach the applications
-    \item idealmente usamos o kafka e afins para tudo, não tendo de desenvolver nada
-    \item need to send custom data on a CUSTOM FORMAT to a custom REST endpoint
-    \item Kafka Sink Connectors (The target REST API is not customizable, such as the data format ) - need for a sender application
-        https://www.confluent.io/hub/confluentinc/kafka-connect-http
-        https://docs.confluent.io/kafka-connect-http/current/overview.html
-    \item No known end on kafka topics/streams - require some management on top of kafka
-\end{itemize}
+%\begin{itemize}
+%    \item data is in kafka. what do we have to do to reach the applications
+%    \item idealmente usamos o kafka e afins para tudo, não tendo de desenvolver nada
+%    \item need to send custom data on a CUSTOM FORMAT to a custom REST endpoint
+%    \item Kafka Sink Connectors (The target REST API is not customizable, such as the data format ) - need for a sender application
+%        https://www.confluent.io/hub/confluentinc/kafka-connect-http
+%        https://docs.confluent.io/kafka-connect-http/current/overview.html
+%        - envia um pedido para cada row dos dados do ficheiro
+%        -  que tal dar aggregate tudo numa mensagem? resolve? não é aconselhavel ter mensagens grandes
+%        - não deixa customizar body se eu quiser fazer algo {data:{patients_num:1, ...}}
+%    \item No known end on kafka topics/streams - require some management on top of kafka
+%\end{itemize}
 
-\section{Network Manager}  % TODO change name
-\begin{itemize}
-    \item centralized entity
-    \item performs operations on top of kafka
-    \item transforms the data to the required format
-    \item sends to the specific application's endpoint
-    \item 5 components
-\end{itemize}
+At the moment, we can deploy several agents on the data owners' local systems and have a set of Kafka topics to where data is uploaded when \gls{csv} metadata files are generated.
+We now need to send this data to the web application in form of \gls{http} requests.
+Ideally, no other component is required, and Kafka is enough to act as a central component of our metadata publishing system.
+With that, a search must be performed to find Kafka sink connectors, which should do the inverse of what the FilePulse connector does on the agent side, which is getting data from Kafka into an external system, in this case in form of \gls{http} requests.
+
+Resorting to Confluent Hub again to search for sink connectors, only one allowed sending Kafka data in \gls{http} requests: HTTP Sink Connector\footnote{\url{https://www.confluent.io/hub/confluentinc/kafka-connect-http}}.
+However, it does not meet some of the requirements.
+Since different applications expect the data in distinct formats, requests need to be customizable, however, the connector does not allow to customize the request.
+The data sent, will be the same as the one present on the value of the Kafka message and the connector only allows to send requests with the \gls{http}'s POST or PUT methods.
+
+Furthermore, by default, this \gls{http} connector will send a request for each Kafka message.
+The connector being used on the agent sends a message for each row of the catalogue export \gls{csv} file, which would mean that this \gls{http} connector would send several \gls{http} to an application related to the same upload.
+The \gls{http} connector supports batching messages together, on the same request, however, messages are stored in memory until the batch size is not reached, which could cause memory problems if the upload contains a high number of metadata metrics and also if several databases upload at the same time.
+Additionally, the number of messages sent by a database is dynamic, which the \gls{http} connector does not support, since it gathers a finite number of messages.
+This problem will always exist due to the nature of Kafka, where topics can be treated as streams of data, which do not have determined start and end, and there is always data flowing.
+
+\section{Metadata Manager}
+
+%\begin{itemize}
+%    \item centralized entity working on top of kafka, dealing with the unbounded format of data in Kafka
+%    \item performs operations on top of kafka
+%    \item transforms the data to the required format
+%    \item sends to the specific application's endpoint
+%    \item 5 components
+%\end{itemize}
+
+To takle the problems mentined previously, new components need to be developed.
+Such group of components will be called Metadata Manager, which will perform operation on top of Kakfa
+The main issues that will be addressed are allowing to customize the requests that are sent to the applications and dealing with the unbounded factor of Kafka topics/streams.
+
+Figure \ref{fig:metadata-manager} presents an overall architecture of how internal components of this Metadata Manager will be organized.
+For the communication between components, Kafka topics are used, however their organization will be detailed when going over the several components next.
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=\textwidth]{metadata-manager}
+    \caption{High-level architecture of the Metadata Manager components}
+    \label{fig:metadata-manager}
+\end{figure}
 
 \subsection{Pipelines Workers}
 \begin{itemize}
@@ -553,9 +608,12 @@ Next is the description of each option:
 
 \subsection{Orchestrator}
 \begin{itemize}
+    \item why do we need this. why do not the workers read directly from the database.
+        Cause wokers use ksql, and it does not allow to create a stream and start reading at a giving time. either start or end.
     \item To ensure multiple records of multiple databases are not processes at the same time, this component redirects the data from databases to the pipelines workers preventing the previous problem
     \item why not use ksql? cant set offset to read from. either always read from start or always read from end
     \item why java? (only it contains a kstream api) and we use it to redirect messages from one topic to another
+    \item 3 threads: one reads uploads, another redirects and creates streams of data, another closes streams once all data was transfered
 \end{itemize}
 
 \subsection{Sender}
