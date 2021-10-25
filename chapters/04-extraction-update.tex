@@ -644,7 +644,7 @@ However, two distinct applications might benefit from the same filtering conditi
 
 In terms of internal organization, displayed in figure \ref{fig:filter-workers}, the main goroutine is in charge of managing the several active Filters, stopping existing ones and starting new ones, according to the orders received from the Admin Portal component.
 Each filter runs in a separate goroutine, which by itself launches other two goroutines.
-One is in charge of counting and sending the data that comply with the filtering condition and the other is counting the number of messages that do not fit the filter condition.
+One is in charge of counting the data that comply with the filtering condition and the other is counting the number of messages that do not fit the filter condition.
 The count of messages filtered is monitored by the main goroutine of each filter.
 When it reaches the number of messages that the agent sent, it tells the other child goroutines that they can stop reading from the streams, and sends a notification to the Sender component telling that data is ready to be sent.
 
@@ -660,19 +660,59 @@ Also, this means that a Filter Worker application will obtain the data to all th
 The system then allows scaling, by running several Filter Worker applications at the same time, with that, several Filters can be run for different databases at the same time.
 
 \subsection{Orchestrator}
+%\begin{itemize}
+%    \item why do we need this. why do not the workers read directly from the database.
+%        Cause wokers use ksql, and it does not allow to create a stream and start reading at a giving time. either start or end.
+%    \item To ensure multiple records of multiple databases are not processes at the same time, this component redirects the data from databases to the pipelines workers preventing the previous problem
+%    \item why not use ksql? cant set offset to read from. either always read from start or always read from end
+%    \item why java? (only it contains a kstream api) and we use it to redirect messages from one topic to another
+%    \item 2 threads: one reads uploads and creates streams of data, another closes streams once all data was transfered
+%\end{itemize}
+
+As multiple Filter Worker components might be running at the same time, there needs to be a way to redistribute the load among the running instances.
+Since agents publish a topic when the upload process is done, a goroutine on each Filter Worker could dynamically create the required processing streams on the data topics of the databases that performed the upload.
+However, as all data on the data topic of a database might not be related to the same upload, due to the retention policy chosen, we require to start the transmission of messages at a given offset of the data topic.
+Such a thing is now achievable with KsqlDB since it only allows to read either from the latest or earliest record.
+As an alternative, Kafka Streams allows achieving this.
+This will require that this redistribution of work has to be written in Java, but as an advantage removes, this responsibility of reading data from databases' topics from the Filter Workers components, allowing for more concrete and small components.
+
+Previously, it was mentioned that the concept of a consumer in Kafka is a group of co-operating processes running as a cluster, so messages of a topic are distributed in a balancing manner, sending a message to only one process of a given group.
+For that, there is no need to implement a balancing algorithm to balance the data uploaded from the agents, as Kafka can achieve that already.
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=\textwidth]{orchestrator-role}
+    \caption{The workflow of how data uploaded from the agents is balanced across Filter Workers instances}
+    \label{fig:orchestrator-role}
+\end{figure}
+
+As shown in figure \ref{fig:orchestrator-role}, every Filter Worker will have a consumer for the Upload Notifications topic, which all will belong to the same group.
+This ensures that only one Filter Worker instance will receive a given message, thus implementing a balancing policy with Kafka.
+On the Filter Worker component, another goroutine will have to be created, which will consume from the Upload Notifications topic and then broadcast this notification to the active Filters (Figure \ref{fig:filter-worker-uploads}).
+\begin{figure}[H]
+    \center
+    \includegraphics[width=.6\textwidth]{filter-worker-uploads}
+    \caption{New ententies achitecture on a Filter Worker component}
+    \label{fig:filter-worker-uploads}
+\end{figure}
+This new entity, Upload Watcher, will broadcast the notification using Go's channels, a built-in language feature that allows having pipes of communication between goroutines.
+Additionally, this entity will also send a message to the Data Request topic, telling the Orchestrator that his Filter Worker instance is in charge of parsing the data associated with a specific upload of an agent.
+The Orchestrator will then create the necessary redirection stream between the database's data topic and the specific Filter Worker instance's data topic.
+
+Following the same balancing concept used for the Filter Workers, the same can be applied to the case of scaling the number of Orchestrators.
+Different Orchestrator instances will consume from the Data Request topic belonging to the same group, balancing the work of redirecting upload data over several Orchestrator instances.
+
+Internally, the Orchestrator is composed of two entities:
 \begin{itemize}
-    \item why do we need this. why do not the workers read directly from the database.
-        Cause wokers use ksql, and it does not allow to create a stream and start reading at a giving time. either start or end.
-    \item To ensure multiple records of multiple databases are not processes at the same time, this component redirects the data from databases to the pipelines workers preventing the previous problem
-    \item why not use ksql? cant set offset to read from. either always read from start or always read from end
-    \item why java? (only it contains a kstream api) and we use it to redirect messages from one topic to another
-    \item 3 threads: one reads uploads, another redirects and creates streams of data, another closes streams once all data was transfered
+    \item one that consumes from the Data Request topic and creates the redirection streams from databases' data topics into the Filter Workers' data topics;
+    \item for each message received by the previous entity, another entity checks when all data reached the data topic of the target Filter Worker instance and closes the stream once that happens.
 \end{itemize}
 
 \subsection{Sender}
 \begin{itemize}
     \item sends/publishes the data resulting from the pipelines, to the application's endpoints
     \item why python? cause jinja and pandas (people know how to use)
+    \item since data was filtered, small data is in memory now
 \end{itemize}
 
 \subsection{Admin Dashboard}
@@ -681,7 +721,7 @@ The system then allows scaling, by running several Filter Worker applications at
 \begin{itemize}
     \item search for tecnologies (first: golang pls . https://github.com/qor/admin)
     \item 2 components: api backend (django) + react frontend
-    \item manage the whole thing
+    \item manage the whole thing. talks to the other components using kafka management topics
     \item Allows to perform all the use cases
 \end{itemize}
 
@@ -691,6 +731,10 @@ The system then allows scaling, by running several Filter Worker applications at
     \item removes this responsability from the other microservices
     \item belongs to a separete consumer group
 \end{itemize}
+
+
+\section{Summary}
+%complete diagram
 
 \section{Network Data Flow}
 \begin{itemize}
