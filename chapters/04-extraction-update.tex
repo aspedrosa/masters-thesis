@@ -489,7 +489,7 @@ With a deployment strategy in mind, figure \ref{fig:agent-architecture} shows th
 
 Docker\footnote{\url{https://www.docker.com/}} is an industry standard that facilitates the process of creating, managing and sharing containers.
 Developers can share their built containers, called Docker Images, in Docker Hub\footnote{\url{https://hub.docker.com/}}, which then can be used to build more specialized containers.
-For example, there are official Docker images available with python pre-installed. These images can be used by developers that want to deploy their Python apps with Docker, not having to bother installing a specific python version.
+For example, there are official Docker images available with Python pre-installed. These images can be used by developers that want to deploy their Python apps with Docker, not having to bother installing a specific Python version.
 
 With that, the agent will be distributed to the data owners as a Docker image.
 However, data owners have to perform two tasks before starting the agent.
@@ -604,7 +604,7 @@ As these components will be implemented from scratch, the programming language t
 %\end{itemize}
 
 Data comes from the agents in several Kafka messages, which need to be gathered together to then be used to build the custom request for each application.
-As gathering all the uploaded data in memory is not a scalable option, and implementing a system with memory usage management is a complex task, the system must first filter out unnecessary data and only allow the user to build and send the request to the applications.
+As gathering all the uploaded data in memory is not a scalable option, and implementing a system with memory usage management is a complex task, the system must first filter out unnecessary data and only allow the Admin to build and send the request to the applications.
 
 That's what the Pipeline Worker component is supposed to do.
 Extract only the essential data from all the data uploaded by an agent and then send it to the Sender component, who will be in charge of building and sending the request to the applications.
@@ -655,7 +655,7 @@ When it reaches the number of messages that the agent sent, it tells the other c
     \label{fig:filter-workers}
 \end{figure}
 
-Note that the "All Data" topic is unique to the Filter Worker application and the "Required Data 1" is unique to each filter goroutine, this means that on a Filter Worker application there can be several Filters running at the same time.
+Note that the ``All Data'' topic is unique to the Filter Worker application, this means that on a Filter Worker application there can be several Filters running at the same time.
 Also, this means that a Filter Worker application will obtain the data to all the filter conditions that were defined, at the same time, for one single database.
 The system then allows scaling, by running several Filter Worker applications at the same time, with that, several Filters can be run for different databases at the same time.
 
@@ -709,36 +709,133 @@ Internally, the Orchestrator is composed of two entities:
 \end{itemize}
 
 \subsection{Sender}
+% sends/publishes the data resulting from the pipelines, to the application's endpoints
+% why python? cause jinja and pandas (people know how to use)
+% since data was filtered, small data is in memory now
+
+At this point, the system contains the data required to build the requests and then send them to the applications.
+It is now required to get, from the Admin, the configuration of the \gls{http} request to send the data.
+An interface to build \gls{http} requests would require several components to allow customizations of the several items of an \gls{http} request: authorization, headers, method, \ldots
+To allow flexibility on the configuration of the \gls{http} request, such an interface would either be too complex or some features would not be allowed to simplify the implementation of such interface.
+
+Many programming languages have libraries that allow performing \gls{http} requests and customization is provided by passing different parameters to functions of such libraries.
+Such parameters will then go over a validation process, avoiding the use of invalid values, such as sending a request with REPLACE as the \gls{http} method for example.
+With that, it would be easier to make use of such libraries, and then Admins would provide the arguments for a function that performs \gls{http} requests.
+The system would provide the data that resulted from a filter to the Admin, and then he would build a structure where they specify the required and additional optional parameters of an \gls{http} requests library's function.
+
+On top of that, the request for each database within the same application might be different, one might use the URL ``http://app.com/data/db1/'' and another use ``http://app.com/data/db2/'', for that the system must provide additional data besides the data filtered, such as the database information.
+
+Basically what the Admin needs to provide the system is a template defining the parameters to a function of an \gls{http} request library function.
+On this template, the Admin can use placeholders to define where the system should insert certain data.
+Django contains a template system that allows building dynamic \gls{html} pages.
+The developer can write a normal \gls{html} page and then, using a special syntax, can tell where Django should insert data to fill the page.
+
+\begin{verbatim}
+<html>
+  <head>
+    <title>{{ app_name }}</title>
+  </head>
+  <body>
+    <h1></h1>
+  </body>
+</html>
+\end{verbatim}
+In the example above, \{\{ \textit{app\_name} \}\} will be replaced by the value of the variable app\_name.
+
+However, the entire Django framework is not required to build the Sender component, as the component does not require to either render pages or manage database models.
+Only the templating system is required.
+Fortunately, there's a Python package called Jinja\footnote{\url{https://palletsprojects.com/p/jinja/}}, which was built based on Django's template system.
+It has a similar syntax to the Django Template System providing some additional features and being more pythonic.
+
+For now, let us assume that the template will be an argument defined in each line, it would look something like this:
+\begin{verbatim}
+method: POST
+url: http://www.app.com/data/{{ database_identifier }}/
+data: {"patients_number": {{ filtered_data.get("patients_number") }}}
+\end{verbatim}
+On Jinja, placeholders are defined within \{\{\ldots\}\} tags, so it would look for the database\_identifier variable and execute the get method of the filtered\_data variable.
+
+While building its template, the Admin must have access to the filtered data, which, on the example above, was exposed through a filtered\_data variable.
+As data is in a Kafka topic, the system must provide an abstraction to easily access such data.
+Once again, since data is extracted into a \gls{csv}, it can be interpreted as a tabular type data.
+Two programming languages suited to read and manipulate data in this format are Python and R, which are widely used on data analysis applications.
+R is a more specialized language than Python since is suited for statistical analysis~\cite{r-lang}, however, Python is more popular, as there are many data analysis and machine learning packages written in it.
+As the Admin will mainly just want to access the data, the chosen approach was to expose the data using the Pandas Python package\footnote{\url{https://pandas.pydata.org/}}.
+It contains a DataFrame data structure, which is widely used in data manipulation and analysis applications written in Python.
+
+With Jinja and Pandas, the Admin can customize the request that sends the data to the applications, however, there is a use case that there is no possibility to achieve with this implementation.
+It was mentioned previously that the \gls{ehden} project uses a separate tool as a plugin of the \gls{ehden} Portal to build visualizations allowing for better comparison between databases, which is named Network Dashboards.
+Data is inserted into the tool by uploading a file into a form, which is not possible to reproduce with the current implementation.
+In Python, the most popular library to perform \gls{http} requests is called requests\footnote{\url{https://docs.python-requests.org/en/latest/}}.
+It contains several specific functions that allow performing any type of request.
+Files can be sent with this library by passing a file pointer as one of the arguments.
+In Python, a file pointer can be acquired by opening a file on disk.
+With this, the system has to provide a way to allow the Admin to insert this file pointer in its template of the \gls{http} request.
+
+To avoid having to create a parser to read a custom structure of key-value pairs where Admins define the parameters of the request, it would be ideal that the template could be generated directly into a Python data structure.
+This can be achieved by running code dynamically.
+When the template provided is rendered, replacing the placeholders by their values, a string value is generated.
+We can then treat that string as Python code and execute it.
+The system will require that this code returns Python's key-value data structure called dictionary, which can then be used to pass arguments to the requests function that performs the \gls{http} request since Python allows to provide arguments to a function with a dictionary.
+
+Let's sum up the process of building and sending the requests to the applications (Figure \ref{fig:sender-request}):
+\begin{enumerate}
+    \item The Admin defines a template with placeholders;
+    \item Once data is received by the Sender component, the template is rendered and a string will be generated;
+    \item The generated string will be executed as a Python code returning a Python's dictionary;
+    \item The dictionary is used to provide the parameters to the request function to perform the \gls{http} request.
+\end{enumerate}
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=\textwidth]{sender-request}
+    \caption{Process of generating the parameters of the \gls{http} request to send to an application}
+    \label{fig:sender-request}
+\end{figure}
+
+Note that, in figure \ref{fig:sender-request}, the value of the files dictionary is a variable name, which will be a local Python variable containing the file pointer to a temporary file containing the records received from the Filter Worker component.
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=.5\textwidth]{sender-interaction}
+    \caption{Interaction between the Filter Worker and Sender components}
+    \label{fig:sender-interaction}
+\end{figure}
+
+Regarding how data is transferred from the Filter Worker component to the Sender, figure \ref{fig:sender-interaction} shows a representation of the process.
+Once all data was filtered, the main goroutine of each Filter will send a message to the Data Ready to Send topic with the following metadata:
 \begin{itemize}
-    \item sends/publishes the data resulting from the pipelines, to the application's endpoints
-    \item why python? cause jinja and pandas (people know how to use)
-    \item since data was filtered, small data is in memory now
+    \item Filter Worker application id: since several could be running at the same time;
+    \item Filter id: through what filter did the data go;
+    \item Kafka topic offset: wherein Filter's data topic does the data start.
+    \item Records count: number of records that meet the filtering criteria;
+    \item Database identifier: to what database does the data belong;
 \end{itemize}
 
-\subsection{Admin Dashboard}
+The internal structure of the Sender component is similar to the Orchestrator components, having the main thread consuming from the Data Ready to Send topic, and then other threads will deal with the work of building and sending the request to the applications.
+
+Scalability is also allowed on this component as multiple Sender components can be running at the same time.
+For that, consumers used by their main thread all must belong to the same group to ensure that a message is sent to only one Sender application.
+
+\subsection{Admin Portal}
 % nice implementation detail: only on the backend of this are topics created
 
 \begin{itemize}
     \item search for tecnologies (first: golang pls . https://github.com/qor/admin)
+    \item react or angualr allow more customizability. dont want from scratch. react-admin library
     \item 2 components: api backend (django) + react frontend
     \item manage the whole thing. talks to the other components using kafka management topics
+    \item models and their relasionships
+    \item ksql as a db?
     \item Allows to perform all the use cases
 \end{itemize}
 
-\subsection{Statistics Recorder}
-\begin{itemize}
-    \item Listens to the kafka topics that are used along the system and transforms into persistent statistics data (sql)
-    \item removes this responsability from the other microservices
-    \item belongs to a separete consumer group
-\end{itemize}
-
+%\subsection{Statistics Recorder}
+%\begin{itemize}
+%    \item Listens to the kafka topics that are used along the system and transforms into persistent statistics data (sql)
+%    \item removes this responsability from the other microservices
+%    \item belongs to a separete consumer group
+%\end{itemize}
 
 \section{Summary}
-%complete diagram
-
-\section{Network Data Flow}
-\begin{itemize}
-    \item Evaluation?
-    \item step by step
-    \item number of topics involved
-\end{itemize}
+% sistema capaz de automatizar o processo de atualizar metadtados nas apps
