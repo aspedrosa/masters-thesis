@@ -835,6 +835,7 @@ Also, such new components are implemented in a combination of \gls{html}, \gls{c
 Regarding the backend, the React-admin framework already takes care of the communication between the frontend app and the backend app, however, only a set of technologies are supported to use in the backend.
 One of the available technologies to use is Django, which must be used alongside the framework called Django REST framework\footnote{\url{https://www.django-rest-framework.org/}}, which allows exposing Django's models through an interface.
 Django was chosen over other technologies such as Springboot\footnote{\url{https://spring.io/projects/spring-boot}} or GraphQL\footnote{\url{https://graphql.org/}} due to it managing the models by itself, creating migration files every time data models definition are changed on the Django app, allowing to keep both the business logic and the stored data models in a relational database in sync automatically.
+The database used here in conjuntion with Django will be PostgreSQL\footnote{\url{https://www.postgresql.org/}} since it is one of the most popular open-source and free \gls{rdbms}.
 
 With this integration between the frontend app and the backend app set up by React-admin, when defining a page on the front end app, it is only necessary to define to which model is referred to, and then enumerate the wanted fields that must be displayed on the page.
 There is no need to implement calls to the \gls{api} exposed by the backend app, as the React-admin framework will take of this automatically.
@@ -855,6 +856,16 @@ Models marks with green the admin can perform all \gls{crud} operations, models 
 % Listens to the kafka topics that are used along the system and transforms into persistent statistics data (sql)
 % removes this responsability from the other microservices
 % belongs to a separete consumer group
+
+Finally, this last component is in charge of reading messages that are sent between the components described before and persisting some of those messages as statistics of the system, so the admin can consult them on the Admin Portal.
+This could also be done on the components that send those messages, however, this way, such components are simpler and have well-defined objectives.
+
+To avoid interfering with the data flow of other components, this Statistics Recorder component should consume messages from the necessary topics using a different consumer group, this way Kafka will send a message of a topic to both this component and the other components.
+
+However, there is no need to develop a component from scratch to perform this.
+As we intend to move messages from Kafka into a relational database, we can make use of a Kafka Sink connector.
+A connector that allows achieving this is the JDBC Sink connector\footnote{\url{https://www.confluent.io/hub/confluentinc/kafka-connect-jdbc/}}.
+We are only required to set up Kafka Connect and launch a task using the JDBC Sink connector for each topic where the messages have to be persisted on the database.
 
 \section{Summary}
 % referencias para um anexo onde tem um diagrama completo do sistema
