@@ -227,15 +227,13 @@ Such actions were divided into three groups: Agents, Metadata Extraction, action
 With the requirements analysis done, let's first go over the portion of the system which executes in data owners' space.
 
 \subsection{ACHILLES}
-%\begin{itemize}
-%    \item percisade de um vocab files
-%    \item escolhemos principalmente por estar direcionada para bases de dados cdm
-%    \item organização interna
-%    \item implementado em R
-%    \item diferentes maneiras de exportação (json, csv ou diramente para db)
-%    \item a query for each analaysis
-%    \item Catalogue Export
-%\end{itemize}
+% percisade de um vocab files
+% escolhemos principalmente por estar direcionada para bases de dados cdm
+% organização interna
+% implementado em R
+% diferentes maneiras de exportação (json, csv ou diramente para db)
+% a query for each analaysis
+% Catalogue Export
 
 Regarding the extracting tool, from the ones presented in chapter \ref{chapter:background}, the most indicated for our use case is \gls{achilles}, developed by \gls{ohdsi}, or a variation of such.
 This choice was mainly because of its database, instead of the dataset, focused design, and because it was built to extract metadata from databases that follow the \gls{omop} \gls{cdm}.
@@ -360,13 +358,11 @@ As stated before, a different application might not be expecting the entire data
 Finally, with its easily scalable modular architecture, Kafka is well suited to our use case.
 
 \subsection{Kafka Source Connectors}
-%\begin{itemize}
-%    \item kafka tem algumas appllicação ja devenvolvida que tiram dados de uma source e metem mensagem no kafka
-%    \item fetch from files or from tables
-%    \item falar nas varias opcoes consideradas. as the tables não davam tudo duma vez, e as alternativas de ficheiros não davam feedback de quando tudo ja tinah sido uploaded
-%    \item o que eu escolhi da feedback de quando todos os records estão kafka e quantos records foram escritos
-%    \item a tabela implica ter esses dados guardados sempre. em differentes runs de achilles (em que os dados têm de ser apagados) eventos falsos de deleção seriam enviados
-%\end{itemize}
+% kafka tem algumas appllicação ja devenvolvida que tiram dados de uma source e metem mensagem no kafka
+% fetch from files or from tables
+% falar nas varias opcoes consideradas. as the tables não davam tudo duma vez, e as alternativas de ficheiros não davam feedback de quando tudo ja tinah sido uploaded
+% o que eu escolhi da feedback de quando todos os records estão kafka e quantos records foram escritos
+% a tabela implica ter esses dados guardados sempre. em differentes runs de achilles (em que os dados têm de ser apagados) eventos falsos de deleção seriam enviados
 
 At this point, we need to find a way to move the data extracted from the database into Kafka.
 As mentioned previously, the Kafka Connect framework allows to easily import and export data between Kafka and third-party systems.
@@ -421,13 +417,11 @@ After researching on the Confluent Hub, three connectors were found to suit the 
 \end{itemize}
 
 \subsection{Agent Final Architecture}
-%\begin{enumerate}
-%    \item docker to facilitae deploymente of agent (will require a little intro to docker)
-%    \item data owners should automatize (if they want) the process of achilles extracting data from their databases
-%    \item send data to kafka
-%    \item responde to health check messages
-%    \item automação da extração está nas mão do data owner mas existem ferramentas simples como o crontab que executam commandos a determinadas horas
-%\end{enumerate}
+% docker to facilitae deploymente of agent (will require a little intro to docker)
+% data owners should automatize (if they want) the process of achilles extracting data from their databases
+% send data to kafka
+% responde to health check messages
+% automação da extração está nas mão do data owner mas existem ferramentas simples como o crontab que executam commandos a determinadas horas
 
 At this point, we have all the building blocks to set up an agent and make it ready to deploy on the data owners' local system.
 The agent will have two internal components:
@@ -540,18 +534,16 @@ The task will execute on days 1 and 15 of every month at three in the morning.
 However, if it is preferable for the data owner, he can set up his automation, or no automation, of the extraction process.
 
 \section{Publishing}
-%\begin{itemize}
-%    \item data is in kafka. what do we have to do to reach the applications
-%    \item idealmente usamos o kafka e afins para tudo, não tendo de desenvolver nada
-%    \item need to send custom data on a CUSTOM FORMAT to a custom REST endpoint
-%    \item Kafka Sink Connectors (The target REST API is not customizable, such as the data format ) - need for a sender application
-%        https://www.confluent.io/hub/confluentinc/kafka-connect-http
-%        https://docs.confluent.io/kafka-connect-http/current/overview.html
-%        - envia um pedido para cada row dos dados do ficheiro
-%        -  que tal dar aggregate tudo numa mensagem? resolve? não é aconselhavel ter mensagens grandes
-%        - não deixa customizar body se eu quiser fazer algo {data:{patients_num:1, ...}}
-%    \item No known end on kafka topics/streams - require some management on top of kafka
-%\end{itemize}
+% data is in kafka. what do we have to do to reach the applications
+% idealmente usamos o kafka e afins para tudo, não tendo de desenvolver nada
+% need to send custom data on a CUSTOM FORMAT to a custom REST endpoint
+% Kafka Sink Connectors (The target REST API is not customizable, such as the data format ) - need for a sender application
+%  https://www.confluent.io/hub/confluentinc/kafka-connect-http
+%  https://docs.confluent.io/kafka-connect-http/current/overview.html
+%   - envia um pedido para cada row dos dados do ficheiro
+%   -  que tal dar aggregate tudo numa mensagem? resolve? não é aconselhavel ter mensagens grandes
+%   - não deixa customizar body se eu quiser fazer algo {data:{patients_num:1, ...}}
+% No known end on kafka topics/streams - require some management on top of kafka
 
 At the moment, we can deploy several agents on the data owners' local systems and have a set of Kafka topics to where data is uploaded when \gls{csv} metadata files are generated.
 We now need to send this data to the web application in form of \gls{http} requests.
@@ -570,13 +562,11 @@ Additionally, the number of messages sent by a database is dynamic, which the \g
 This problem will always exist due to the nature of Kafka, where topics can be treated as streams of data, which do not have determined start and end, and there is always data flowing.
 
 \section{Metadata Manager}
-%\begin{itemize}
-%    \item centralized entity working on top of kafka, dealing with the unbounded format of data in Kafka
-%    \item performs operations on top of kafka
-%    \item transforms the data to the required format
-%    \item sends to the specific application's endpoint
-%    \item 5 components
-%\end{itemize}
+% centralized entity working on top of kafka, dealing with the unbounded format of data in Kafka
+% performs operations on top of kafka
+% transforms the data to the required format
+% sends to the specific application's endpoint
+% 5 components
 
 To takle the problems mentined previously, new components need to be developed.
 Such group of components will be called Metadata Manager, which will perform operations on top of Kakfa.
@@ -595,13 +585,11 @@ For the communication between components, Kafka topics are used, however their o
 As these components will be implemented from scratch, the programming language that will be used is Go, if applicable, for the same reason explained in the Health Check Handler component of the agent, try new emerging technologies beyond the most popular ones.
 
 \subsection{Filter Worker}
-%\begin{itemize}
-%    \item lets do it in go cause lets explore
-%    \item ksql introduced. easily filter data with select \_ where \_
-%    \item select and filter the data comming from the databses
-%    \item only process data of a single database at a time. handling multiple is the same is hard to handle and hard to scale
-%    \item scalable: several pipeline worker applications
-%\end{itemize}
+% lets do it in go cause lets explore
+% ksql introduced. easily filter data with select \_ where \_
+% select and filter the data comming from the databses
+% only process data of a single database at a time. handling multiple is the same is hard to handle and hard to scale
+% scalable: several pipeline worker applications
 
 Data comes from the agents in several Kafka messages, which need to be gathered together to then be used to build the custom request for each application.
 As gathering all the uploaded data in memory is not a scalable option, and implementing a system with memory usage management is a complex task, the system must first filter out unnecessary data and only allow the Admin to build and send the request to the applications.
@@ -660,14 +648,12 @@ Also, this means that a Filter Worker application will obtain the data to all th
 The system then allows scaling, by running several Filter Worker applications at the same time, with that, several Filters can be run for different databases at the same time.
 
 \subsection{Orchestrator}
-%\begin{itemize}
-%    \item why do we need this. why do not the workers read directly from the database.
-%        Cause wokers use ksql, and it does not allow to create a stream and start reading at a giving time. either start or end.
-%    \item To ensure multiple records of multiple databases are not processes at the same time, this component redirects the data from databases to the pipelines workers preventing the previous problem
-%    \item why not use ksql? cant set offset to read from. either always read from start or always read from end
-%    \item why java? (only it contains a kstream api) and we use it to redirect messages from one topic to another
-%    \item 2 threads: one reads uploads and creates streams of data, another closes streams once all data was transfered
-%\end{itemize}
+% why do we need this. why do not the workers read directly from the database.
+%  Cause wokers use ksql, and it does not allow to create a stream and start reading at a giving time. either start or end.
+% To ensure multiple records of multiple databases are not processes at the same time, this component redirects the data from databases to the pipelines workers preventing the previous problem
+% why not use ksql? cant set offset to read from. either always read from start or always read from end
+% why java? (only it contains a kstream api) and we use it to redirect messages from one topic to another
+% 2 threads: one reads uploads and creates streams of data, another closes streams once all data was transfered
 
 As multiple Filter Worker components might be running at the same time, there needs to be a way to redistribute the load among the running instances.
 Since agents publish a topic when the upload process is done, a goroutine on each Filter Worker could dynamically create the required processing streams on the data topics of the databases that performed the upload.
@@ -818,24 +804,58 @@ Scalability is also allowed on this component as multiple Sender components can 
 For that, consumers used by their main thread all must belong to the same group to ensure that a message is sent to only one Sender application.
 
 \subsection{Admin Portal}
-% nice implementation detail: only on the backend of this are topics created
+% search for tecnologies (first: golang pls . https://github.com/qor/admin)
+% react or angualr allow more customizability. dont want from scratch. react-admin library
+% 2 components: api backend (django) + react frontend
+% manage the whole thing. talks to the other components using kafka management topics
+% models and their relasionships
+% Allows to perform all the use cases
 
-\begin{itemize}
-    \item search for tecnologies (first: golang pls . https://github.com/qor/admin)
-    \item react or angualr allow more customizability. dont want from scratch. react-admin library
-    \item 2 components: api backend (django) + react frontend
-    \item manage the whole thing. talks to the other components using kafka management topics
-    \item models and their relasionships
-    \item ksql as a db?
-    \item Allows to perform all the use cases
-\end{itemize}
+Moving to the component where the Admin will use to manage the whole metadata manager.
+It will allow performing the several use cases defined on the requirement analysis stage: managing communities, databases, filters and target applications, and checking statistics of the system.
 
-%\subsection{Statistics Recorder}
-%\begin{itemize}
-%    \item Listens to the kafka topics that are used along the system and transforms into persistent statistics data (sql)
-%    \item removes this responsability from the other microservices
-%    \item belongs to a separete consumer group
-%\end{itemize}
+As this component is mainly just a web interface, a search was performed for Go packages that allowed to create some kind of admin dashboard.
+Some solutions were found such as Qor Admin\footnote{\url{https://github.com/qor/admin}} and GoAdminGroup/go-admin\footnote{\url{https://www.go-admin.com/}}.
+The first solution had good documentation and features.
+It creates management pages for each data model defined, allowing a user to perform the regular \gls{crud} operations on such data models.
+However, there was small flexibility on what to display on a display page of a data model.
+For example, if a model had an id and a name, only those fields would appear on the display page of such a model.
+The second solution had better flexibility compared to the first one, however, page customization was done through a series of function calls which lead to big chunks of code to define a page, consequently, contributing to the maintainability of this component to be hard.
+
+With this, we decided to separate this component into two parts, a web interface app and a backend app exposing an \gls{api} for the web interface app to use.
+This allows using technologies that are better suited for such types of applications.
+Regarding the web interface, there are several popular web frameworks/libraries such as React\footnote{\url{https://reactjs.org/}}, Angular\footnote{\url{https://angular.io/}} and Vue\footnote{\url{https://vuejs.org/}} that intend to facilitate the process of creating web applications.
+However, we didn't want to build something from scratch, for that, we performed a new search for framework/libraries that used those web technologies, but were specialized to build an admin interface.
+The solution found was React-Admin\footnote{\url{https://marmelab.com/react-admin/}}, a frontend framework to build data-driven applications.
+React~\cite{react} is a library that allows dividing a page into components that can be reused across the web application.
+Each component them as an internal state, and React will automatically update and render the associated components as the data changes.
+With React-admin, customizations are easily implemented by just creating new components and then adding them to their appropriate place.
+Also, such new components are implemented in a combination of \gls{html}, \gls{css} and Javascript, languages that are mainly used to build web interfaces.
+
+Regarding the backend, the React-admin framework already takes care of the communication between the frontend app and the backend app, however, only a set of technologies are supported to use in the backend.
+One of the available technologies to use is Django, which must be used alongside the framework called Django REST framework\footnote{\url{https://www.django-rest-framework.org/}}, which allows exposing Django's models through an interface.
+Django was chosen over other technologies such as Springboot\footnote{\url{https://spring.io/projects/spring-boot}} or GraphQL\footnote{\url{https://graphql.org/}} due to it managing the models by itself, creating migration files every time data models definition are changed on the Django app, allowing to keep both the business logic and the stored data models in a relational database in sync automatically.
+
+With this integration between the frontend app and the backend app set up by React-admin, when defining a page on the front end app, it is only necessary to define to which model is referred to, and then enumerate the wanted fields that must be displayed on the page.
+There is no need to implement calls to the \gls{api} exposed by the backend app, as the React-admin framework will take of this automatically.
+Additionally, this framework supports relationships, which allows displaying extra data associated with a model, for example, if a database belongs to a community we can also display the Community information on the database page.
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=\textwidth]{data-models}
+    \caption{Data models managed on the Admin Portal component}
+    \label{fig:data-models}
+\end{figure}
+
+Concerning the models' organization, figure \ref{fig:data-models} shows the relationship between models of the Metadata Manager system.
+Models marks with green the admin can perform all \gls{crud} operations, models in yellow are only for reading as they are created by the Statistics Recorder component, and models in blue are dependent models, which are defined when the main model is created, in this case, FilterSelection entries are created when the Admin is creating a Filter.
+
+\subsection{Statistics Recorder}
+% kafka jdbc connector?
+% Listens to the kafka topics that are used along the system and transforms into persistent statistics data (sql)
+% removes this responsability from the other microservices
+% belongs to a separete consumer group
 
 \section{Summary}
+% referencias para um anexo onde tem um diagrama completo do sistema
 % sistema capaz de automatizar o processo de atualizar metadtados nas apps
