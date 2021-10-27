@@ -593,6 +593,7 @@ As these components will be implemented from scratch, the programming language t
 
 Data comes from the agents in several Kafka messages, which need to be gathered together to then be used to build the custom request for each application.
 As gathering all the uploaded data in memory is not a scalable option, and implementing a system with memory usage management is a complex task, the system must first filter out unnecessary data and only allow the Admin to build and send the request to the applications.
+A Filter operation will remove entire rows, however, only a subset of columns might be required, for that, the system should also allow choosing which columns of the metadata are required.
 
 That's what the Pipeline Worker component is supposed to do.
 Extract only the essential data from all the data uploaded by an agent and then send it to the Sender component, who will be in charge of building and sending the request to the applications.
