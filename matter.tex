@@ -336,11 +336,6 @@
 % Including files is advised:
 
 
-%Appendix
-
-\backmatter
-
-
 %Print all used references
 
 \begingroup
@@ -348,17 +343,31 @@
 
 %Redefine References name
 \defbibheading{bibliography}[References]{
-	\chapter{#1}
+    \chapter*{#1}%
+    \addcontentsline{toc}{chapter}{#1}%
+    \markright{#1}%
 }
 \SingleSpacing
 \setlength\bibitemsep{8pt}
 \printbibliography[heading=bibliography]
 \endgroup
 
+%Appendix
+\appendix
 
-%Load appendix
-%\include{appendix-a}
+\chapter{Agent and Metadata Manager Data flow}
+\label{appendix:a}
 
+\pagebreak[4]
 
+\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}
+\begin{figure}[H]
+    \center
+    \includegraphics[width=.58\textwidth]{figs/04-extraction-update/all}
+    \caption{The architecture of the entire Metadata manager and its interaction with the agent}
+\end{figure}
+
+\pagebreak[4]
+\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}
 
 \end{document}
