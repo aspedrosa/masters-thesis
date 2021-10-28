@@ -1,6 +1,6 @@
 \chapter{Metadata Visualization}
-\graphicspath{{figs/03-visualization/}}
 \label{chapter:metadata-visualization}
+\graphicspath{{figs/03-visualization/}}
 
 Among the presented tools in chapter \ref{chapter:background}, MONTRA was our go-to mainly because of its data source-centric approach.
 Also, no real data is shown here, only metadata is handled within the platform, however, it still allows to impose access permissions at several levels.
@@ -119,7 +119,7 @@ A fingerprint is a name given to the set of answers to the questions of a questi
 In other words, it is the metadata that betters describes the original data of the associated data source.
 Data owners can start to answer the questions to build the profile of their data sources once there are communities on the platform and, these have at least a questionnaire associated.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{listings}
     \caption{The user interface displayed after selecting a community, which shows the list of the fingerprints of the chosen community}
@@ -134,6 +134,13 @@ After the data source owners request to publish a fingerprint the framework allo
 
 \subsection*{Views}
 
+\begin{figure}[H]
+    \center
+    \includegraphics[width=\textwidth]{fingerprint-new}
+    \caption{User interface to create a fingerprint}
+    \label{fig:fingerprint-new}
+\end{figure}
+
 In figure \ref{fig:fingerprint-new} it is presented the user interface where a data owner can answer the questions of a questionnaire.
 Each question of the questionnaire is placed under a container that can be collapsed, as is shown for question \textit{Instituition name}.
 However, if multiple questions are grouped, the collapsable container will affect all questions of the group.
@@ -146,7 +153,7 @@ Besides the input widget where the data owner can insert its answers, the user a
         \begin{itemize}
             \item Visibility: Let plugins have access to answers data
             \item Allow printing: On the fingerprints list page, showed in figure \ref{fig:listings}, there is a dropdown with tools, being the only one the "Print" tool (\ref{fig:listings-tools}). However, this feature is not correctly implemented since it calls the browser's built-int printing function on the fingerprint list page, so no actual fingerprint data will be printed. This permission ends up being useless. Additionally, if a user calls the browser's print function (e.g. hitting Ctrl+P) when viewing the data of a fingerprint, the platform will not block the action.
-                \begin{figure}
+                \begin{figure}[H]
                     \center
                     \includegraphics[width=.2\linewidth]{listings-tools}
                     \caption{Available tools on the fingerprint selection}
@@ -158,13 +165,6 @@ Besides the input widget where the data owner can insert its answers, the user a
     \item Enable navigation along the question sets of the current questionnaire
     \item Permits to save or cancel all the changes made to the current question set
 \end{enumerate}
-
-\begin{figure}
-    \center
-    \includegraphics[width=\textwidth]{fingerprint-new}
-    \caption{User interface to create a fingerprint}
-    \label{fig:fingerprint-new}
-\end{figure}
 
 Once the fingerprint is filled and published, a regular user can consult the metadata, which will be displayed by default in detailed view.
 Similar to the create view, it is presented with some control buttons:
@@ -195,7 +195,7 @@ Similar to the create view, it is presented with some control buttons:
         \end{itemize}
 \end{enumerate}
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{fingerprint-show-detailed}
     \caption{A detailed version user interface to view and analyze fingerprints}
@@ -217,7 +217,7 @@ The overall interface used is identical to the ones presented above, where the u
 The main difference to the other versions of the fingerprint view is that the only control buttons available are just the navigation ones, and all the questions don't have any validation.
 Additionally, at the bottom of the page, it is provided to the user a way to customize the search query, allowing to create complex search criteria through a drag and drop interface, as is presented in figure \ref{fig:boolean-query}.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{boolean-query}
     \caption{Interface to customize the fingerprint search query}
@@ -244,14 +244,14 @@ As an example, on figure \ref{fig:montra-xss-create} on the Database Name field,
 Once a user opens the fingerprint to check the data, the code will execute but the dummy name will render on the Database Name field.
 This can be further exploited, where the user visiting the fingerprint will not notice that malicious code was executed.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=0.75\textwidth]{montra-xss-create}
     \caption{Example of how an \gls{xss} attack could be done on MONTRA}
     \label{fig:montra-xss-create}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=0.75\textwidth]{montra-xss}
     \caption{Victim of a simple \gls{xss} attack}
@@ -282,7 +282,7 @@ To show these features I wrote a simple HTML file with a simple form that expect
 
 If I try to submit the form with invalid values, error messages are presented as shown in figure \ref{fig:html-form-validation}.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=.3\textwidth]{html-form-validation}
     \caption{Error messages that appear after submitting the form on a chromium based browser}
@@ -319,7 +319,7 @@ For a regular user to use, there are other set o \gls{api} endpoints that are mo
 First, we will go over the \gls{api} used by the fingerprint views.
 But before showing the available endpoints, let's go over how the fingerprint views are organized and how they show only the questions of a certain question set at a time.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{fingerprint-hidden-question-sets}
     \caption{Each question set has its container.
@@ -426,14 +426,11 @@ If the auto-accept setting is off and the second endpoint is used, a user can pu
 
 \subsection{Import Questionnaires - Excel}
 \label{subsection:excel}
-
-%\begin{itemize}
-%    \item Como os vários conceitos anteriores são mapeados para o excel
-%    \item Question Sets
-%    \item Questions
-%    \item Choices
-%    \item ...
-%\end{itemize}
+% Como os vários conceitos anteriores são mapeados para o excel
+% Question Sets
+% Questions
+% Choices
+% ...
 
 As mentioned before, to define a skeleton of the metadata that describes a data source for a given community, a spreadsheet file has to be submitted.
 There is already a template with some instructions and columns where a community manager only has to fill the necessary rows to then get the wanted result.
@@ -462,7 +459,7 @@ The column defined in the template are the following:
 From the previous list, question groups were mentioned both when the type column has the Category value and on the Level part of the Level/Number column.
 The former is used to add a title with no question associated, resulting in what is presented in figure \ref{fig:question-group-category}.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{category}
     \caption{Create a group of questions with a title}
@@ -471,7 +468,7 @@ The former is used to add a title with no question associated, resulting in what
 
 On the latter, the text of the question in the most upper level is used as the title of the questions group, resulting in an output similar to the one in figure \ref{fig:question-group-levels}.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{levels}
     \caption{Create a group of questions using a question's text as the title}
@@ -481,7 +478,7 @@ On the latter, the text of the question in the most upper level is used as the t
 It's important to highlight that the category way to create question groups is not independent of levels.
 If both a category row and a question are on the most upper level, MONTRA will render two separate collapsable containers, where the first one will be empty, as is shown in figure \ref{fig:question-group-category-wrong-levels}.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{category-levels}
     \caption{Example to show that the category way to create question groups also depends on the values that are set on the level column}
@@ -497,7 +494,7 @@ To avoid having a spreadsheet with several columns that will not be used for all
 For choice-based questions, the value list column is used to define the possible choices and to add an extra text field associated with a given choice.
 Choices are separated by a ``|'' character and the extra text field can be set by appending ``\{...\}'' after the target choice's text.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{choice-freeforms}
     \caption{Multiple choice question with some extra text fields associated with the several choices}
@@ -550,7 +547,7 @@ The components are the following:
     \item type of the information: available values are choice, multiple-choice and text
 \end{itemize}
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{choice-tabular}
     \caption{How a tabular-choice question type is specified on the spreadsheet and how it is rendered}

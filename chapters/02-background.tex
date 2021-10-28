@@ -6,53 +6,6 @@
     You can't have happiness without pain, you need a little bit of rain to have a little bit of rainbow - Felix Lengyel
 \end{introduction}
 
-Oftentimes medical researchers do studies associated with diseases, such as determining the impact of a certain drug or find variables that are characteristic of certain diseases.
-To perform such studies and have reliable results, a great amount of data is required.
-To obtain that data, these researchers have to contact medical data owners to have access to relevant data that can help improve their analysis and/or findings.
-
-With this procedure emerges several problems for the researcher such as he has to find
-institutions willing to share data and the process of contacting the data providers can
-be cumbersome.
-To aid in this whole process, several data hubs have been developed with the purpose of
-making the process of data discovery easier.
-One important aspect of such data hubs is that they present to the researcher meta
-data, which is aggregations or summaries of the original data.
-Metadata has the advantage that one doesn't have to deal with the anonymization process
-of medical records, since only summaries of the initial data are retrieved
-~\cite{egenvar, montra}.
-With this dependency on the original data, emerges an important problem of data hubs
-which is, metadata can easily be outdated after a small time window.
-This could not raise a big problem, if the records were updated regularly, however this
-rarely happens, mainly because either the update process is difficult or because
-metadata has to be manually extracted and uploaded to the data hub.
-A problem that still might arise from such platforms, is those different datasets very
-often have different representation for the same concept or the data is organized in a
-different layout.
-The research is then hampered since either different approaches have to be taken to
-analyze each dataset.
-
-The \gls{ehden}~\cite{ehden} project has affiliations with several institutions, data sources and data custodians across the \gls{eu}, which the main goal is to, within a federated network~\cite{ehden-datapartners}, harmonize their data to the \gls{omop} \gls{cdm}, which was developed by \gls{ohdsi}, a multi-stakeholder, interdisciplinary and collaborative organization that brings out the value of health data through large-scale analytics~\cite{ohdsi-site}.
-With a \gls{cdm}, the problem of having different representations for the same data
-across distinct data sources is solved.
-Researchers can now develop a single analysis method and then apply it to all gathered
-datasets and these methods can be optimized for this specific data model, which allows
-large-scale analytics.
-Furthermore, also improves collaborative research~\cite{ohdsi-site}.
-Still, within the scope of the \gls{ehden} project, the project has a database catalog~\cite{ehden-portal},
-built with the MONTRA framework~\cite{montra}, where data owners fill metadata about
-their data source manually, which brings the outdated problem already mentioned before.
-Additionally, whenever new metadata fields are introduced, the data owners of all data
-sources have to go manually update their metadata form.
-
-To build a valuable data hub is then important to take into account how to:
-\begin{itemize}
-    \item extract metadata from a data source
-    \item upload and update the metadata on the data hub
-    \item automatize the two processes mentioned before
-    \item receive and display the metadata on the data hub in a way that facilitates
-        readability.
-\end{itemize}
-
 \section{Metadata Visualization Tools} \label{sec:viz-tools}
 
 %30876434,Evaluation of repositories for sharing individual-participant data from clinical studies.
@@ -306,7 +259,7 @@ An interesting and important note is that there was already some work done on ma
 ...
 
 
-\section{Metadata Network Architectures}  % TODO discuss
+\section{Metadata Network Architectures}
 
 Considering that we have an agent that extracts or gathers metadata from a data source,
 it is also important to think on how they will transfer or communicate data with the
@@ -418,7 +371,7 @@ It consists of multiple connectors which are in charge of loading the data into 
 Each channel has exactly one source connector and one or more destination connectors.
 A possible configuration is to receive data over HTTP, then send the result of the configured transformations to a file and/or insert it into a configured database.
 
-\section{Findings}
+\section{Summary}
 
 \begin{table}[H]
     \center
@@ -471,9 +424,9 @@ A possible configuration is to receive data over HTTP, then send the result of t
 \end{tabular}
 \end{table}
 
+O this chapter ...
+
 -Similarity between extraction tools -> all converge different data model to a comon one
 -As we can see there is no tool that all the cheks ...
 -como vimos algumas aplicações podem dar insgits importantes que devemo spensar quando formos devenvolver as cenas, como por examplo, aquele paper que disse que segui uma filosofia de push em vez de pull para não pedir portas abertas aos colaboradores do projeto
-
-\section{Summary}
 

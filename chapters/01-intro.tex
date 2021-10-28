@@ -1,14 +1,69 @@
 \chapter{Introduction}
 \label{chapter:introduction}
 
+Oftentimes medical researchers do studies associated with diseases, such as determining the impact of a certain drug or find variables that are characteristic of certain diseases.
+To perform such studies and have reliable results, a great amount of data is required.
+To obtain that data, these researchers have to contact medical data owners to have access to relevant data that can help improve their analysis and/or findings.
+
+With this procedure emerges several problems for the researcher such as he has to find
+institutions willing to share data and the process of contacting the data providers can
+be cumbersome.
+To aid in this whole process, several data hubs have been developed with the purpose of
+making the process of data discovery easier.
+One important aspect of such data hubs is that they present to the researcher meta
+data, which is aggregations or summaries of the original data.
+Metadata has the advantage that one doesn't have to deal with the anonymization process
+of medical records, since only summaries of the initial data are retrieved
+~\cite{egenvar, montra}.
+With this dependency on the original data, emerges an important problem of data hubs
+which is, metadata can easily be outdated after a small time window.
+This could not raise a big problem, if the records were updated regularly, however this
+rarely happens, mainly because either the update process is difficult or because
+metadata has to be manually extracted and uploaded to the data hub.
+A problem that still might arise from such platforms, is those different datasets very
+often have different representation for the same concept or the data is organized in a
+different layout.
+The research is then hampered since either different approaches have to be taken to
+analyze each dataset.
+
+The \gls{ehden}~\cite{ehden} project has affiliations with several institutions, data sources and data custodians across the \gls{eu}, which the main goal is to, within a federated network~\cite{ehden-datapartners}, harmonize their data to the \gls{omop} \gls{cdm}, which was developed by \gls{ohdsi}, a multi-stakeholder, interdisciplinary and collaborative organization that brings out the value of health data through large-scale analytics~\cite{ohdsi-site}.
+With a \gls{cdm}, the problem of having different representations for the same data
+across distinct data sources is solved.
+Researchers can now develop a single analysis method and then apply it to all gathered
+datasets and these methods can be optimized for this specific data model, which allows
+large-scale analytics.
+Furthermore, also improves collaborative research~\cite{ohdsi-site}.
+Still, within the scope of the \gls{ehden} project, the project has a database catalog~\cite{ehden-portal},
+built with the MONTRA framework~\cite{montra}, where data owners fill metadata about
+their data source manually, which brings the outdated problem already mentioned before.
+Additionally, whenever new metadata fields are introduced, the data owners of all data
+sources have to go manually update their metadata form.
 
 \section{Objectives}
+The purpose of this dissertation is to create a system that can automate the update process of metadata stored in online platforms, that aids in the procedure of finding the correct data set for a specific study.
+Such a system must be able to extract metadata from the databases, for that, an agent software will be installed along with each databases' local system.
+Additionally, as new software components might be developed, it is a great opportunity to try new technologies.
 
+With that, the following goals were established:
 \begin{itemize}
-    \item have a platform capable of holding and displaying metadta in a intuitive and user-friendly way
-    \item find a tool that extracts metadta from several databases
-    \item design a system capable of sending dta to aplication to keep their data up to date
-    \item make use of new and growing popularity tecnologies
+    \item have a platform capable of holding and displaying metadata in an intuitive and user-friendly way;
+    \item develop or find a tool that extracts metadata from a database;
+    \item design a system capable of sending data to an application, to keep their data up-to-date;
+    \item make use of new technologies with growing popularity.
 \end{itemize}
 
 \section{Outline}
+This dissertation is organized into five more chapters, which are described below.
+
+Chapter \ref{chapter:background} intends to provide a state-of-the-art characterization associated with the work of the dissertation.
+Regarding the several goals established, several solutions and approaches were studied.
+
+In chapter \ref{chapter:metadata-visualization} a software framework used to develop platforms to store and visualize metadata is described.
+Has this framework had some design flaws, the chapter also details all the improvements performed.
+
+Chapter \ref{chapter:extraction-update} describes the entire development process around the tool to extract metadata and the metadata management system that automates the update process of metadata.
+It starts by detailing all the requirements associated with such components, then describes both the architecture and implementation of both the extraction tool and the metadata management system.
+
+The Chapter \ref{chapter:evalution} is used to show the integration of all the components developed in the previous chapters.
+
+The last chapter, \ref{chapter:conclusion}, presents the main achievements with the work, main challenges found and future work.
