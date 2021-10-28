@@ -248,7 +248,22 @@ Each particular ingestor transforms raw data into the \gls{dats}, and they make 
 An interesting and important note is that there was already some work done on mapping datasets represented in the \gls{omop} \gls{cdm} to \gls{dats}~\cite{cdm-dats}.
 
 \subsection*{Xtract}
-...
+The high throughput of data coming from \gls{iot} devices or scientific instruments causes data management challenges.
+Generation of big and heterogeneous data leads to repositories being nearly unsearchable.
+
+Xtract~\cite{xtract} is a serverless middleware that allows extracting metadata from distributed files, allowing to have a centralized index of distributed data.
+The work aims to create a scalable and decentralized metadata extraction system that can be installed either centrally or at the edge.
+This then allows automizing the process of creating searchable data hubs from repositories where data is not organized.
+
+The tool provides a set of built-in extractors that range from ones that can determine null values on tabular files to others that can extract topics and keywords of free text files.
+
+To extract metadata from files, the Xtract service sends a Crawler function that fetches file system properties from files in a repository.
+Then a file type extractor is used to better select which extractor should be applied to each specific file.
+Xtract will then dynamically use further extractors based on the output gotten.
+
+Endpoints are what allow Xtract to execute the metadata extraction function from registered repositories.
+They offer to compute resources and execute extractor functions on local file systems.
+Such endpoints can be deployed across a high number of heterogeneous types of systems.
 
 \subsection*{MetaExtractor}
 ...
