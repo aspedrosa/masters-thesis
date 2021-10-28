@@ -2,16 +2,16 @@
 \label{chapter:background}
 \graphicspath{{figs/02-background/}}
 
-\begin{introduction}
-    You can't have happiness without pain, you need a little bit of rain to have a little bit of rainbow - Felix Lengyel
-\end{introduction}
+In this chapter, a search will be performed to find existing solutions that might already achieve some of the goals defined previously.
+The chapter is divided into three sections, presenting tools regarding metadata visualizations, metadata extraction and metadata network architectures.
+From the study of such solutions, hopefully, some can be reused avoiding implementing new systems, however, if the implementation of new applications is required, these tools can give intel on some aspects that might need to be taken into account while developing.
 
 \section{Metadata Visualization Tools} \label{sec:viz-tools}
 
 %30876434,Evaluation of repositories for sharing individual-participant data from clinical studies.
 %31862012,The Systematic Review Data Repository (SRDR): descriptive characteristics of publicly available data and opportunities for research.
 
-It will then be explored existing visualization platforms that enhance data discovery
+Starting on explored existing visualization platforms that enhance data discovery
 by presenting summaries or metadata of records (data sources, datasets).
 
 In some cases data can't be publicly available because it contains sensitive data or
@@ -38,7 +38,7 @@ possible to receive contributions from the community.
 \subsection*{Search Method}
 
 Regarding this subject, there was already done a systematic review of several tools that fit within the current search pool.
-Its objective was to ``identify projects and software solutions that promote patient electronic health data discovery, as enablers for data reuse and advancement of biomedical and translational research''~\cite{systematic_review}.
+Its objective was to ``identify projects and software solutions that promote patient electronic health data discovery, as enablers for data reuse and advancement of biomedical and translational research''~\cite{systematic-review}.
 From the final 20 systems, they captured their interoperability, what type of data they were providing and their after effect related to scientific results and improvements to better healthcare.
 To perform their search they only used PubMed \link{https://pubmed.ncbi.nlm.nih.gov/} considering it indexes a substantially amount of health-care related work and provides a public \gls{api} which allows automation of the retrieval process.
 The programmatic retrieval was done using the Biopython framework\link{https://biopython.org/} to query PubMed and consisted of eight steps.
@@ -202,21 +202,19 @@ The available access types are:
 
 Associated with some projects mentioned in the previous section, several tools and
 processes are relevant for the task of extracting/profiling datasets.
-Next are presented such tools:
 
 \subsection*{Search Method}
 
-\textit{TODO describe this}
+To search for these tools the following queries were used in the both PubMed and Gooogle Schrollar search engines:
+\begin{itemize}
+    \item metadata (extration or creation)
+    \item "metadata" (extraction or creation) from database
+    \item extraction from database
+    \item metadata fingerprinting a database
+    \item metadata updating
+\end{itemize}
 
-search terms: metadata (extration or creation),
-
-"metadata" (extraction or creation) from database,
-
-extraction from database,
-
-metadata fingerprinting a database,
-
-metadata updating,
+Next are presented the tools found from that search, except the first tool, which was retrieved from the OHDSI tools catalogue~\cite{ohdsi-tools}, and the second, which was gathered from the search performed for Metadata visualization tools.
 
 \subsection*{ACHILLES}
 The \gls{ohdsi} project, already mentioned at the beginning of this chapter, offers a variety of open-source tools~\cite{ohdsi-tools} that can be used on several data-analytics use cases on observational patient-level data.
@@ -358,7 +356,7 @@ To do so, IT administrators need solutions that allow customization and are scal
 In a continuously changing healthcare economy, NextGen Healthcare Solutions assist in supersede these challenges by: increasing the capabilities of sharing data; efficiently combine and transfer data over multiple systems; diminish costs and satisfy urging needs with Fast Healthcare Interoperability Resources (FHIR, a standard that defines data formats and API to exchange \gls{ehr} ) based APIs.
 One of such solutions is NextGen Connect, where NextGen Healthcare's goal is to offer the healthcare society a secure and practical way to share health data.
 
-NextGen Connect contains an Integration Engine that, like a language interpreter who translates from one language into another, translates a message represented on a given format into another that the destination system understands.
+NextGen Connect\cite{nextgen} contains an Integration Engine that, like a language interpreter who translates from one language into another, translates a message represented on a given format into another that the destination system understands.
 Whenever NextGen Connect receives a message from an external system, the Integration Engine perform:
 \begin{itemize}
     \item Filtering: analyses the message parameters and transfers or discards it from going to the transformation phase.
@@ -419,14 +417,22 @@ A possible configuration is to receive data over HTTP, then send the result of t
 \hline
         EHR4CR \cite{ehr4cr} & {\color{red} \xmark} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
 \hline
-        NextGen Connect \cite{} & {\color{green} \cmark} \repo{https://github.com/nextgenhealthcare/connect} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
+        NextGen Connect \cite{nextgen} & {\color{green} \cmark} \repo{https://github.com/nextgenhealthcare/connect} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
 \hline
 \end{tabular}
+    \caption{A summary of the features present in each tool studied in this Background chapter}
+    \label{tab:background-resumo}
 \end{table}
 
-O this chapter ...
+In this chapter, several tools were analyzed regarding metadata visualization, extraction, and tools implementing networks of metadata.
+Table \ref{tab:background-resumo} enumerates all the tools analyzed, as well as, marked with a green check, features that the specific tool supports and marked with a red cross, not supported features.
+It is possible to see that no tool contains all the desired features.
+It is then required to either build a system that supports all these features or make integration of a set of these tools.
 
--Similarity between extraction tools -> all converge different data model to a comon one
--As we can see there is no tool that all the cheks ...
--como vimos algumas aplicações podem dar insgits importantes que devemo spensar quando formos devenvolver as cenas, como por examplo, aquele paper que disse que segui uma filosofia de push em vez de pull para não pedir portas abertas aos colaboradores do projeto
+Either way, this study will help on further development processes, due to the aspects that certain tools might alert to, such as, on \cite{popmednet}, software running on the local environment of the data owners followed a push approach for communication instead of pull, to avoid requiring open ports on their systems, which could lead to having to change critical firewall rules.
+Also, one interesting fact that extraction tools had in common, was that either the data was assumed to be or was first transformed into a common format before performing any extraction processes.
 
+Both \cite{montra} and \cite{achilles-github} look promising to be used on this work, due to its database-centric design and also for already being used on the \gls{ehden} project.
+However, there is still the need for a system that gets the data from the agents extracting the data to the applications holding and displaying the data.
+
+The next chapter will approach the platform that will be used to store and visualize the metadata, detailing its features and consequential improvements.
