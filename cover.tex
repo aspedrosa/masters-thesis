@@ -181,8 +181,19 @@ Por último, mas não menos importante, queria agradecer à minha família por e
 %%%  declaration.
 %%% Don't remove the \selectlanguage statement or you will end with incorrect hyphenation
 %% Mandatory Keywords and Abstract in Portuguese
-\Abstract{Palavras Chave}{texto livro, arquitetura, história, construção, materiais de construção, saber tradicional.}
-         {Resumo}{\selectlanguage{portuguese}\blindtext[3]}
+\Abstract{Palavras Chave}{meta-dados, registo eletrónico de pacientes, EHDEN, OHDSI, atualização, automatização, extração}
+         {Resumo}{\selectlanguage{portuguese}%
+Para realizar estudos médicos, tais como o impacto de um fármaco numa determinada população, os investigadores precisam de acesso a dados reais de organizações médicas, tais como hospitais, para que os seus estudos tenham resultados fiáveis. %
+No entanto, para os investigadores, este é um processo difícil e demorado até conseguirem encontrar o conjunto de dados que melhor se adapta ao seu estudo, dado que muitas vezes não têm acesso direto aos dados reais. %
+Para ajudar neste processo, existem plataformas centralizadas que descrevem o conteúdo dos conjuntos de dados através de meta-dados. %
+Atualmente, em muitas destas plataformas, estes meta-dados são atualizados manualmente, um processo lento e tedioso, o que leva a que se tornem muito facilmente desatualizados. %
+\\%
+O objetivo deste trabalho é desenvolver um sistema que extrai automaticamente meta-dados diretamente dos dados reais das bases de dados e os envia para várias plataformas que estão a expor meta-dados de modo a que estes se mantenham atualizados. %
+O sistema pretende trabalhar em bases de dados ligadas ao grupo EHDEN (European Health Data and Evidence Network), que pretende criar uma rede federada de bases de dados médicas na Europa, seguindo os mesmos princípios e ferramentas utilizados pela comunidade OHDSI (Observational Health Data Sciences and Informatics). %
+A extração de meta-dados é feita por agentes que são instalados juntamente com o sistema de produção das bases de dados. %
+Os meta-dados são então enviados para um sistema de gestão de meta-dados, construído sobre uma framework de fluxo de dados chamada Kafka. %
+Este sistema de gestão é composto por um conjunto de componentes que foram desenvolvidos de acordo com uma filosofia de microsserviços, tendo sempre em mente a possibilidade de escalar cada um deles.%
+}
 
 %%% OPTIONAL: you can write the keywords and
 %%%  abstract in other languages. You can repeat
@@ -191,8 +202,19 @@ Por último, mas não menos importante, queria agradecer à minha família por e
 %%% Don't remove the \selectlanguage statement or you will end with incorrect hyphenation.
 %%% You can modify the language to any other supported by Latex
 %% Optional Keywords and Abstract in additional languages.
-\Abstract{Keywords}{textbook, architecture, history, construction, construction materials, traditional knowledge.}
-         {Abstract}{\selectlanguage{english}\blindtext[3]}
+\Abstract{Keywords}{metadata, electronic health records, EHDEN, OHDSI, update, automation, extraction}
+         {Abstract}{\selectlanguage{english}%
+To conduct medical studies, such as the impact of a drug on a certain population, researchers need access to real data from medical organizations such as hospitals for their studies to have reliable results. %
+However, for researchers, this is a difficult and time-consuming process until they can find the dataset that best fits their study, as they often do not have direct access to the actual data. %
+To help in this process, there are centralized platforms that describe the content of datasets through metadata. %
+Currently, in many of these platforms, this metadata is updated manually, a slow and tedious process, which leads to it becoming outdated very easily. %
+\\%
+The goal of this work is to develop a system that automatically extracts metadata directly from databases' actual data and sends it to various platforms that are exposing metadata so that they are kept up to date. %
+The system intends to work on databases linked to the EHDEN (European Health Data and Evidence Network) group, which intends to create a federated network of medical databases in Europe, following the same principles and tools used by the OHDSI (Observational Health Data Sciences and Informatics) community. %
+Metadata extraction is done by agents that are installed along with the production system of the databases. %
+The metadata is then sent to a metadata management system, built on top of a data streaming framework called Kafka. %
+This management system is composed of a set of components that were developed according to a philosophy of microservices, always keeping in mind the possibility of scaling each one.%
+}
 
 %%% Edit the Jury President information.
 %% First Member will be the President of the Jury

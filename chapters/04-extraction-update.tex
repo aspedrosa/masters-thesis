@@ -428,7 +428,7 @@ The agent will have two internal components:
 
 \begin{itemize}
     \item One will be the FilePulse Source Kafka connector, which will parse the files provided by the data owners and insert their data into Kafka.
-        It is important to note that both the metadata and the status of upload use different topics for each database.
+        It is important to note that both the metadata and the upload notifications use different topics for each database.
         This was decided because, otherwise, some processing would be required on gathering data of a specific upload from the main topic, that would contain messages from different uploads of different databases.
         The available \gls{csv} reader of this connector allows performing transformations on the data before sending it to Kafka.
         Such transformations include ignoring empty rows, converting values on a row, among others.
