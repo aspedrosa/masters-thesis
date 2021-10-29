@@ -563,7 +563,7 @@ E.g. If a user answers ``Yes'' to the Question ``Have you visited Aveiro?'', the
 
 MONTRA supports this kind of dependencies, which should be defined on the Dependencies column of the questionnaire spreadsheet.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\linewidth]{dependencies-excel}
     \caption{An example of both a question and a category that depend on the selected value for another question.}
@@ -574,14 +574,14 @@ As shown in figure \ref{fig:dependencies-excel}, first you should indicate the s
 Then, separated by a ``|'' character, it must be specified which choice has to be selected for the dependency to be fulfilled, using its index, starting at 1.
 On figure \ref{fig:dependencies-excel}, since a choice-yesnodontknow question type has three implicit choices, by having a dependency with the value ``Any\_blood\_collected|1'', both the \textit{Blood collection} category and the \textit{Plasma} question will only be displayed to the user once the choice \textit{Yes} of the \textit{Any Blood Collection?} question is selected.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=0.75\linewidth]{dependencies-no}
     \caption{The questions with dependencies are not rendered if the specific choice is not selected}
     \label{fig:dependencies-no}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=0.75\linewidth]{dependencies-yes}
     \caption{Once the dependency of a specific question is meet it will be rendered}
@@ -625,7 +625,7 @@ Classes with the same color belong to the same Django application, dividing them
 
 Going into more detail on some models we can see some poor design decisions.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=.4\linewidth]{answer-model}
     \caption{Detailed information of the Answer model of the Fingerprint application}
@@ -645,7 +645,7 @@ Although this approach is much simpler in terms of data models, it leads to two 
 
 Related to MONTRA itself, when a user provides no data to a specific question, an empty string will still be sent for that question on the submission of the answers to a question set, which will create unnecessary records on the database.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=.6\linewidth]{answer-changes-models}
     \caption{Models that store the changes to answers of fingerprint}
@@ -659,7 +659,7 @@ In this model, we can get the answers data duplicated three times since it is al
 
 % ---
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=.6\linewidth]{fingerprint-pending-models}
     \caption{The Model that stores the information telling if a fingerprint is waiting to be approved to be published}
@@ -677,7 +677,7 @@ However, this value is not required to be stored on the database since after a f
 
 % ---
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=.6\textwidth]{questionnaire-import-models}
     \caption{Questionnaire model and the model where questionnaire imports information is stored}
@@ -698,9 +698,9 @@ If there are some user input errors, it could lead to unexpected behavior or int
 
 % ---
 
-\begin{figure}
+\begin{figure}[H]
     \center
-    \includegraphics[width=.4\textwidth]{question-model}
+    \includegraphics[width=.3\textwidth]{question-model}
     \caption{Question model and its extensive number of fields}
     \label{fig:question-model}
 \end{figure}
@@ -816,7 +816,7 @@ However, we can also see some components in figure \ref{fig:fingerprint-show-det
 Note that the name of the fingerprint (DemoAveiro), the several tabs (Fingerprint, Documents, ...), and the subscribe and Manage buttons are specific to the show Page.
 The new fingerprint template will only contain components to display within the Fingerprint tab.
 
-\begin{figure}[H]
+\begin{figure}
     \center
     \includegraphics[width=\textwidth]{fingerprint-other-after-diagram}
     \caption{New fingerprint template for the create, edit, search and preview fingerprint views variations.}
@@ -1047,7 +1047,7 @@ ColumnChoice                  &                                                 
 Using the new row types described in table \ref{tab:excel-row-types}, the spreadsheet itself will be longer, however, it will be easier to read.
 In figures \ref{fig:choice-tabular-neu}, \ref{fig:open-multiple-neu} and \ref{fig:choice-neu}, it's presented three before and after of how questions that require extra configuration were and are now defined with the new spreadsheet version.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=.75\textwidth]{choice-tabular-neu}
     \caption{Differences between how a choice tabular question was versus how is now defined on the questionnaire spreadsheet.}

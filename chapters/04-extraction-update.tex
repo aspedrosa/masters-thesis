@@ -291,7 +291,7 @@ Before the specification of the \gls{amqp} protocol, there were already several 
 There was the open \gls{jms}, however, it was limited to java and was simply an interface standard, not specifying a standard protocol.
 \gls{amqp} defines a binary protocol implementation, ensuring interoperability between tools implementing the protocol individually.
 
-igure \ref{fig:rabbitmq} presents the architecture of RabbitMQ/\gls{amqp}.
+Figure \ref{fig:rabbitmq} presents the architecture of RabbitMQ/\gls{amqp}.
 The message brokering responsibility is divided into exchanges and message queues:
 
 \begin{itemize}
@@ -854,6 +854,9 @@ Additionally, this framework supports relationships, which allows displaying ext
 Concerning the models' organization, figure \ref{fig:data-models} shows the relationship between models of the Metadata Manager system.
 Models marks with green the admin can perform all \gls{crud} operations, models in yellow are only for reading as they are created by the Statistics Recorder component, and models in blue are dependent models, which are defined when the main model is created, in this case, FilterSelection entries are created when the Admin is creating a Filter.
 
+To communicate any changes on the models the remaining components, a management topic is used.
+For example, if a Filter is deleted on the Admin Portal component by an Admin, then the Filter Worker component, after reading a delete message from such management topic, will stop the main goroutine associated with that Filter.
+
 \subsection{Statistics Recorder}
 % kafka jdbc connector?
 % Listens to the kafka topics that are used along the system and transforms into persistent statistics data (sql)
@@ -870,12 +873,32 @@ As we intend to move messages from Kafka into a relational database, we can make
 A connector that allows achieving this is the JDBC Sink connector\footnote{\url{https://www.confluent.io/hub/confluentinc/kafka-connect-jdbc/}}.
 We are only required to set up Kafka Connect and launch a task using the JDBC Sink connector for each topic where the messages have to be persisted on the database.
 
+\section{Evaluation}
+A complete diagram of the system is present in Appendix \ref{appendix:a}.
+
+Each component was separated into its own repository which is publicly available on GitHub:
+\begin{itemize}
+    \item Orchestrator\footnote{\url{https://github.com/aspedrosa/MetadataOrchestrator}}
+    \item Filter Worker\footnote{\url{https://github.com/aspedrosa/FilterWorker}}
+    \item Sender\footnote{\url{https://github.com/aspedrosa/MetadataSender}}
+    \item Admin\footnote{\url{https://github.com/aspedrosa/AdminPortal}}
+    \item Files regarding deployment of agent, extraction tool and StatisticsRecorder\footnote{\url{https://github.com/aspedrosa/MetadataManagerDeployment}}.
+\end{itemize}
+
+Appendix \ref{appendix:b} presents several screenshots of the Admin Portal.
+It shows the creation/registry of the several concepts associated with the metadata manager: community (figure \ref{fig:admin-portal/community-creation}), databases (figure \ref{fig:admin-portal/database-creation}), filters (figures \ref{fig:admin-portal/filter-creation-patient-count} and \ref{fig:admin-portal/filter-creation-all}) and applications (figures \ref{fig:admin-portal/application-creation-montra} and \ref{figs/}).
+These creation screenshots show a use case in the system where the destination applications are both an installation of the MONTRA framework and an installation of the Network Dashboards application.
+For the first one, a filter will get the patients count, present in analysis\_id 1, of the database and select only the ``count\_value'' column, which contains the numeric value related to the metadata metric.
+Then a request to the \gls{api} will update the answer value of the specific ``Patients Count'' question.
+Regarding the Network Dashboards, no filter is performed and all columns are retrieved.
+Then, when building the request, data is sent through a file upload request.
+Finally, the admin can view statistics of the data that flowed on the system by accessing the show page of either an application (figure \ref{fig:admin-portal/application-show}) or a database (figure \ref{fig:admin-portal/database-show}).
+
 \section{Summary}
 % referencias para um anexo onde tem um diagrama completo do sistema
 % sistema capaz de automatizar o processo de atualizar metadtados nas apps
 
 This chapter it was explained the entire development process around a system capable of automating the procedure of updating metadata stored on web applications about clinical databases.
 A solution was provided to the data owners to automatize the process of extracting metadata from their databases and then the system will make sure that that data will reach the desired web applications.
-A complete diagram of the system is present in Appendix \ref{appendix:a}.
 
 %The next chapter will present the system developed in this chapter in action, using an installation of the Montra framework improved in chapter \ref{chapter:metadata-visualization} as a target web application of the metadata.
