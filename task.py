@@ -78,7 +78,7 @@ def send_updates(db_hash, pipeline_id, pipelines_set, last_offset, count, subscr
             next(results)
         except StopIteration:
             logger.info(
-                'Subscription with %d was is longer active. Skipping processing data of db with hash "%s"',
+                'Subscription with %d is longer active. Skipping processing data of db with hash "%s"',
                 subscription_id, db_hash,
             )
             return
