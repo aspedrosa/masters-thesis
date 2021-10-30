@@ -1,3 +1,9 @@
+FROM golang:1.17 AS build
+
+# COPY  TODO copy data
+
+RUN go build
+
 FROM streamthoughts/kafka-connect-file-pulse:2.4.0
 
 ENV CONNECT_PLUGIN_PATH="/usr/share/confluent-hub-components" \
@@ -16,7 +22,7 @@ ENV CONNECT_PLUGIN_PATH="/usr/share/confluent-hub-components" \
 
 
 RUN mkdir /app \
- && mkdir /app/healthcheck_replier \
+ && mkdir /app/healthcheck_handler \
  && mkdir /app/file_pulse
 
 COPY command.sh /app
@@ -24,4 +30,4 @@ COPY achilles.json /app/file_pulse/config.json
 
 CMD "/app/command.sh"
 
-# TODO copy healthcheck_replier app
+COPY --form build /healthcheck_replier /app/healthcheck_handler
