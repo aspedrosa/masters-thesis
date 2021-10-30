@@ -84,6 +84,10 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 			if err != nil {
 				return
 			}
+
+			// TODO check if this pipeline is associated with the community
+			community_checks_out := true
+
 			sent_rows = binary.BigEndian.Uint32(msg.Value) - 1
 
 			log.Printf("Pipeline %d received an upload\n", pipeline.id)
@@ -147,21 +151,23 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 					consumer.CommitMessages(ctx, msgs_filtered...)
 					consumer_not.CommitMessages(ctx, msgs_filtered_not...)
 
-					log.Printf("Sending DATA_READY_TO_SEND message from pipeline %d\n", pipeline.id)
+					if community_checks_out {
+						log.Printf("Sending DATA_READY_TO_SEND message from pipeline %d\n", pipeline.id)
 
-					data_ready_notification, _ := json.Marshal(map[string]interface{}{
-						"pipeline_id":   pipeline.id,
-						"pipelines_set": pipelines_set,
-						"last_offset":   last_offset,
-						"count":         filtered_count,
-					})
-					data_ready_to_send_producer.WriteMessages(
-						ctx,
-						kafka.Message{
-							Topic: fmt.Sprintf("PIPELINES_SET_%d_DATA_READY_TO_SEND", pipelines_set),
-							Value: data_ready_notification,
-						},
-					)
+						data_ready_notification, _ := json.Marshal(map[string]interface{}{
+							"pipeline_id":   pipeline.id,
+							"pipelines_set": pipelines_set,
+							"last_offset":   last_offset,
+							"count":         filtered_count,
+						})
+						data_ready_to_send_producer.WriteMessages(
+							ctx,
+							kafka.Message{
+								Topic: fmt.Sprintf("PIPELINES_SET_%d_DATA_READY_TO_SEND", pipelines_set),
+								Value: data_ready_notification,
+							},
+						)
+					}
 
 					break
 				}
