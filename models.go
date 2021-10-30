@@ -84,10 +84,7 @@ func configure_admin_models(DB *gorm.DB) *admin.Admin {
 	subscription := configure_subscription(Admin)
 	configure_subscription_request(subscription)
 
-	// dont allow to create or update log entries
-	Admin.AddResource(&SubscriptionLog{}, &admin.Config{
-		Permission: roles.Deny(roles.Update, roles.Anyone).Deny(roles.Create, roles.Anyone),
-	})
+	configure_logs(Admin)
 
 	return Admin
 }
@@ -125,6 +122,29 @@ func configure_pipeline(Admin *admin.Admin) *admin.Resource {
 	pipeline.NewAttrs("-Status")
 	pipeline.EditAttrs("-Status")
 
+	pipeline.Meta(&admin.Meta{
+		Name: "Selections",
+		FormattedValuer: func(record interface{}, context *qor.Context) (result interface{}) {
+			var selections []PipelineSelection
+		    context.GetDB().Find(&selections, "pipeline_id = ?", record.(*Pipeline).ID)
+
+			if len(selections) == 0 {
+				return []string{"*"}
+			}
+
+			var columns []string
+
+			for _, selection := range selections {
+				if len(columns) != 0 {
+					columns = append(columns, ",")
+				}
+				columns = append(columns, selection.SelectionColumn)
+			}
+
+			return columns
+		},
+	})
+
 	return pipeline
 }
 
@@ -161,11 +181,17 @@ func configure_subscription(Admin *admin.Admin) *admin.Resource {
 	sub.NewAttrs("-Status", "-Logs")
 	sub.EditAttrs("-Status", "-Logs")
 	sub.ShowAttrs("-Logs")
-	sub.IndexAttrs("-Logs")
+	sub.IndexAttrs("-Logs", "-ID", "-Requests")
 
 	// select between existing pipelines
 	sub.Meta(&admin.Meta{
 		Name: "PipelineID",
+		Label: "Pipeline",
+		FormattedValuer: func(record interface{}, context *qor.Context) (result interface{}) {
+			var pipeline Pipeline
+			context.GetDB().Take(&pipeline, record.(*Subscription).PipelineID)
+			return pipeline.Name
+		},
 		Config: &admin.SelectOneConfig{
 			Collection: func(_ interface{}, context *admin.Context) (options [][]string) {
 				var pipelines []Pipeline
@@ -304,14 +330,50 @@ func configure_subscription_request(subscription *admin.Resource) {
 	// change some inputs to textarea
 	request.Meta(&admin.Meta{
 		Name: "Request_arguments_template",
+		Label: "Request Arguments Template",
 		Type: "text",
 	})
 	request.Meta(&admin.Meta{
 		Name: "Success_condition_template",
+		Label: "Success Condition Template",
+		Type: "text",
+	})
+	request.Meta(&admin.Meta{
+		Name: "Success_condition_template",
+		Label: "Success Condition Template",
 		Type: "text",
 	})
 
 	request.ShowAttrs("-Logs")
 	request.NewAttrs("-Logs")
 	request.EditAttrs("-Logs")
+}
+
+func configure_logs(Admin *admin.Admin) {
+	deny_update_create := roles.Deny(roles.Update, roles.Anyone).Deny(roles.Create, roles.Anyone)
+
+	// dont allow to create or update log entries
+	subs_logs := Admin.AddResource(&SubscriptionLog{}, &admin.Config{
+		Permission: deny_update_create,
+	})
+
+	subs_logs.IndexAttrs("SubscriptionID", "SuccessCount", "CreatedAt")
+
+	subs_logs.Meta(&admin.Meta{
+		Name: "SubscriptionID",
+		Label: "Subscription",
+		FormattedValuer: func(record interface{}, context *qor.Context) (result interface{}) {
+			var subscription Subscription
+			context.GetDB().Find(&subscription, record.(*SubscriptionLog).SubscriptionID)
+			return subscription.Name
+		},
+	})
+
+	subs_logs.Meta(&admin.Meta{
+		Name: "CreatedAt",
+		Label: "Time",
+		Permission: deny_update_create,
+	})
+
+	subs_logs.Meta(&admin.Meta{Name: "RequestsLogs"}).Resource.Permission = deny_update_create
 }
