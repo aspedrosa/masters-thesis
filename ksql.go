@@ -14,11 +14,11 @@ import (
 
 var schemaRegistryClient = srclient.CreateSchemaRegistryClient("http://localhost:8081") // don't hardcode
 
-func init_data_stream(pipelines_set int) error {
+func init_data_stream(filter_worker_id int) error {
 	//ksql_url := os.Getenv("KSQL_URL")
 	ksql_url := "http://localhost:8088" // TODO don't hardcode
 
-	data_topic := fmt.Sprintf("PIPELINES_SET_%d_DATA_TO_PARSE", pipelines_set)
+	data_topic := fmt.Sprintf("FILTER_WORKER_%d_DATA_TO_PARSE", filter_worker_id)
 
 	post_json_body, _ := json.Marshal(map[string]interface{}{
 		"ksql": fmt.Sprintf("DESCRIBE %s;", data_topic),
@@ -30,12 +30,12 @@ func init_data_stream(pipelines_set int) error {
 	} else if response.StatusCode == 400 {
 		// assume that if fails the data stream doesn't exist
 
-		_, err := schemaRegistryClient.GetLatestSchema(data_topic, false)
+		_, err := schemaRegistryClient.GetLatestSchema(data_topic)
 		if err != nil {
-			f, _ := os.Open("pipelines_sets_data_topics_schema.json")
+			f, _ := os.Open("filter_worker_data_topics_schema.json")
 			schema_json, _ := ioutil.ReadAll(f)
 			f.Close()
-			_, err := schemaRegistryClient.CreateSchema(data_topic, string(schema_json), srclient.Avro, false)
+			_, err := schemaRegistryClient.CreateSchema(data_topic, string(schema_json), srclient.Avro)
 			if err != nil {
 				return nil
 			}
@@ -56,35 +56,35 @@ func init_data_stream(pipelines_set int) error {
 	return nil
 }
 
-func init_streams(pipelines_set int, pipeline Pipeline) error {
+func init_streams(filter_worker_id int, filter Filter) error {
 	//ksql_url := os.Getenv("KSQL_URL")
 	ksql_url := "http://localhost:8088" // TODO dont' hardcode
 
-	data_topic := fmt.Sprintf("PIPELINES_SET_%d_DATA_TO_PARSE", pipelines_set)
+	data_topic := fmt.Sprintf("FILTER_WORKER_%d_DATA_TO_PARSE", filter_worker_id)
 
 	var selection string
-	if len(pipeline.selection) == 0 {
+	if len(filter.selection) == 0 {
 		selection = "*"
 	} else {
-		selection = strings.Join(pipeline.selection, ", ")
+		selection = strings.Join(filter.selection, ", ")
 	}
 
 	var where string
 	var where_not string
-	if pipeline.filter == "" {
+	if filter.filter == "" {
 		where = ""
 		where_not = ""
 	} else {
-		where = fmt.Sprintf("WHERE %s", pipeline.filter)
-		where_not = fmt.Sprintf("WHERE NOT(%s)", pipeline.filter)
+		where = fmt.Sprintf("WHERE %s", filter.filter)
+		where_not = fmt.Sprintf("WHERE NOT(%s)", filter.filter)
 	}
 
 	post_json_body, _ := json.Marshal(map[string]interface{}{
 		"ksql": fmt.Sprintf(
-			"CREATE STREAM PIPELINES_SET_%d_PIPELINE_%d AS SELECT %s FROM %s %s;"+
-				"CREATE STREAM PIPELINES_SET_%d_PIPELINE_%d_NOT AS SELECT 1 FROM %s %s;",
-			pipelines_set, pipeline.id, selection, data_topic, where,
-			pipelines_set, pipeline.id, data_topic, where_not,
+			"CREATE STREAM FILTER_WORKER_%d_FILTER_%d AS SELECT %s FROM %s %s;"+
+				"CREATE STREAM FILTER_WORKER_%d_FILTER_%d_NOT AS SELECT 1 FROM %s %s;",
+			filter_worker_id, filter.id, selection, data_topic, where,
+			filter_worker_id, filter.id, data_topic, where_not,
 		),
 	})
 	post_body := bytes.NewBuffer(post_json_body)
@@ -101,15 +101,15 @@ func init_streams(pipelines_set int, pipeline Pipeline) error {
 	return nil
 }
 
-func stop_streams(pipelines_set int, pipeline_id int) error {
+func stop_streams(filter_worker_id int, filter_id int) error {
 	//ksql_url := os.Getenv("KSQL_URL")
 	ksql_url := "http://localhost:8088"
 
 	post_json_body, _ := json.Marshal(map[string]interface{}{
 		"ksql": fmt.Sprintf(
-			"DROP STREAM PIPELINES_SET_%d_PIPELINE_%d;"+
-				"DROP STREAM PIPELINES_SET_%d_PIPELINE_%d_NOT;",
-			pipelines_set, pipeline_id, pipelines_set, pipeline_id,
+			"DROP STREAM FILTER_WORKER_%d_FILTER_%d;"+
+				"DROP STREAM FILTER_WORKER_%d_FILTER_%d_NOT;",
+			filter_worker_id, filter_id, filter_worker_id, filter_id,
 		),
 	})
 	post_body := bytes.NewBuffer(post_json_body)

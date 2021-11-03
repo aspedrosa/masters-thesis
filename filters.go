@@ -16,40 +16,40 @@ import (
 var mappings_mtx = sync.Mutex{}
 var mappings = make(map[int]context.CancelFunc)
 
-func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) {
-	// create context to stop pipeline worker
+func launch_filter(filter_worker_id int, filter Filter, create_streams bool) {
+	// create context to stop filter worker
 	ctx := context.Background()
-	ctx, cancel_pipeline_woker := context.WithCancel(ctx)
+	ctx, cancel_filter_main := context.WithCancel(ctx)
 
 	mappings_mtx.Lock()
-	mappings[pipeline.id] = cancel_pipeline_woker
+	mappings[filter.id] = cancel_filter_main
 	mappings_mtx.Unlock()
 
 	if create_streams {
-		init_streams(pipelines_set, pipeline)
+		init_streams(filter_worker_id, filter)
 	}
 
-	// launch pipeline worker
+	// launch filter worker
 	go func() {
 		bootstrap_servers := os.Getenv("BOOTSTRAP_SERVERS")
 
 		// initiate kafka consumers
 		consumer_manager := kafka.NewReader(kafka.ReaderConfig{
 			Brokers: strings.Split(bootstrap_servers, ","),
-			GroupID: fmt.Sprintf("subscription_%d_manager", pipeline.id),
-			Topic:   fmt.Sprintf("PIPELINES_SET_%d_UPLOAD_NOTIFICATIONS", pipelines_set),
+			GroupID: fmt.Sprintf("subscription_%d_manager", filter.id),
+			Topic:   fmt.Sprintf("FILTER_WORKER_%d_UPLOAD_NOTIFICATIONS", filter_worker_id),
 		})
 
 		consumer := kafka.NewReader(kafka.ReaderConfig{
 			Brokers: strings.Split(bootstrap_servers, ","),
-			GroupID: fmt.Sprintf("pipeline_%d", pipeline.id),
-			Topic:   fmt.Sprintf("PIPELINES_SET_%d_PIPELINE_%d", pipelines_set, pipeline.id),
+			GroupID: fmt.Sprintf("filter_%d", filter.id),
+			Topic:   fmt.Sprintf("FILTER_WORKER_%d_FILTER_%d", filter_worker_id, filter.id),
 		})
 
 		consumer_not := kafka.NewReader(kafka.ReaderConfig{
 			Brokers: strings.Split(bootstrap_servers, ","),
-			GroupID: fmt.Sprintf("pipeline_%d_not", pipeline.id),
-			Topic:   fmt.Sprintf("PIPELINES_SET_%d_PIPELINE_%d_NOT", pipelines_set, pipeline.id),
+			GroupID: fmt.Sprintf("filter_%d_not", filter.id),
+			Topic:   fmt.Sprintf("FILTER_WORKER_%d_FILTER_%d_NOT", filter_worker_id, filter.id),
 		})
 
 		data_ready_to_send_producer := &kafka.Writer{
@@ -85,14 +85,14 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 				return
 			}
 
-			// TODO check if this pipeline is associated with the community
+			// TODO check if this filter is associated with the community
 			community_checks_out := true
 
 			sent_rows = binary.BigEndian.Uint32(msg.Value) - 1
 
-			log.Printf("Pipeline %d received an upload\n", pipeline.id)
+			log.Printf("Filter %d received an upload\n", filter.id)
 
-			// launch worker that reads and writes the result of the pipeline to a file
+			// launch worker that reads and writes the result of the filter to a file
 			go func() {
 				defer wg.Done()
 
@@ -107,10 +107,10 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 					filtered <- 1
 				}
 
-				log.Printf("Worker for pipeline %d exiting\n", pipeline.id)
+				log.Printf("Worker for filter %d exiting\n", filter.id)
 			}()
 
-			// launch worker in charge of counting the number of messages that were filtered by the pipeline
+			// launch worker in charge of counting the number of messages that were filtered by the filter
 			go func() {
 				defer wg.Done()
 
@@ -124,7 +124,7 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 					filtered_not <- 1
 				}
 
-				log.Printf("WorkerNot for pipeline %d exiting\n", pipeline.id)
+				log.Printf("WorkerNot for filter %d exiting\n", filter.id)
 			}()
 
 			filtered_count := uint32(0)
@@ -142,7 +142,7 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 				}
 
 				if filtered_count+filtered_not_count == sent_rows {
-					log.Printf("All records processed on pipeline %d\n", pipeline.id)
+					log.Printf("All records processed on filter %d\n", filter.id)
 					cancel_childrens()
 
 					wg.Wait()
@@ -152,18 +152,18 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 					consumer_not.CommitMessages(ctx, msgs_filtered_not...)
 
 					if community_checks_out {
-						log.Printf("Sending DATA_READY_TO_SEND message from pipeline %d\n", pipeline.id)
+						log.Printf("Sending DATA_READY_TO_SEND message from filter %d\n", filter.id)
 
 						data_ready_notification, _ := json.Marshal(map[string]interface{}{
-							"pipeline_id":   pipeline.id,
-							"pipelines_set": pipelines_set,
-							"last_offset":   last_offset,
-							"count":         filtered_count,
+							"filter_id":        filter.id,
+							"filter_worker_id": filter_worker_id,
+							"last_offset":      last_offset,
+							"count":            filtered_count,
 						})
 						data_ready_to_send_producer.WriteMessages(
 							ctx,
 							kafka.Message{
-								Topic: fmt.Sprintf("PIPELINES_SET_%d_DATA_READY_TO_SEND", pipelines_set),
+								Topic: fmt.Sprintf("FILTER_WORKER_%d_DATA_READY_TO_SEND", filter_worker_id),
 								Value: data_ready_notification,
 							},
 						)
@@ -173,22 +173,22 @@ func launch_pipeline(pipelines_set int, pipeline Pipeline, create_streams bool) 
 				}
 			}
 
-			log.Printf("All done on pipeline %d for this upload\n", pipeline.id)
+			log.Printf("All done on filter %d for this upload\n", filter.id)
 		}
 	}()
 }
 
-func edit_pipeline(pipelines_set int, new_pipeline Pipeline) {
-	stop_pipeline(pipelines_set, new_pipeline.id)
+func edit_filter(filter_worker_id int, new_filter_id Filter) {
+	stop_filter(filter_worker_id, new_filter_id.id)
 
-	launch_pipeline(pipelines_set, new_pipeline, true)
+	launch_filter(filter_worker_id, new_filter_id, true)
 }
 
-func stop_pipeline(pipelines_set int, pipeline_id int) {
-	mappings[pipeline_id]()
+func stop_filter(filter_worker_id int, filter_id int) {
+	mappings[filter_id]()
 	mappings_mtx.Lock()
-	delete(mappings, pipeline_id)
+	delete(mappings, filter_id)
 	mappings_mtx.Unlock()
 
-	stop_streams(pipelines_set, pipeline_id)
+	stop_streams(filter_worker_id, filter_id)
 }

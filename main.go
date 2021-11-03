@@ -2,91 +2,65 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"fmt"
-	_ "github.com/lib/pq"
+	"io/ioutil"
 	"log"
+	"net/http"
 
 	"github.com/segmentio/kafka-go"
 	"os"
 	"strings"
 )
 
-type Pipeline struct {
+type Filter struct {
 	id        int
 	selection []string
 	filter    string
 }
 
 type ManagementMessage struct {
-	PipelineId int    `json:"pipeline_id"`
-	Action     string `json:"action"`
+	FilterId int    `json:"filter_id"`
+	Action   string `json:"action"`
 }
 
 func main() {
-	pipelines_set := 0 // TODO get this as a program argument
+	filter_worker_id := 0 // TODO get this as a program argument OR have generate unique id mechanism
 
 	// kafka related
 	bootstrap_servers := os.Getenv("BOOTSTRAP_SERVERS")
+	admin_portal_backend := os.Getenv("ADMIN_PORTAL_BACKEND")
 
-	create_topics(pipelines_set, bootstrap_servers)
-	init_data_stream(pipelines_set)
+	create_topics(filter_worker_id, bootstrap_servers)
+	init_data_stream(filter_worker_id)
 
-	// database related
-	db_host := os.Getenv("DB_HOST")
-	db_port := os.Getenv("DB_PORT")
-	db_user := os.Getenv("DB_USER")
-	db_password := os.Getenv("DB_PASSWORD")
-	db_name := os.Getenv("DB_NAME")
+	log.Println("Fetching for active filters")
 
-	psqlconn := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		db_host, db_port, db_user, db_password, db_name)
+	var filters []Filter
+	{
+		resp, err := http.Get(fmt.Sprintf("%s/filter", admin_portal_backend))
+		if err != nil {
+			log.Fatalln(err)
+		}
 
-	db, err := sql.Open("postgres", psqlconn)
-	//db, err := sql.Open("sqlite3", "demo.db")
-	if err != nil {
-		panic("unable to connect to the database")
+		body, _ := ioutil.ReadAll(resp.Body)
+
+		json.Unmarshal(body, &filters)
 	}
 
-	log.Println("Fetching for active pipelines")
+	for _, filter := range filters {
+		log.Printf("Launching active pipeline %d\n", filter.id)
 
-	rows, _ := db.Query(`SELECT id, filter FROM pipelines WHERE status = 'ACTIVE'`)
-	for rows != nil && rows.Next() {
-		var pipeline Pipeline
-
-		rows.Scan(&pipeline.id, &pipeline.filter)
-
-		selections, err := db.Query(
-			fmt.Sprintf(
-				`SELECT selection_column FROM pipeline_selections WHERE pipeline_id = %d ORDER BY selection_order`,
-				pipeline.id,
-			),
-		)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		var column string
-		for selections.Next() {
-			selections.Scan(&column)
-			pipeline.selection = append(pipeline.selection, column)
-		}
-
-		log.Printf("Launching active pipeline %d\n", pipeline.id)
-
-		go launch_pipeline(pipelines_set, pipeline, false)
+		go launch_filter(filter_worker_id, filter, false)
 	}
 
 	consumer := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:     strings.Split(bootstrap_servers, ","),
-		Topic:       "PIPELINES_MANAGEMENT",
-		GroupID:     fmt.Sprintf("pipelines_set_%d_pipelines_management", pipelines_set),
+		Topic:       "FILTER_WORKERS_MANAGEMENT",
 		StartOffset: kafka.LastOffset,
 	})
 
-	log.Println("Listening to pipeline management messages")
+	log.Println("Listening to filter management messages")
 
 	for {
 		message, _ := consumer.FetchMessage(context.Background())
@@ -94,42 +68,31 @@ func main() {
 		var message_value ManagementMessage
 		json.Unmarshal(message.Value, &message_value)
 
-		var pipeline Pipeline
-		pipeline.id = message_value.PipelineId
+		var filter Filter
+		filter.id = message_value.FilterId
 
 		if message_value.Action == "ACTIVE" {
-			row, err := db.Query(fmt.Sprintf("SELECT filter FROM pipeline WHERE id = %d", message_value.PipelineId))
-			row.Next()
-			row.Scan(&pipeline.filter)
-
-			selections, err := db.Query(
-				fmt.Sprintf(
-					`SELECT selection_column FROM pipeline_selections WHERE pipeline_id = %d ORDER BY selection_order`,
-					pipeline.id,
-				),
-			)
+			resp, err := http.Get(fmt.Sprintf("%s/filter/%d/", admin_portal_backend, filter.id))
 			if err != nil {
-				log.Fatal(err)
+				log.Fatalln(err)
 			}
 
-			var column string
-			for selections.Next() {
-				selections.Scan(&column)
-				pipeline.selection = append(pipeline.selection, column)
-			}
+			body, _ := ioutil.ReadAll(resp.Body)
 
-			log.Printf("Launching pipeline with id %d\n", pipeline.id)
+			json.Unmarshal(body, &filter)
 
-			launch_pipeline(pipelines_set, pipeline, true)
+			log.Printf("Launching filter with id %d\n", filter.id)
+
+			launch_filter(filter_worker_id, filter, true)
 
 		} else if message_value.Action == "STOPPED" {
-			log.Printf("Stopping pipeline with id %d\n", pipeline.id)
+			log.Printf("Stopping filter with id %d\n", filter.id)
 
-			stop_pipeline(pipelines_set, message_value.PipelineId)
+			stop_filter(filter_worker_id, message_value.FilterId)
 		} else {
 			log.Printf("Invalid action %s\n", message_value.Action)
 		}
 
-		// TODO edit pipeline
+		// TODO edit filter
 	}
 }

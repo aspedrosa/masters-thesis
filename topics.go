@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func create_topics(pipeline_set int, bootstrap_server string) {
+func create_topics(filter_worker_id int, bootstrap_server string) {
 	conn, _ := kafka.Dial("tcp", bootstrap_server)
 
 	controller, _ := conn.Controller()
@@ -25,17 +25,17 @@ func create_topics(pipeline_set int, bootstrap_server string) {
 	controllerConn.CreateTopics(
 		[]kafka.TopicConfig{
 			{
-				Topic:             fmt.Sprintf("PIPELINES_SET_%d_UPLOAD_NOTIFICATIONS", pipeline_set),
+				Topic:             fmt.Sprintf("FILTER_WORKER_%d_UPLOAD_NOTIFICATIONS", filter_worker_id),
 				NumPartitions:     -1,
 				ReplicationFactor: -1,
 			},
 			{
-				Topic:             fmt.Sprintf("PIPELINES_SET_%d_DATA_TO_PARSE", pipeline_set),
+				Topic:             fmt.Sprintf("FILTER_WORKER_%d_DATA_TO_PARSE", filter_worker_id),
 				NumPartitions:     -1,
 				ReplicationFactor: -1,
 			},
 			{
-				Topic:             fmt.Sprintf("PIPELINES_SET_%d_DATA_READY_TO_SEND", pipeline_set),
+				Topic:             fmt.Sprintf("FILTER_WORKER_%d_DATA_READY_TO_SEND", filter_worker_id),
 				NumPartitions:     -1,
 				ReplicationFactor: -1,
 			},
