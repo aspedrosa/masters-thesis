@@ -14,9 +14,10 @@ import (
 )
 
 type Filter struct {
-	id        int
-	selection []string
-	filter    string
+	id          int
+	selection   []string
+	communities []int
+	filter      string
 }
 
 type ManagementMessage struct {
@@ -53,6 +54,8 @@ func main() {
 
 		go launch_filter(filter_worker_id, filter, false)
 	}
+
+	go upload_watcher(filter_worker_id)
 
 	consumer := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:     strings.Split(bootstrap_servers, ","),
