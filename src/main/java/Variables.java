@@ -17,4 +17,13 @@ public class Variables {
         return value;
     }
 
+    public static String get_with_default(String env_var, String default_value) {
+        var value = System.getenv().get(env_var);
+
+        if (value == null) {
+            return default_value;
+        }
+        return value;
+    }
+
 }
