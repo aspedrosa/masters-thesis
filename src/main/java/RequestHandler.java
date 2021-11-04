@@ -93,7 +93,7 @@ public class RequestHandler extends Thread {
 
             data_counter_consumer.subscribe(Collections.singletonList(target_data_topic));
             AtomicInteger current_count = new AtomicInteger();
-            while (current_count.get() + 1 < request.get_rows_count()) {  // +1 because header is ignored
+            while (current_count.get() < request.get_rows_count()) {
                 data_counter_consumer
                     .poll(Duration.ofMillis(Long.MAX_VALUE))
                     .forEach(record -> current_count.getAndIncrement());
