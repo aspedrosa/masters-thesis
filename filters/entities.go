@@ -1,42 +1,38 @@
-package main
+package filters
 
 import (
+	"../globals"
+
 	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/segmentio/kafka-go"
 	"log"
-	"os"
-	"strings"
 	"sync"
 )
 
 func filter_main(
-	filters_wait_group *sync.WaitGroup,
 	upload_notification_chan chan UploadToFilter,
-	filter_worker_id int,
 	filter_id int,
 	ctx context.Context,
 ) {
-	defer filters_wait_group.Done()
-
-	bootstrap_servers := os.Getenv("BOOTSTRAP_SERVERS")
+	defer Filters_wait_group.Done()
 
 	// initiate kafka consumers
 	consumer := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: strings.Split(bootstrap_servers, ","),
+		Brokers: globals.BOOTSTRAP_SERVERS,
 		GroupID: fmt.Sprintf("filter_%d", filter_id),
-		Topic:   fmt.Sprintf("FILTER_WORKER_%d_FILTER_%d", filter_worker_id, filter_id),
+		Topic:   fmt.Sprintf("FILTER_WORKER_%d_FILTER_%d", globals.FILTER_WORKER_ID, filter_id),
 	})
 
 	consumer_not := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: strings.Split(bootstrap_servers, ","),
+		Brokers: globals.BOOTSTRAP_SERVERS,
 		GroupID: fmt.Sprintf("filter_%d_not", filter_id),
-		Topic:   fmt.Sprintf("FILTER_WORKER_%d_FILTER_%d_NOT", filter_worker_id, filter_id),
+		Topic:   fmt.Sprintf("FILTER_WORKER_%d_FILTER_%d_NOT", globals.FILTER_WORKER_ID, filter_id),
 	})
 
 	data_ready_to_send_producer := &kafka.Writer{
-		Addr: kafka.TCP(strings.Split(bootstrap_servers, ",")...),
+		Addr: kafka.TCP(globals.BOOTSTRAP_SERVERS...),
 	}
 
 	// channels so children workers communicate received messages
@@ -118,7 +114,7 @@ func filter_main(
 				filtered_not_count++
 			}
 
-			if filtered_count+filtered_not_count == upload.rows {
+			if filtered_count+filtered_not_count == upload.Rows {
 				log.Printf("All records processed on filter %d\n", filter_id)
 
 				break
@@ -132,13 +128,13 @@ func filter_main(
 		consumer.CommitMessages(ctx, msgs_filtered...)
 		consumer_not.CommitMessages(ctx, msgs_filtered_not...)
 
-		if upload.belongs_to_communities {
+		if upload.Belongs_to_communities {
 			log.Printf("Sending DATA_READY_TO_SEND message from filter %d\n", filter_id)
 
 			data_ready_notification, _ := json.Marshal(map[string]interface{}{
-				"filter_worker_id":    filter_worker_id,
+				"filter_worker_id":    globals.FILTER_WORKER_ID,
 				"filter_id":           filter_id,
-				"database_identifier": upload.database_identifier,
+				"database_identifier": upload.Database_identifier,
 				"last_offset":         last_offset,
 				"count":               filtered_count,
 			})
@@ -151,7 +147,7 @@ func filter_main(
 			)
 		}
 
-		filters_wait_group.Done()
+		Filters_wait_group.Done()
 
 		log.Printf("All done on filter %d for this upload\n", filter_id)
 	}

@@ -1,14 +1,16 @@
 package main
 
 import (
+	"./globals"
+
 	"fmt"
 	"github.com/segmentio/kafka-go"
 	"net"
 	"strconv"
 )
 
-func create_topics(filter_worker_id int, bootstrap_server string) {
-	conn, _ := kafka.Dial("tcp", bootstrap_server)
+func create_topics() {
+	conn, _ := kafka.Dial("tcp", globals.BOOTSTRAP_SERVERS[0])
 
 	controller, _ := conn.Controller()
 
@@ -25,17 +27,12 @@ func create_topics(filter_worker_id int, bootstrap_server string) {
 	controllerConn.CreateTopics(
 		[]kafka.TopicConfig{
 			{
-				Topic:             fmt.Sprintf("FILTER_WORKER_%d_UPLOAD_NOTIFICATIONS", filter_worker_id),
+				Topic:             fmt.Sprintf("FILTER_WORKER_%d_DATA_TO_PARSE", globals.FILTER_WORKER_ID),
 				NumPartitions:     -1,
 				ReplicationFactor: -1,
 			},
 			{
-				Topic:             fmt.Sprintf("FILTER_WORKER_%d_DATA_TO_PARSE", filter_worker_id),
-				NumPartitions:     -1,
-				ReplicationFactor: -1,
-			},
-			{
-				Topic:             fmt.Sprintf("FILTER_WORKER_%d_DATA_READY_TO_SEND", filter_worker_id),
+				Topic:             fmt.Sprintf("FILTER_WORKER_%d_DATA_READY_TO_SEND", globals.FILTER_WORKER_ID),
 				NumPartitions:     -1,
 				ReplicationFactor: -1,
 			},

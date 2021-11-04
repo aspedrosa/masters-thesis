@@ -1,6 +1,11 @@
 package main
 
 import (
+	"./filters"
+	"./globals"
+	"./ksql"
+	"./shared_structs"
+
 	"context"
 	"encoding/json"
 	"fmt"
@@ -9,56 +14,18 @@ import (
 	"net/http"
 
 	"github.com/segmentio/kafka-go"
-	"os"
-	"strings"
 )
 
-type Filter struct {
-	id          int
-	selection   []string
-	communities []int
-	filter      string
-}
-
-type ManagementMessage struct {
-	FilterId int    `json:"filter_id"`
-	Action   string `json:"action"`
-}
-
 func main() {
-	filter_worker_id := 0 // TODO get this as a program argument OR have generate unique id mechanism
+	globals.Init_global_variables()
+	ksql.Init_schema_registry_client()
 
-	// kafka related
-	bootstrap_servers := os.Getenv("BOOTSTRAP_SERVERS")
-	admin_portal_backend := os.Getenv("ADMIN_PORTAL_BACKEND")
-
-	create_topics(filter_worker_id, bootstrap_servers)
-	init_data_stream(filter_worker_id)
-
-	log.Println("Fetching for active filters")
-
-	var filters []Filter
-	{
-		resp, err := http.Get(fmt.Sprintf("%s/filter", admin_portal_backend))
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		body, _ := ioutil.ReadAll(resp.Body)
-
-		json.Unmarshal(body, &filters)
-	}
-
-	for _, filter := range filters {
-		log.Printf("Launching active pipeline %d\n", filter.id)
-
-		go launch_filter(filter_worker_id, filter, false)
-	}
-
-	go upload_watcher(filter_worker_id)
+	create_topics()
+	ksql.Init_data_stream()
+	launch_entities()
 
 	consumer := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:     strings.Split(bootstrap_servers, ","),
+		Brokers:     globals.BOOTSTRAP_SERVERS,
 		Topic:       "FILTER_WORKERS_MANAGEMENT",
 		StartOffset: kafka.LastOffset,
 	})
@@ -68,14 +35,14 @@ func main() {
 	for {
 		message, _ := consumer.FetchMessage(context.Background())
 
-		var message_value ManagementMessage
+		var message_value shared_structs.ManagementMessage
 		json.Unmarshal(message.Value, &message_value)
 
-		var filter Filter
-		filter.id = message_value.FilterId
+		var filter shared_structs.Filter
+		filter.Id = message_value.FilterId
 
 		if message_value.Action == "ACTIVE" {
-			resp, err := http.Get(fmt.Sprintf("%s/filter/%d/", admin_portal_backend, filter.id))
+			resp, err := http.Get(fmt.Sprintf("%s/filter/%d/", globals.ADMIN_PORTAL_URL, filter.Id))
 			if err != nil {
 				log.Fatalln(err)
 			}
@@ -84,18 +51,38 @@ func main() {
 
 			json.Unmarshal(body, &filter)
 
-			log.Printf("Launching filter with id %d\n", filter.id)
+			log.Printf("Launching filter with id %d\n", filter.Id)
 
-			launch_filter(filter_worker_id, filter, true)
+			filters.Launch_filter(filter, true)
 
 		} else if message_value.Action == "STOPPED" {
-			log.Printf("Stopping filter with id %d\n", filter.id)
+			log.Printf("Stopping filter with id %d\n", filter.Id)
 
-			stop_filter(filter_worker_id, message_value.FilterId)
+			filters.Stop_filter(message_value.FilterId)
 		} else {
 			log.Printf("Invalid action %s\n", message_value.Action)
 		}
 
 		// TODO edit filter
 	}
+}
+
+func launch_entities() {
+	log.Println("Fetching for active filters")
+
+	var active_filters []shared_structs.Filter
+	resp, err := http.Get(fmt.Sprintf("%s/filters/?status=ACTIVE", globals.FILTER_WORKER_ID))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	body, _ := ioutil.ReadAll(resp.Body)
+	json.Unmarshal(body, &active_filters)
+
+	for _, filter := range active_filters {
+		log.Printf("Launching active filter %d\n", filter.Id)
+
+		go filters.Launch_filter(filter, false)
+	}
+
+	go upload_watcher(globals.FILTER_WORKER_ID)
 }

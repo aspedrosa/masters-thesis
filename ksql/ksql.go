@@ -1,6 +1,9 @@
-package main
+package ksql
 
 import (
+	"../globals"
+	"../shared_structs"
+
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -12,19 +15,20 @@ import (
 	"strings"
 )
 
-var schemaRegistryClient = srclient.CreateSchemaRegistryClient("http://localhost:8081") // don't hardcode
+var schemaRegistryClient *srclient.SchemaRegistryClient
 
-func init_data_stream(filter_worker_id int) error {
-	//ksql_url := os.Getenv("KSQL_URL")
-	ksql_url := "http://localhost:8088" // TODO don't hardcode
+func Init_schema_registry_client() {
+	schemaRegistryClient = srclient.CreateSchemaRegistryClient(globals.SCHEMA_REGISTRY_URL)
+}
 
-	data_topic := fmt.Sprintf("FILTER_WORKER_%d_DATA_TO_PARSE", filter_worker_id)
+func Init_data_stream() error {
+	data_topic := fmt.Sprintf("FILTER_WORKER_%d_DATA_TO_PARSE", globals.FILTER_WORKER_ID)
 
 	post_json_body, _ := json.Marshal(map[string]interface{}{
 		"ksql": fmt.Sprintf("DESCRIBE %s;", data_topic),
 	})
 	post_body := bytes.NewBuffer(post_json_body)
-	response, err := http.Post(fmt.Sprintf("%s/ksql", ksql_url), "application/json", post_body)
+	response, err := http.Post(fmt.Sprintf("%s/ksql", globals.KSQLDB_URL), "application/json", post_body)
 	if err != nil {
 		return err
 	} else if response.StatusCode == 400 {
@@ -45,7 +49,7 @@ func init_data_stream(filter_worker_id int) error {
 			"ksql": fmt.Sprintf("CREATE STREAM %s WITH (kafka_topic='%s', value_format='avro');", data_topic, data_topic),
 		})
 		post_body = bytes.NewBuffer(post_json_body)
-		response, err = http.Post(fmt.Sprintf("%s/ksql", ksql_url), "application/json", post_body)
+		response, err = http.Post(fmt.Sprintf("%s/ksql", globals.KSQLDB_URL), "application/json", post_body)
 		if err != nil {
 			return err
 		} else if response.StatusCode != 200 {
@@ -56,39 +60,36 @@ func init_data_stream(filter_worker_id int) error {
 	return nil
 }
 
-func init_streams(filter_worker_id int, filter Filter) error {
-	//ksql_url := os.Getenv("KSQL_URL")
-	ksql_url := "http://localhost:8088" // TODO dont' hardcode
-
-	data_topic := fmt.Sprintf("FILTER_WORKER_%d_DATA_TO_PARSE", filter_worker_id)
+func Init_streams(filter shared_structs.Filter) error {
+	data_topic := fmt.Sprintf("FILTER_WORKER_%d_DATA_TO_PARSE", globals.FILTER_WORKER_ID)
 
 	var selection string
-	if len(filter.selection) == 0 {
+	if len(filter.Selections) == 0 {
 		selection = "*"
 	} else {
-		selection = strings.Join(filter.selection, ", ")
+		selection = strings.Join(filter.Selections, ", ")
 	}
 
 	var where string
 	var where_not string
-	if filter.filter == "" {
+	if filter.Filter == "" {
 		where = ""
 		where_not = ""
 	} else {
-		where = fmt.Sprintf("WHERE %s", filter.filter)
-		where_not = fmt.Sprintf("WHERE NOT(%s)", filter.filter)
+		where = fmt.Sprintf("WHERE %s", filter.Filter)
+		where_not = fmt.Sprintf("WHERE NOT(%s)", filter.Filter)
 	}
 
 	post_json_body, _ := json.Marshal(map[string]interface{}{
 		"ksql": fmt.Sprintf(
 			"CREATE STREAM FILTER_WORKER_%d_FILTER_%d AS SELECT %s FROM %s %s;"+
 				"CREATE STREAM FILTER_WORKER_%d_FILTER_%d_NOT AS SELECT 1 FROM %s %s;",
-			filter_worker_id, filter.id, selection, data_topic, where,
-			filter_worker_id, filter.id, data_topic, where_not,
+			globals.FILTER_WORKER_ID, filter.Id, selection, data_topic, where,
+			globals.FILTER_WORKER_ID, filter.Id, data_topic, where_not,
 		),
 	})
 	post_body := bytes.NewBuffer(post_json_body)
-	response, err := http.Post(fmt.Sprintf("%s/ksql", ksql_url), "application/json", post_body)
+	response, err := http.Post(fmt.Sprintf("%s/ksql", globals.KSQLDB_URL), "application/json", post_body)
 	if err != nil {
 		return err
 	}
@@ -101,19 +102,16 @@ func init_streams(filter_worker_id int, filter Filter) error {
 	return nil
 }
 
-func stop_streams(filter_worker_id int, filter_id int) error {
-	//ksql_url := os.Getenv("KSQL_URL")
-	ksql_url := "http://localhost:8088"
-
+func Stop_streams(filter_id int) error {
 	post_json_body, _ := json.Marshal(map[string]interface{}{
 		"ksql": fmt.Sprintf(
 			"DROP STREAM FILTER_WORKER_%d_FILTER_%d;"+
 				"DROP STREAM FILTER_WORKER_%d_FILTER_%d_NOT;",
-			filter_worker_id, filter_id, filter_worker_id, filter_id,
+			globals.FILTER_WORKER_ID, filter_id, globals.FILTER_WORKER_ID, filter_id,
 		),
 	})
 	post_body := bytes.NewBuffer(post_json_body)
-	response, err := http.Post(fmt.Sprintf("%s/ksql", ksql_url), "application/json", post_body)
+	response, err := http.Post(fmt.Sprintf("%s/ksql", globals.KSQLDB_URL), "application/json", post_body)
 	if err != nil {
 		return err
 	}
