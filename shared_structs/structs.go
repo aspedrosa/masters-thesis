@@ -6,8 +6,3 @@ type Filter struct {
 	Communities []int    `json:"communities"`
 	Selections  []string `json:"selections"`
 }
-
-type ManagementMessage struct {
-	FilterId int    `json:"filter_id"`
-	Action   string `json:"action"`
-}

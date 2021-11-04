@@ -2,64 +2,47 @@ package main
 
 import (
 	"./filters"
+	"./globals"
 
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/segmentio/kafka-go"
-	"io/ioutil"
 	"log"
-	"net/http"
-	"os"
-	"strings"
 )
 
-type Database struct {
-	id                int
-	community         int
-	name              string
-	unique_identifier string
-}
-
-func upload_watcher(filter_worker_id int) {
-	BOOTSTRAP_SERVERS := os.Getenv("BOOTSTRAP_SERVERS")
-	KSQLDB_HOST := os.Getenv("KSQLDB_HOST")
-	KSQLDB_PORT := os.Getenv("KSQLDB_PORT")
-
+func upload_watcher() {
 	consumer := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: strings.Split(BOOTSTRAP_SERVERS, ","),
+		Brokers: globals.BOOTSTRAP_SERVERS,
 		GroupID: "FILTER_WORKER",
 		Topic:   "DATABASES_UPLOAD_NOTIFICATIONS",
 	})
 
 	data_resquests_producer := &kafka.Writer{
-		Addr: kafka.TCP(strings.Split(BOOTSTRAP_SERVERS, ",")...),
+		Addr: kafka.TCP(globals.BOOTSTRAP_SERVERS...),
 	}
 
 	for {
 		msg, _ := consumer.FetchMessage(context.Background())
 
-		var upload filters.Upload
+		var upload map[string]interface{}
 		json.Unmarshal(msg.Value, &upload)
 
-		log.Printf("Received an upload with %d rows from %s\n", upload.Rows, upload.Database_identifier)
+		database_identifier := upload["DATABASE_IDENTIFIER"].(string)
+		rows := uint32(upload["ROWS"].(float64))
 
-		resp, _ := http.Get(fmt.Sprintf(
-			"%s:%s/databases/?unique_identifier=%s", KSQLDB_HOST, KSQLDB_PORT, upload.Database_identifier,
-		))
-		body, _ := ioutil.ReadAll(resp.Body)
-		var database []Database
-		json.Unmarshal(body, &database)
+		log.Printf("Received an upload with %d rows from %s\n", rows, database_identifier)
 
-		if len(database) == 0 {
-			log.Printf("Unknow database with database identifer %s. Ignoring\n", upload.Database_identifier)
+		community := get_community_of_database(database_identifier)
+
+		if community == -1 {
+			log.Printf("Unknow database with database identifer %s. Ignoring\n", database_identifier)
 			continue // no database with given database_identifier. ignore
 		}
 
 		data_request, _ := json.Marshal(map[string]interface{}{
-			"filter_worker_id":    filter_worker_id,
-			"database_identifier": upload.Database_identifier,
-			"rows":                upload.Rows,
+			"filter_worker_id":    globals.FILTER_WORKER_ID,
+			"database_identifier": database_identifier,
+			"rows":                rows,
 		})
 		data_resquests_producer.WriteMessages(
 			context.Background(),
@@ -78,7 +61,7 @@ func upload_watcher(filter_worker_id int) {
 		for filter_id, filter := range filters.Mappings {
 			belongs_to_communities := false
 			for _, filter_community_id := range filter.Communities {
-				if filter_community_id == database[0].community {
+				if filter_community_id == community {
 					belongs_to_communities = true
 					break
 				}
@@ -91,8 +74,8 @@ func upload_watcher(filter_worker_id int) {
 			}
 
 			filter.Upload_notifications_chan <- filters.UploadToFilter{
-				Database_identifier:    upload.Database_identifier,
-				Rows:                   upload.Rows,
+				Database_identifier:    database_identifier,
+				Rows:                   rows,
 				Belongs_to_communities: belongs_to_communities,
 			}
 		}
@@ -104,5 +87,7 @@ func upload_watcher(filter_worker_id int) {
 		filters.Filters_wait_group.Wait()
 
 		log.Printf("All filters parsed the uploaded data\n")
+
+		consumer.CommitMessages(context.Background(), msg)
 	}
 }

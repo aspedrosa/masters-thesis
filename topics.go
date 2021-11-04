@@ -2,7 +2,6 @@ package main
 
 import (
 	"./globals"
-
 	"fmt"
 	"github.com/segmentio/kafka-go"
 	"net"

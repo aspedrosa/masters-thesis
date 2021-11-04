@@ -8,11 +8,6 @@ import (
 	"sync"
 )
 
-type Upload struct {
-	Database_identifier string `json:"DATABASE_IDENTIFIER"`
-	Rows                uint32 `json:"ROWS"`
-}
-
 type UploadToFilter struct {
 	Database_identifier    string
 	Rows                   uint32
@@ -56,10 +51,10 @@ func Launch_filter(filter shared_structs.Filter, create_streams bool) {
 	)
 }
 
-func edit_filter(new_filter_id shared_structs.Filter) {
-	Stop_filter(new_filter_id.Id)
+func Edit_filter(new_filter shared_structs.Filter) {
+	Stop_filter(new_filter.Id)
 
-	Launch_filter(new_filter_id, true)
+	Launch_filter(new_filter, true)
 }
 
 func Stop_filter(filter_id int) {

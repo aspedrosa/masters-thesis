@@ -3,7 +3,6 @@ package ksql
 import (
 	"../globals"
 	"../shared_structs"
-
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -34,26 +33,36 @@ func Init_data_stream() error {
 	} else if response.StatusCode == 400 {
 		// assume that if fails the data stream doesn't exist
 
-		_, err := schemaRegistryClient.GetLatestSchema(data_topic)
+		var schema *srclient.Schema
+		var err error
+
+		schema_name := fmt.Sprintf("%s-value", data_topic)
+		schema, err = schemaRegistryClient.GetLatestSchema(schema_name)
 		if err != nil {
 			f, _ := os.Open("filter_worker_data_topics_schema.json")
 			schema_json, _ := ioutil.ReadAll(f)
 			f.Close()
-			_, err := schemaRegistryClient.CreateSchema(data_topic, string(schema_json), srclient.Avro)
+			schema, err = schemaRegistryClient.CreateSchema(schema_name, string(schema_json), srclient.Avro)
 			if err != nil {
 				return nil
 			}
 		}
 
 		post_json_body, _ = json.Marshal(map[string]interface{}{
-			"ksql": fmt.Sprintf("CREATE STREAM %s WITH (kafka_topic='%s', value_format='avro');", data_topic, data_topic),
+			"ksql": fmt.Sprintf(
+				"CREATE STREAM %s WITH (kafka_topic='%s', value_format='avro', value_schema_id=%d);",
+				data_topic, data_topic, schema.ID(),
+			),
 		})
 		post_body = bytes.NewBuffer(post_json_body)
 		response, err = http.Post(fmt.Sprintf("%s/ksql", globals.KSQLDB_URL), "application/json", post_body)
 		if err != nil {
 			return err
 		} else if response.StatusCode != 200 {
-			return errors.New("creation of data stream failed")
+			response_bytes, _ := ioutil.ReadAll(response.Body)
+			response_str := string(response_bytes)
+			return errors.New(response_str)
+			//return errors.New("creation of data stream failed")
 		}
 	}
 

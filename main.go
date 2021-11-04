@@ -8,12 +8,8 @@ import (
 
 	"context"
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"log"
-	"net/http"
-
 	"github.com/segmentio/kafka-go"
+	"log"
 )
 
 func main() {
@@ -35,32 +31,25 @@ func main() {
 	for {
 		message, _ := consumer.FetchMessage(context.Background())
 
-		var message_value shared_structs.ManagementMessage
+		var message_value map[string]interface{}
 		json.Unmarshal(message.Value, &message_value)
 
 		var filter shared_structs.Filter
-		filter.Id = message_value.FilterId
+		filter.Id = message_value["filter_id"].(int)
 
-		if message_value.Action == "ACTIVE" {
-			resp, err := http.Get(fmt.Sprintf("%s/filter/%d/", globals.ADMIN_PORTAL_URL, filter.Id))
-			if err != nil {
-				log.Fatalln(err)
-			}
-
-			body, _ := ioutil.ReadAll(resp.Body)
-
-			json.Unmarshal(body, &filter)
+		if message_value["action"].(string) == "ACTIVE" {
+			json.Unmarshal(message.Value, &filter)
 
 			log.Printf("Launching filter with id %d\n", filter.Id)
 
 			filters.Launch_filter(filter, true)
 
-		} else if message_value.Action == "STOPPED" {
+		} else if message_value["action"].(string) == "STOPPED" {
 			log.Printf("Stopping filter with id %d\n", filter.Id)
 
-			filters.Stop_filter(message_value.FilterId)
+			filters.Stop_filter(filter.Id)
 		} else {
-			log.Printf("Invalid action %s\n", message_value.Action)
+			log.Printf("Invalid action %s\n", message_value["action"].(string))
 		}
 
 		// TODO edit filter
@@ -70,19 +59,11 @@ func main() {
 func launch_entities() {
 	log.Println("Fetching for active filters")
 
-	var active_filters []shared_structs.Filter
-	resp, err := http.Get(fmt.Sprintf("%s/filters/?status=ACTIVE", globals.FILTER_WORKER_ID))
-	if err != nil {
-		log.Fatalln(err)
-	}
-	body, _ := ioutil.ReadAll(resp.Body)
-	json.Unmarshal(body, &active_filters)
-
-	for _, filter := range active_filters {
+	for _, filter := range get_active_filters() {
 		log.Printf("Launching active filter %d\n", filter.Id)
 
 		go filters.Launch_filter(filter, false)
 	}
 
-	go upload_watcher(globals.FILTER_WORKER_ID)
+	go upload_watcher()
 }
