@@ -1,7 +1,8 @@
-from django.db.models import Q
 from django.conf import settings
 from django.db import transaction
+from django.db.models import Q
 from rest_framework import serializers
+import requests
 
 from . import models
 
@@ -21,7 +22,7 @@ class CommunitySerializer(serializers.ModelSerializer):
 class DatabaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Database
-        fields = ("id", "community", "name", "unique_identifier")
+        fields = ("id", "community", "name", "database_identifier")
 
 
 class FilterSelectionSerializer(serializers.ListField):
@@ -32,19 +33,30 @@ class FilterSelectionSerializer(serializers.ListField):
 
 
 class FilterSerializer(serializers.ModelSerializer):
+    communities = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=models.Community.objects.all(),
+        required=False,
+    )
     status = serializers.CharField(read_only=True)
     selections = FilterSelectionSerializer(required=False)
 
     class Meta:
         model = models.Filter
-        fields = ("id", "name", "filter", "selections", "status")
+        fields = ("id", "name", "filter", "communities", "selections", "status")
 
     def create(self, validated_data):
         selections = validated_data.pop("selections") if "selections" in validated_data else tuple()
+        communities = validated_data.pop("communities") if "communities" in validated_data else tuple()
 
         filter = models.Filter.objects.create(**validated_data)
         for column in selections:
             models.FilterSelection.objects.create(filter=filter, column=column)
+
+        if communities:
+            for community in communities:
+                filter.communities.add(community)
+
         return filter
 
     def update(self, instance, validated_data):

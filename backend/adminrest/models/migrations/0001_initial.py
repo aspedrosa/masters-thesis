@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=255, unique=True)),
-                ('unique_identifier', models.CharField(max_length=255, unique=True)),
+                ('database_identifier', models.CharField(max_length=255, unique=True)),
                 ('community', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='databases', to='models.community')),
             ],
         ),
@@ -91,6 +91,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='application',
             name='filter',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='applications', to='models.filter'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='applications', to='models.filter'),
         ),
     ]

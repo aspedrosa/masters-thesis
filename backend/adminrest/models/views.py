@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from django_filters.rest_framework import DjangoFilterBackend
 
 from . import models, serializers
 
@@ -13,11 +14,15 @@ class CommunityViewSet(viewsets.ModelViewSet):
 class DatabaseViewSet(viewsets.ModelViewSet):
     queryset = models.Database.objects.all()
     serializer_class = serializers.DatabaseSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ("database_identifier",)
 
 
 class FilterViewSet(viewsets.ModelViewSet):
     queryset = models.Filter.objects.all()
     serializer_class = serializers.FilterSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ("status",)
 
 
 class ApplicationViewSet(viewsets.ModelViewSet):
@@ -47,14 +52,12 @@ def stop_filter(request, filter_id):
     if filter.status == models.STATUS_STOPPED:
         return Response()
 
-    # TODO send kafka messages
-
     filter.status = models.STATUS_STOPPED
-    filter.save()
+    filter.save(update_fields=("status",))
 
-    for subscription in filter.subscriptions.all():
-        subscription.status = models.STATUS_STOPPED
-        subscription.save()
+    for application in filter.applications.all():
+        application.status = models.STATUS_STOPPED
+        application.save()
 
     return Response()
 
@@ -67,10 +70,8 @@ def start_application(request, application_id):
 
     filter = application.filter
     if filter.status == models.STATUS_STOPPED:
-        # TODO send kafka messages
-
         filter.status = models.STATUS_ACTIVE
-        filter.save()
+        filter.save(update_fields=("status",))
 
     # TODO send kafka messages
 
@@ -87,10 +88,8 @@ def stop_application(request, application_id):
 
     filter = application.filter
     if filter.status == models.STATUS_ACTIVE and not filter.applications.filter(status=models.STATUS_ACTIVE).exists():
-        # TODO send kafka messages
-
         filter.status = models.STATUS_STOPPED
-        filter.save()
+        filter.save(update_fields=("status",))
 
     return Response()
 

@@ -8,7 +8,7 @@ class Community(models.Model):
 class Database(models.Model):
     community = models.ForeignKey(Community, related_name="databases", on_delete=models.CASCADE)
     name = models.CharField(max_length=255, unique=True)
-    unique_identifier = models.CharField(max_length=255, unique=True)
+    database_identifier = models.CharField(max_length=255, unique=True)
 
 
 STATUS_STOPPED = "STOPPED"

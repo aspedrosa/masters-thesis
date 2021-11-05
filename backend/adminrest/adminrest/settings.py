@@ -17,7 +17,15 @@ import environ
 
 env = environ.Env(
     DEBUG=(bool, True),
+    POSTGRES_DB=(str, "adminrest"),
+    POSTGRES_HOST=(str, "localhost"),
+    POSTGRES_PORT=(str, "5432"),
+    POSTGRES_USER=(str, "adminrest"),
+    POSTGRES_PASSWORD=(str, "adminrest"),
+    KSQLDB_HOST=(str, "localhost"),
+    KSQLDB_PORT=(str, "8088"),
     COLUMNS=str,
+    BOOTSTRAP_SERVERS=(str, "localhost:29092"),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -47,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django_filters',
     'rest_framework',
     'rest_framework_simplejwt',
 
@@ -89,8 +98,14 @@ WSGI_APPLICATION = 'adminrest.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        #'ENGINE': 'django.db.backends.sqlite3',
+        #'NAME': BASE_DIR / 'db.sqlite3',
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env("POSTGRES_DB"),
+        "HOST": env("POSTGRES_HOST"),
+        "PORT": env("POSTGRES_PORT"),
+        "USER": env("POSTGRES_USER"),
+        "PASSWORD": env("POSTGRES_PASSWORD"),
     }
 }
 
@@ -150,3 +165,7 @@ REST_FRAMEWORK = {
 }
 
 COLUMNS = env("COLUMNS").split(",")
+
+KSQL_URL = f"http://{env('KSQLDB_HOST')}:{env('KSQLDB_PORT')}/ksql"
+
+BOOTSTRAP_SERVERS = env("BOOTSTRAP_SERVERS").split(",")

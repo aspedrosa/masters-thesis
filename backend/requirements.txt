@@ -6,12 +6,19 @@
 #
 asgiref==3.4.1
     # via django
+certifi==2021.10.8
+    # via requests
+charset-normalizer==2.0.7
+    # via requests
 django==3.2.8
     # via
     #   -r requirements.in
+    #   django-filter
     #   djangorestframework
     #   djangorestframework-simplejwt
 django-environ==0.8.1
+    # via -r requirements.in
+django-filter==21.1
     # via -r requirements.in
 djangorestframework==3.12.4
     # via
@@ -19,9 +26,24 @@ djangorestframework==3.12.4
     #   djangorestframework-simplejwt
 djangorestframework-simplejwt==5.0.0
     # via -r requirements.in
-pyjwt==2.1.0
+gunicorn==20.1.0
+    # via -r requirements.in
+idna==3.3
+    # via requests
+kafka-python==2.0.2
+    # via -r requirements.in
+psycopg2-binary==2.9.1
+    # via -r requirements.in
+pyjwt==2.3.0
     # via djangorestframework-simplejwt
-pytz==2021.1
+pytz==2021.3
     # via django
+requests==2.26.0
+    # via -r requirements.in
 sqlparse==0.4.2
     # via django
+urllib3==1.26.7
+    # via requests
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools
