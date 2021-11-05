@@ -1,8 +1,8 @@
 package main
 
 type Filter struct {
-	id          int
-	filter      string
-	communities []int
-	selections  []string
+	Id          int      `json:"id"`
+	Filter      string   `json:"filter"`
+	Communities []int    `json:"communities"`
+	Selections  []string `json:"selections"`
 }

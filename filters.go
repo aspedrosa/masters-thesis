@@ -29,9 +29,9 @@ func Launch_filter(filter Filter, create_streams bool) {
 	upload_notification_chan := make(chan UploadToFilter)
 
 	Mappings_mtx.Lock()
-	Mappings[filter.id] = FilterData{
+	Mappings[filter.Id] = FilterData{
 		cancel_func:               cancel_filter_main,
-		Communities:               filter.communities,
+		Communities:               filter.Communities,
 		Upload_notifications_chan: upload_notification_chan,
 	}
 	Mappings_mtx.Unlock()
@@ -43,13 +43,13 @@ func Launch_filter(filter Filter, create_streams bool) {
 	// launch filter worker
 	go filter_main(
 		upload_notification_chan,
-		filter.id,
+		filter.Id,
 		ctx,
 	)
 }
 
 func Edit_filter(new_filter Filter) {
-	Stop_filter(new_filter.id)
+	Stop_filter(new_filter.Id)
 
 	Launch_filter(new_filter, true)
 }

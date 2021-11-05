@@ -55,7 +55,7 @@ func make_request(url string) []byte {
 func get_community_of_database(database_identifier string) int {
 	body := make_request(
 		fmt.Sprintf(
-			"%s/databases/?unique_identifier=%s", ADMIN_PORTAL_URL, database_identifier,
+			"%s/databases?unique_identifier=%s", ADMIN_PORTAL_URL, database_identifier,
 		),
 	)
 
@@ -69,7 +69,7 @@ func get_community_of_database(database_identifier string) int {
 }
 
 func get_active_filters() []Filter {
-	body := make_request(fmt.Sprintf("%s/filters/?status=ACTIVE", ADMIN_PORTAL_URL))
+	body := make_request(fmt.Sprintf("%s/filters?status=ACTIVE", ADMIN_PORTAL_URL))
 
 	var filters []Filter
 	json.Unmarshal(body, &filters)

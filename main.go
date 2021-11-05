@@ -31,19 +31,19 @@ func main() {
 		json.Unmarshal(message.Value, &message_value)
 
 		var filter Filter
-		filter.id = message_value["filter_id"].(int)
+		filter.Id = message_value["filter_id"].(int)
 
 		if message_value["action"].(string) == "ACTIVE" {
 			json.Unmarshal(message.Value, &filter)
 
-			log.Printf("Launching filter with id %d\n", filter.id)
+			log.Printf("Launching filter with id %d\n", filter.Id)
 
 			Launch_filter(filter, true)
 
 		} else if message_value["action"].(string) == "STOPPED" {
-			log.Printf("Stopping filter with id %d\n", filter.id)
+			log.Printf("Stopping filter with id %d\n", filter.Id)
 
-			Stop_filter(filter.id)
+			Stop_filter(filter.Id)
 		} else {
 			log.Printf("Invalid action %s\n", message_value["action"].(string))
 		}
@@ -56,9 +56,9 @@ func launch_entities() {
 	log.Println("Fetching for active filters")
 
 	for _, filter := range get_active_filters() {
-		log.Printf("Launching active filter %d\n", filter.id)
+		log.Printf("Launching active filter %d\n", filter.Id)
 
-		go Launch_filter(filter, true)
+		go Launch_filter(filter, false)
 	}
 
 	go upload_watcher()
