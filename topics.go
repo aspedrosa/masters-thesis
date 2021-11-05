@@ -30,7 +30,7 @@ func create_topics() {
 				ReplicationFactor: -1,
 			},
 			{
-				Topic:             fmt.Sprintf("FILTER_WORKER_%d_DATA_READY_TO_SEND", FILTER_WORKER_ID),
+				Topic:             "FILTER_WORKER_DATA_READY_TO_SEND",
 				NumPartitions:     -1,
 				ReplicationFactor: -1,
 			},

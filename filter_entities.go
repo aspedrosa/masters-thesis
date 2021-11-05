@@ -1,12 +1,12 @@
 package main
 
 import (
-    "context"
-    "encoding/json"
-    "fmt"
-    "github.com/segmentio/kafka-go"
-    "log"
-    "sync"
+	"context"
+	"encoding/json"
+	"fmt"
+	"github.com/segmentio/kafka-go"
+	"log"
+	"sync"
 )
 
 func filter_main(
@@ -14,8 +14,6 @@ func filter_main(
 	filter_id int,
 	ctx context.Context,
 ) {
-	defer Filters_wait_group.Done()
-
 	// initiate kafka consumers
 	consumer := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: BOOTSTRAP_SERVERS,
@@ -105,6 +103,9 @@ func filter_main(
 			select {
 			case <-ctx.Done():
 				cancel_childrens()
+				if Waiting_for_filters {
+					Filters_wait_group.Done()
+				}
 				return
 			case <-filtered:
 				filtered_count++

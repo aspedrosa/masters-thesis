@@ -53,6 +53,8 @@ func upload_watcher() {
 
 		Mappings_mtx.Lock()
 		filters_to_wait_for := len(Mappings)
+		Waiting_for_filters = true
+		// FIXME if filter mains perform a Done between these two instructions the program will crash
 		Filters_wait_group.Add(filters_to_wait_for)
 
 		for filter_id, filter := range Mappings {

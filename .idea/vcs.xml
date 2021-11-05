@@ -2,32 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/davecgh/go-spew" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/eapache/go-xerial-snappy" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/golang/snappy" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/google/uuid" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/hashicorp/go-uuid" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/jcmturner/aescts" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/jcmturner/dnsutils" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/jcmturner/gofork" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/jcmturner/goidentity" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/jcmturner/gokrb5" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/jcmturner/rpc" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/klauspost/compress" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/lib/pq" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/linkedin/goavro" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/mongodb/mongo-go-driver" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/pierrec/lz4" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/pmezard/go-difflib" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/riferrei/srclient" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/segmentio/kafka-go" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/stretchr/testify" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/xdg/scram" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/xdg/stringprep" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/golang.org/x/crypto" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/golang.org/x/net" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/golang.org/x/sync" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/golang.org/x/text" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/gopkg.in/yaml.v3" vcs="Git" />
   </component>
 </project>

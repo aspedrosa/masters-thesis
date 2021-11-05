@@ -20,6 +20,7 @@ type FilterData struct {
 var Mappings_mtx = sync.Mutex{}
 var Mappings = make(map[int]FilterData)
 var Filters_wait_group = sync.WaitGroup{}
+var Waiting_for_filters = false
 
 func Launch_filter(filter Filter, create_streams bool) {
 	// create context to stop filter worker

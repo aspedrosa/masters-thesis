@@ -17,10 +17,10 @@ func main() {
 	launch_entities()
 
 	consumer := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:     BOOTSTRAP_SERVERS,
-		Topic:       "FILTER_WORKERS_MANAGEMENT",
-		StartOffset: kafka.LastOffset,
+		Brokers: BOOTSTRAP_SERVERS,
+		Topic:   "FILTER_WORKERS_MANAGEMENT",
 	})
+	consumer.SetOffset(kafka.LastOffset)
 
 	log.Println("Listening to filter management messages")
 
@@ -31,7 +31,7 @@ func main() {
 		json.Unmarshal(message.Value, &message_value)
 
 		var filter Filter
-		filter.Id = message_value["filter_id"].(int)
+		filter.Id = int(message_value["filter_id"].(float64))
 
 		if message_value["action"].(string) == "ACTIVE" {
 			json.Unmarshal(message.Value, &filter)
