@@ -3,6 +3,7 @@
   "filters": "ParseDelimitedRow",
   "filters.ParseDelimitedRow.extractColumnName": "headers",
   "filters.ParseDelimitedRow.trimColumn": "true",
+  "filters.ParseDelimitedRow.separator": ",",
   "filters.ParseDelimitedRow.columns": "analysis_id:long;stratum_1:string;stratum_2:string;stratum_3:string;stratum_4:string;stratum_5:string;count_value:long;min_value:double;max_value:double;avg_value:double;stdev_value:double;median_value:double;p10_value:double;p25_value:double;p75_value:double;p90_value:double",
   "filters.ParseDelimitedRow.type": "io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter",
   "fs.cleanup.policy.class": "io.streamthoughts.kafka.connect.filepulse.fs.clean.CLEANUP_POLICY_CLASS",

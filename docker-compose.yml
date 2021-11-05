@@ -2,9 +2,7 @@ version: '3'
 
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:6.1.1
-    hostname: zookeeper
-    container_name: zookeeper
+    image: confluentinc/cp-zookeeper:7.0.0
     ports:
       - "2181:2181"
     environment:
@@ -15,9 +13,7 @@ services:
       - kafka_zookeeper_log:/var/lib/zookeeper/log
 
   broker:
-    image: confluentinc/cp-kafka:6.1.1
-    hostname: broker
-    container_name: broker
+    image: confluentinc/cp-kafka:7.0.0
     depends_on:
       - zookeeper
     ports:
@@ -35,14 +31,14 @@ services:
       - kafka_broker:/var/lib/kafka/data
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:6.0.0
+    image: confluentinc/cp-schema-registry:7.0.0
     depends_on:
       - broker
       - zookeeper
     ports:
       - "8081:8081"
     environment:
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: "zookeeper:2181"
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "broker:9092"
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
 
   ui:
@@ -52,15 +48,18 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker:9092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
       KAFKA_CLUSTERS_0_SCHEMAREGISTRY: schema-registry:8081
+    depends_on:
+      - broker
+      - zookeeper
+      - schema-registry
     ports:
       - "8080:8080"
 
   ksqldb-server:
-    image: confluentinc/ksqldb-server:0.18.0
-    hostname: ksqldb-server
-    container_name: ksqldb-server
+    image: confluentinc/cp-ksqldb-server:7.0.0
     depends_on:
       - broker
+      - schema-registry
     ports:
       - "8088:8088"
     environment:
@@ -72,23 +71,83 @@ services:
       KSQL_KSQL_SERVICE_ID: "ksql-server"
 
   ksqldb-cli:
-    image: confluentinc/ksqldb-cli:0.18.0
-    container_name: ksqldb-cli
+    image: confluentinc/cp-ksqldb-cli:7.0.0
     depends_on:
       - broker
+      - schema-registry
       - ksqldb-server
     entrypoint: /bin/sh
     tty: true
 
+  orchestrator:
+    build: ../MetadataOrchestrator
+    depends_on:
+      - broker
+    environment:
+      BOOTSTRAP_SERVERS: broker:9092
+
+  orchestrator:
+    build: ../FilterWorker
+    depends_on:
+      - broker
+      - ksqldb-server
+      - schema-registry
+    environment:
+      KSQLDB_HOST: ksqldb-server
+      KSQLDB_PORT: 8088
+      ADMIN_PORTAL_HOST: localhost
+      ADMIN_PORTAL_PORT: 8000
+      ADMIN_PORTAL_USER: admin
+      ADMIN_PORTAL_PASSWORD: admin
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      BOOTSTRAP_SERVERS: broker:9092
+
+  filter-worker:
+    build: ../FilterWorker
+    depends_on:
+      - broker
+      - ksqldb-server
+      - schema-registry
+      - admin-portal-backend
+    environment:
+      KSQLDB_HOST: ksqldb-server
+      KSQLDB_PORT: 8088
+      ADMIN_PORTAL_HOST: admin-portal-backend
+      ADMIN_PORTAL_PORT: 8000
+      ADMIN_PORTAL_USER: admin
+      ADMIN_PORTAL_PASSWORD: admin
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      BOOTSTRAP_SERVERS: broker:9092
+
+  admin-portal-backend:
+    build: ../AdminPortal/backend
+    depends_on:
+      - broker
+      - ksqldb-server
+    ports:
+      - 8000:8000
+    environment:
+      ALLOWED_HOSTS: localhost,admin-portal-backend
+      DEBUG: "false"
+      POSTGRES_DB: adminrest
+      POSTGRES_USER: adminrest
+      POSTGRES_PASSWORD: adminrest
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      KSQLDB_HOST: ksqldb-server
+      KSQLDB_PORT: 8088
+      BOOTSTRAP_SERVERS: broker:9092
+
   agent:
     build: ./agent
     depends_on:
-      - zookeeper
       - broker
       - schema-registry
     environment:
       #AGENT_DELETE_CLEANUP_POLICY: y
-      AGENT_DATABASE_IDENTIFIER: uniquehash
+      AGENT_DATABASE_IDENTIFIER: hashhashhashhashhashhash
     volumes:
       - ./achilles_files:/app/catalogue_export_files
 
@@ -97,9 +156,10 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: adminrest
+      POSTGRES_USER: adminrest
+      POSTGRES_PASSWORD: adminrest
     volumes:
-      - ./postgres-entrypoint:/docker-entrypoint-initdb.d
       - postgres_data:/var/lib/postgresql/data
 
   redis:

@@ -1,2 +1,0 @@
-CREATE STREAM db_uniquehash_status (status VARCHAR, offset STRUCT<rows BIGINT>) WITH (kafka_topic='db_uniquehash_status', value_format='json');
-CREATE STREAM upload_notifications_uniquehash WITH (kafka_topic='UPLOAD_NOTIFICATIONS') AS SELECT 'uniquehash' as hash, offset->rows FROM db_uniquehash_status WHERE status = 'COMPLETED';
