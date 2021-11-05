@@ -1,135 +1,138 @@
-{
-  "type": "record",
-  "name": "ConnectDefault",
-  "namespace": "io.confluent.connect.avro",
-  "fields": [
-    {
-      "name": "analysis_id",
-      "type": [
-        "null",
-        "long"
-      ],
-      "default": null
-    },
-    {
-      "name": "stratum_1",
-      "type": [
-        "null",
-        "string"
-      ],
-      "default": null
-    },
-    {
-      "name": "stratum_2",
-      "type": [
-        "null",
-        "string"
-      ],
-      "default": null
-    },
-    {
-      "name": "stratum_3",
-      "type": [
-        "null",
-        "string"
-      ],
-      "default": null
-    },
-    {
-      "name": "stratum_4",
-      "type": [
-        "null",
-        "string"
-      ],
-      "default": null
-    },
-    {
-      "name": "stratum_5",
-      "type": [
-        "null",
-        "string"
-      ],
-      "default": null
-    },
-    {
-      "name": "count_value",
-      "type": [
-        "null",
-        "long"
-      ],
-      "default": null
-    },
-    {
-      "name": "min_value",
-      "type": [
-        "null",
-        "double"
-      ],
-      "default": null
-    },
-    {
-      "name": "max_value",
-      "type": [
-        "null",
-        "double"
-      ],
-      "default": null
-    },
-    {
-      "name": "avg_value",
-      "type": [
-        "null",
-        "double"
-      ],
-      "default": null
-    },
-    {
-      "name": "stdev_value",
-      "type": [
-        "null",
-        "double"
-      ],
-      "default": null
-    },
-    {
-      "name": "median_value",
-      "type": [
-        "null",
-        "double"
-      ],
-      "default": null
-    },
-    {
-      "name": "p10_value",
-      "type": [
-        "null",
-        "double"
-      ],
-      "default": null
-    },
-    {
-      "name": "p25_value",
-      "type": [
-        "null",
-        "double"
-      ],
-      "default": null
-    },
-    {
-      "name": "p75_value",
-      "type": [
-        "null",
-        "double"
-      ],
-      "default": null
-    },
-    {
-      "name": "p90_value",
-      "type": [
-        "null",
-        "double"
-      ],
-      "default": null
-    }
-  ]
-}
+[
+  "null",
+  {
+    "type": "record",
+    "name": "ConnectDefault",
+    "namespace": "io.confluent.connect.avro",
+    "fields": [
+      {
+        "name": "analysis_id",
+        "type": [
+          "null",
+          "long"
+        ],
+        "default": null
+      },
+      {
+        "name": "stratum_1",
+        "type": [
+          "null",
+          "string"
+        ],
+        "default": null
+      },
+      {
+        "name": "stratum_2",
+        "type": [
+          "null",
+          "string"
+        ],
+        "default": null
+      },
+      {
+        "name": "stratum_3",
+        "type": [
+          "null",
+          "string"
+        ],
+        "default": null
+      },
+      {
+        "name": "stratum_4",
+        "type": [
+          "null",
+          "string"
+        ],
+        "default": null
+      },
+      {
+        "name": "stratum_5",
+        "type": [
+          "null",
+          "string"
+        ],
+        "default": null
+      },
+      {
+        "name": "count_value",
+        "type": [
+          "null",
+          "long"
+        ],
+        "default": null
+      },
+      {
+        "name": "min_value",
+        "type": [
+          "null",
+          "double"
+        ],
+        "default": null
+      },
+      {
+        "name": "max_value",
+        "type": [
+          "null",
+          "double"
+        ],
+        "default": null
+      },
+      {
+        "name": "avg_value",
+        "type": [
+          "null",
+          "double"
+        ],
+        "default": null
+      },
+      {
+        "name": "stdev_value",
+        "type": [
+          "null",
+          "double"
+        ],
+        "default": null
+      },
+      {
+        "name": "median_value",
+        "type": [
+          "null",
+          "double"
+        ],
+        "default": null
+      },
+      {
+        "name": "p10_value",
+        "type": [
+          "null",
+          "double"
+        ],
+        "default": null
+      },
+      {
+        "name": "p25_value",
+        "type": [
+          "null",
+          "double"
+        ],
+        "default": null
+      },
+      {
+        "name": "p75_value",
+        "type": [
+          "null",
+          "double"
+        ],
+        "default": null
+      },
+      {
+        "name": "p90_value",
+        "type": [
+          "null",
+          "double"
+        ],
+        "default": null
+      }
+    ]
+  }
+]

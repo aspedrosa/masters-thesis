@@ -1,14 +1,12 @@
-package filters
+package main
 
 import (
-	"../globals"
-
-	"context"
-	"encoding/json"
-	"fmt"
-	"github.com/segmentio/kafka-go"
-	"log"
-	"sync"
+    "context"
+    "encoding/json"
+    "fmt"
+    "github.com/segmentio/kafka-go"
+    "log"
+    "sync"
 )
 
 func filter_main(
@@ -20,19 +18,19 @@ func filter_main(
 
 	// initiate kafka consumers
 	consumer := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: globals.BOOTSTRAP_SERVERS,
+		Brokers: BOOTSTRAP_SERVERS,
 		GroupID: fmt.Sprintf("filter_%d", filter_id),
-		Topic:   fmt.Sprintf("FILTER_WORKER_%d_FILTER_%d", globals.FILTER_WORKER_ID, filter_id),
+		Topic:   fmt.Sprintf("FILTER_WORKER_%d_FILTER_%d", FILTER_WORKER_ID, filter_id),
 	})
 
 	consumer_not := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: globals.BOOTSTRAP_SERVERS,
+		Brokers: BOOTSTRAP_SERVERS,
 		GroupID: fmt.Sprintf("filter_%d_not", filter_id),
-		Topic:   fmt.Sprintf("FILTER_WORKER_%d_FILTER_%d_NOT", globals.FILTER_WORKER_ID, filter_id),
+		Topic:   fmt.Sprintf("FILTER_WORKER_%d_FILTER_%d_NOT", FILTER_WORKER_ID, filter_id),
 	})
 
 	data_ready_to_send_producer := &kafka.Writer{
-		Addr: kafka.TCP(globals.BOOTSTRAP_SERVERS...),
+		Addr: kafka.TCP(BOOTSTRAP_SERVERS...),
 	}
 
 	// channels so children workers communicate received messages
@@ -132,7 +130,7 @@ func filter_main(
 			log.Printf("Sending DATA_READY_TO_SEND message from filter %d\n", filter_id)
 
 			data_ready_notification, _ := json.Marshal(map[string]interface{}{
-				"filter_worker_id":    globals.FILTER_WORKER_ID,
+				"filter_worker_id":    FILTER_WORKER_ID,
 				"filter_id":           filter_id,
 				"database_identifier": upload.Database_identifier,
 				"last_offset":         last_offset,

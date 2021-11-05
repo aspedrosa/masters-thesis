@@ -1,9 +1,6 @@
 package main
 
 import (
-	"./globals"
-	"./shared_structs"
-
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -16,10 +13,10 @@ var client = http.Client{}
 
 func get_new_login_token() {
 	resp, _ := http.Post(
-		fmt.Sprintf("%s/token/", globals.ADMIN_PORTAL_URL),
+		fmt.Sprintf("%s/token/", ADMIN_PORTAL_URL),
 		"application/json",
 		bytes.NewBuffer([]byte(fmt.Sprintf(
-			"{\"username\":\"%s\", \"password\":\"%s\"}", globals.ADMIN_PORTAL_USER, globals.ADMIN_PORTAL_PASSWORD,
+			"{\"username\":\"%s\", \"password\":\"%s\"}", ADMIN_PORTAL_USER, ADMIN_PORTAL_PASSWORD,
 		))),
 	)
 	body, _ := ioutil.ReadAll(resp.Body)
@@ -58,7 +55,7 @@ func make_request(url string) []byte {
 func get_community_of_database(database_identifier string) int {
 	body := make_request(
 		fmt.Sprintf(
-			"%s/databases/?unique_identifier=%s", globals.ADMIN_PORTAL_URL, database_identifier,
+			"%s/databases/?unique_identifier=%s", ADMIN_PORTAL_URL, database_identifier,
 		),
 	)
 
@@ -71,10 +68,10 @@ func get_community_of_database(database_identifier string) int {
 	return int(database[0]["community"].(float64))
 }
 
-func get_active_filters() []shared_structs.Filter {
-	body := make_request(fmt.Sprintf("%s/filters/?status=ACTIVE", globals.ADMIN_PORTAL_URL))
+func get_active_filters() []Filter {
+	body := make_request(fmt.Sprintf("%s/filters/?status=ACTIVE", ADMIN_PORTAL_URL))
 
-	var filters []shared_structs.Filter
+	var filters []Filter
 	json.Unmarshal(body, &filters)
 
 	return filters

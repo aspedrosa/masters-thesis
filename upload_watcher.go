@@ -1,9 +1,6 @@
 package main
 
 import (
-	"./filters"
-	"./globals"
-
 	"context"
 	"encoding/json"
 	"github.com/segmentio/kafka-go"
@@ -12,13 +9,13 @@ import (
 
 func upload_watcher() {
 	consumer := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: globals.BOOTSTRAP_SERVERS,
+		Brokers: BOOTSTRAP_SERVERS,
 		GroupID: "FILTER_WORKER",
 		Topic:   "DATABASES_UPLOAD_NOTIFICATIONS",
 	})
 
 	data_resquests_producer := &kafka.Writer{
-		Addr: kafka.TCP(globals.BOOTSTRAP_SERVERS...),
+		Addr: kafka.TCP(BOOTSTRAP_SERVERS...),
 	}
 
 	for {
@@ -40,7 +37,7 @@ func upload_watcher() {
 		}
 
 		data_request, _ := json.Marshal(map[string]interface{}{
-			"filter_worker_id":    globals.FILTER_WORKER_ID,
+			"filter_worker_id":    FILTER_WORKER_ID,
 			"database_identifier": database_identifier,
 			"rows":                rows,
 		})
@@ -54,11 +51,11 @@ func upload_watcher() {
 
 		log.Printf("Sent data request\n")
 
-		filters.Mappings_mtx.Lock()
-		filters_to_wait_for := len(filters.Mappings)
-		filters.Filters_wait_group.Add(filters_to_wait_for)
+		Mappings_mtx.Lock()
+		filters_to_wait_for := len(Mappings)
+		Filters_wait_group.Add(filters_to_wait_for)
 
-		for filter_id, filter := range filters.Mappings {
+		for filter_id, filter := range Mappings {
 			belongs_to_communities := false
 			for _, filter_community_id := range filter.Communities {
 				if filter_community_id == community {
@@ -73,18 +70,18 @@ func upload_watcher() {
 				log.Printf("Filter %d will not execute\n", filter_id)
 			}
 
-			filter.Upload_notifications_chan <- filters.UploadToFilter{
+			filter.Upload_notifications_chan <- UploadToFilter{
 				Database_identifier:    database_identifier,
 				Rows:                   rows,
 				Belongs_to_communities: belongs_to_communities,
 			}
 		}
 
-		filters.Mappings_mtx.Unlock()
+		Mappings_mtx.Unlock()
 
 		log.Printf("Will wait for %d filters\n", filters_to_wait_for)
 
-		filters.Filters_wait_group.Wait()
+		Filters_wait_group.Wait()
 
 		log.Printf("All filters parsed the uploaded data\n")
 

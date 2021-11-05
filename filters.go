@@ -1,9 +1,6 @@
-package filters
+package main
 
 import (
-	"../ksql"
-	"../shared_structs"
-
 	"context"
 	"sync"
 )
@@ -24,7 +21,7 @@ var Mappings_mtx = sync.Mutex{}
 var Mappings = make(map[int]FilterData)
 var Filters_wait_group = sync.WaitGroup{}
 
-func Launch_filter(filter shared_structs.Filter, create_streams bool) {
+func Launch_filter(filter Filter, create_streams bool) {
 	// create context to stop filter worker
 	ctx := context.Background()
 	ctx, cancel_filter_main := context.WithCancel(ctx)
@@ -32,27 +29,27 @@ func Launch_filter(filter shared_structs.Filter, create_streams bool) {
 	upload_notification_chan := make(chan UploadToFilter)
 
 	Mappings_mtx.Lock()
-	Mappings[filter.Id] = FilterData{
+	Mappings[filter.id] = FilterData{
 		cancel_func:               cancel_filter_main,
-		Communities:               filter.Communities,
+		Communities:               filter.communities,
 		Upload_notifications_chan: upload_notification_chan,
 	}
 	Mappings_mtx.Unlock()
 
 	if create_streams {
-		ksql.Init_streams(filter)
+		Init_streams(filter)
 	}
 
 	// launch filter worker
 	go filter_main(
 		upload_notification_chan,
-		filter.Id,
+		filter.id,
 		ctx,
 	)
 }
 
-func Edit_filter(new_filter shared_structs.Filter) {
-	Stop_filter(new_filter.Id)
+func Edit_filter(new_filter Filter) {
+	Stop_filter(new_filter.id)
 
 	Launch_filter(new_filter, true)
 }
@@ -63,5 +60,5 @@ func Stop_filter(filter_id int) {
 	delete(Mappings, filter_id)
 	Mappings_mtx.Unlock()
 
-	ksql.Stop_streams(filter_id)
+	Stop_streams(filter_id)
 }

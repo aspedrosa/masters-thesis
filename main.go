@@ -1,27 +1,23 @@
 package main
 
 import (
-	"./filters"
-	"./globals"
-	"./ksql"
-	"./shared_structs"
+	"github.com/segmentio/kafka-go"
 
 	"context"
 	"encoding/json"
-	"github.com/segmentio/kafka-go"
 	"log"
 )
 
 func main() {
-	globals.Init_global_variables()
-	ksql.Init_schema_registry_client()
+	Init_global_variables()
+	Init_schema_registry_client()
 
 	create_topics()
-	ksql.Init_data_stream()
+	Init_data_stream()
 	launch_entities()
 
 	consumer := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:     globals.BOOTSTRAP_SERVERS,
+		Brokers:     BOOTSTRAP_SERVERS,
 		Topic:       "FILTER_WORKERS_MANAGEMENT",
 		StartOffset: kafka.LastOffset,
 	})
@@ -34,20 +30,20 @@ func main() {
 		var message_value map[string]interface{}
 		json.Unmarshal(message.Value, &message_value)
 
-		var filter shared_structs.Filter
-		filter.Id = message_value["filter_id"].(int)
+		var filter Filter
+		filter.id = message_value["filter_id"].(int)
 
 		if message_value["action"].(string) == "ACTIVE" {
 			json.Unmarshal(message.Value, &filter)
 
-			log.Printf("Launching filter with id %d\n", filter.Id)
+			log.Printf("Launching filter with id %d\n", filter.id)
 
-			filters.Launch_filter(filter, true)
+			Launch_filter(filter, true)
 
 		} else if message_value["action"].(string) == "STOPPED" {
-			log.Printf("Stopping filter with id %d\n", filter.Id)
+			log.Printf("Stopping filter with id %d\n", filter.id)
 
-			filters.Stop_filter(filter.Id)
+			Stop_filter(filter.id)
 		} else {
 			log.Printf("Invalid action %s\n", message_value["action"].(string))
 		}
@@ -60,9 +56,9 @@ func launch_entities() {
 	log.Println("Fetching for active filters")
 
 	for _, filter := range get_active_filters() {
-		log.Printf("Launching active filter %d\n", filter.Id)
+		log.Printf("Launching active filter %d\n", filter.id)
 
-		go filters.Launch_filter(filter, false)
+		go Launch_filter(filter, true)
 	}
 
 	go upload_watcher()
