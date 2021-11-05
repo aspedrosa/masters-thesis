@@ -26,6 +26,7 @@ env = environ.Env(
     KSQLDB_PORT=(str, "8088"),
     COLUMNS=str,
     BOOTSTRAP_SERVERS=(str, "localhost:29092"),
+    ALLOWED_HOSTS=(str, "*"),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -41,9 +42,9 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = 'django-insecure-3ko1oo+412&p8w304a+0%4l7c=28h=26b9ad7&2^r$8w8k*5qd'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",")
 
 
 # Application definition
