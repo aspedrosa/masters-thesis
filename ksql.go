@@ -78,21 +78,22 @@ func Init_streams(filter Filter) error {
 	}
 
 	var where string
-	var where_not string
+	var not_query string
 	if filter.Filter == "" {
 		where = ""
-		where_not = ""
+		not_query = "" // if the is no filter, there is no need to create a NOT stream
 	} else {
 		where = fmt.Sprintf("WHERE %s", filter.Filter)
-		where_not = fmt.Sprintf("WHERE NOT(%s)", filter.Filter)
+		not_query = fmt.Sprintf(
+			"CREATE STREAM FILTER_WORKER_%d_FILTER_%d_NOT AS SELECT 1 FROM %s WHERE NOT (%s);",
+			FILTER_WORKER_ID, filter.Id, data_topic, filter.Filter,
+		)
 	}
 
 	post_json_body, _ := json.Marshal(map[string]interface{}{
 		"ksql": fmt.Sprintf(
-			"CREATE STREAM FILTER_WORKER_%d_FILTER_%d AS SELECT %s FROM %s %s;"+
-				"CREATE STREAM FILTER_WORKER_%d_FILTER_%d_NOT AS SELECT 1 FROM %s %s;",
-			FILTER_WORKER_ID, filter.Id, selection, data_topic, where,
-			FILTER_WORKER_ID, filter.Id, data_topic, where_not,
+			"CREATE STREAM FILTER_WORKER_%d_FILTER_%d AS SELECT %s FROM %s %s; %s",
+			FILTER_WORKER_ID, filter.Id, selection, data_topic, where, not_query,
 		),
 	})
 	post_body := bytes.NewBuffer(post_json_body)

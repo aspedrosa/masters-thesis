@@ -10,8 +10,9 @@ import (
 )
 
 func filter_main(
-	upload_notification_chan chan UploadToFilter,
 	filter_id int,
+	empty_filter bool,
+	upload_notification_chan chan UploadToFilter,
 	ctx context.Context,
 ) {
 	// initiate kafka consumers
@@ -21,11 +22,14 @@ func filter_main(
 		Topic:   fmt.Sprintf("FILTER_WORKER_%d_FILTER_%d", FILTER_WORKER_ID, filter_id),
 	})
 
-	consumer_not := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: BOOTSTRAP_SERVERS,
-		GroupID: fmt.Sprintf("filter_%d_not", filter_id),
-		Topic:   fmt.Sprintf("FILTER_WORKER_%d_FILTER_%d_NOT", FILTER_WORKER_ID, filter_id),
-	})
+	var consumer_not *kafka.Reader
+	if !empty_filter {
+		consumer_not = kafka.NewReader(kafka.ReaderConfig{
+			Brokers: BOOTSTRAP_SERVERS,
+			GroupID: fmt.Sprintf("filter_%d_not", filter_id),
+			Topic:   fmt.Sprintf("FILTER_WORKER_%d_FILTER_%d_NOT", FILTER_WORKER_ID, filter_id),
+		})
+	}
 
 	data_ready_to_send_producer := &kafka.Writer{
 		Addr: kafka.TCP(BOOTSTRAP_SERVERS...),
@@ -33,7 +37,10 @@ func filter_main(
 
 	// channels so children workers communicate received messages
 	filtered := make(chan struct{})
-	filtered_not := make(chan struct{})
+	var filtered_not chan struct{}
+	if !empty_filter {
+		filtered_not = make(chan struct{})
+	}
 
 	// wait group for main worker wait for both children to exit
 	wg := sync.WaitGroup{}
@@ -44,7 +51,10 @@ func filter_main(
 		// read messages that can be committed
 		//  these messages objects only hold the necessary values to commit then
 		msgs_filtered := make([]kafka.Message, 0, 1500)
-		msgs_filtered_not := make([]kafka.Message, 0, 1500)
+		var msgs_filtered_not []kafka.Message
+		if !empty_filter {
+			msgs_filtered_not = make([]kafka.Message, 0, 1500)
+		}
 
 		var upload UploadToFilter
 		var last_offset int64
@@ -79,22 +89,24 @@ func filter_main(
 			log.Printf("Worker for filter %d exiting\n", filter_id)
 		}()
 
-		// launch worker in charge of counting the number of messages that were filtered by the filter
-		go func() {
-			defer wg.Done()
+		if !empty_filter {
+			// launch worker in charge of counting the number of messages that were filtered by the filter
+			go func() {
+				defer wg.Done()
 
-			for {
-				msg, err := consumer_not.FetchMessage(children_ctx)
-				if err != nil {
-					break
+				for {
+					msg, err := consumer_not.FetchMessage(children_ctx)
+					if err != nil {
+						break
+					}
+
+					msgs_filtered_not = append(msgs_filtered_not, kafka.Message{Topic: msg.Topic, Partition: msg.Partition, Offset: msg.Offset})
+					filtered_not <- struct{}{}
 				}
 
-				msgs_filtered_not = append(msgs_filtered_not, kafka.Message{Topic: msg.Topic, Partition: msg.Partition, Offset: msg.Offset})
-				filtered_not <- struct{}{}
-			}
-
-			log.Printf("WorkerNot for filter %d exiting\n", filter_id)
-		}()
+				log.Printf("WorkerNot for filter %d exiting\n", filter_id)
+			}()
+		}
 
 		filtered_count := uint32(0)
 		filtered_not_count := uint32(0)
@@ -125,7 +137,9 @@ func filter_main(
 		wg.Wait()
 
 		consumer.CommitMessages(ctx, msgs_filtered...)
-		consumer_not.CommitMessages(ctx, msgs_filtered_not...)
+		if !empty_filter {
+			consumer_not.CommitMessages(ctx, msgs_filtered_not...)
+		}
 
 		if upload.Belongs_to_communities {
 			log.Printf("Sending DATA_READY_TO_SEND message from filter %d\n", filter_id)
@@ -140,7 +154,7 @@ func filter_main(
 			data_ready_to_send_producer.WriteMessages(
 				ctx,
 				kafka.Message{
-					Topic: fmt.Sprintf("FILTER_WORKER_DATA_READY_TO_SEND"),
+					Topic: fmt.Sprintf("FILTER_WORKERS_DATA_READY_TO_SEND"),
 					Value: data_ready_notification,
 				},
 			)

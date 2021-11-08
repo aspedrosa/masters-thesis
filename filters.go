@@ -43,8 +43,9 @@ func Launch_filter(filter Filter, create_streams bool) {
 
 	// launch filter worker
 	go filter_main(
-		upload_notification_chan,
 		filter.Id,
+		filter.Filter == "",
+		upload_notification_chan,
 		ctx,
 	)
 }

@@ -30,7 +30,7 @@ func create_topics() {
 				ReplicationFactor: -1,
 			},
 			{
-				Topic:             "FILTER_WORKER_DATA_READY_TO_SEND",
+				Topic:             "FILTER_WORKERS_DATA_READY_TO_SEND",
 				NumPartitions:     -1,
 				ReplicationFactor: -1,
 			},

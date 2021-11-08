@@ -84,6 +84,8 @@ func upload_watcher() {
 		log.Printf("Will wait for %d filters\n", filters_to_wait_for)
 
 		Filters_wait_group.Wait()
+		// FIXME if filter mains perform a Done between these two instructions the program will crash
+		Waiting_for_filters = false
 
 		log.Printf("All filters parsed the uploaded data\n")
 
