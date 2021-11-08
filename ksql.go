@@ -31,16 +31,21 @@ func Init_data_stream() error {
 	} else if response.StatusCode == 400 {
 		// assume that if fails the data stream doesn't exist
 
-		var schema *srclient.Schema
-		var err error
-
 		schema_name := fmt.Sprintf("%s-value", data_topic)
-		schema, err = schemaRegistryClient.GetLatestSchema(schema_name)
+		_, err = schemaRegistryClient.GetLatestSchema(schema_name)
 		if err != nil {
-			f, _ := os.Open("filter_worker_data_topics_schema.json")
+			f, _ := os.Open("filter_worker_data_topics_avro_schema1.json")
 			schema_json, _ := ioutil.ReadAll(f)
 			f.Close()
-			schema, err = schemaRegistryClient.CreateSchema(schema_name, string(schema_json), srclient.Avro)
+			_, err = schemaRegistryClient.CreateSchema(schema_name, string(schema_json), srclient.Avro)
+			if err != nil {
+				return nil
+			}
+
+			f, _ = os.Open("filter_worker_data_topics_avro_schema2.json")
+			schema_json, _ = ioutil.ReadAll(f)
+			f.Close()
+			_, err = schemaRegistryClient.CreateSchema(schema_name, string(schema_json), srclient.Avro)
 			if err != nil {
 				return nil
 			}
@@ -48,8 +53,8 @@ func Init_data_stream() error {
 
 		post_json_body, _ = json.Marshal(map[string]interface{}{
 			"ksql": fmt.Sprintf(
-				"CREATE STREAM %s WITH (kafka_topic='%s', value_format='avro', value_schema_id=%d);",
-				data_topic, data_topic, schema.ID(),
+				"CREATE STREAM %s WITH (kafka_topic='%s', value_format='avro');",
+				data_topic, data_topic,
 			),
 		})
 		post_body = bytes.NewBuffer(post_json_body)
