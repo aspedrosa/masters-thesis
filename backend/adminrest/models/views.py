@@ -28,6 +28,8 @@ class FilterViewSet(viewsets.ModelViewSet):
 class ApplicationViewSet(viewsets.ModelViewSet):
     queryset = models.Application.objects.all()
     serializer_class = serializers.ApplicationSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ("status",)
 
 
 class ApplicationDataSentViewSet(viewsets.ModelViewSet):
@@ -57,7 +59,7 @@ def stop_filter(request, filter_id):
 
     for application in filter.applications.all():
         application.status = models.STATUS_STOPPED
-        application.save()
+        application.save(update_fields=("status",))
 
     return Response()
 
@@ -101,6 +103,6 @@ def _manage_application(application_id, new_status):
         return application, False
 
     application.status = new_status
-    application.save()
+    application.save(update_fields=("status",))
 
     return application, True
