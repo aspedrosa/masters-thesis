@@ -34,16 +34,8 @@ func Init_data_stream() error {
 		schema_name := fmt.Sprintf("%s-value", data_topic)
 		_, err = schemaRegistryClient.GetLatestSchema(schema_name)
 		if err != nil {
-			f, _ := os.Open("filter_worker_data_topics_avro_schema1.json")
+			f, _ := os.Open("filter_worker_data_topics_avro_schema.json")
 			schema_json, _ := ioutil.ReadAll(f)
-			f.Close()
-			_, err = schemaRegistryClient.CreateSchema(schema_name, string(schema_json), srclient.Avro)
-			if err != nil {
-				return nil
-			}
-
-			f, _ = os.Open("filter_worker_data_topics_avro_schema2.json")
-			schema_json, _ = ioutil.ReadAll(f)
 			f.Close()
 			_, err = schemaRegistryClient.CreateSchema(schema_name, string(schema_json), srclient.Avro)
 			if err != nil {
