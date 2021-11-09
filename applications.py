@@ -14,6 +14,7 @@ class Application:
 applications = {}
 applications_mtx = None
 
+
 async def init_applications():
     global applications_mtx
 
@@ -23,8 +24,10 @@ async def init_applications():
         del application["name"]
 
         filter_id = application.pop("filter")
+        if filter_id not in applications:
+            applications[filter_id] = {}
 
-        applications[filter_id] = Application(
+        applications[filter_id][application["id"]] = Application(
             **application
         )
     applications_mtx = aiorwlock.RWLock()

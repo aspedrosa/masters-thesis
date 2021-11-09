@@ -20,20 +20,20 @@ import globals
 
 
 all_normal_order = "".join([
-    "ANALYSIS_ID",
-    "STRATUM_1",
-    "STRATUM_2",
-    "STRATUM_3",
-    "STRATUM_4",
-    "STRATUM_5",
-    "COUNT_VALUE",
-    "MIN_VALUE",
-    "AVG_VALUE",
-    "MEDIAN_VALUE",
-    "P10_VALUE",
-    "P25_VALUE",
-    "P75_VALUE",
-    "P90_VALUE",
+    "analysis_id",
+    "stratum_1",
+    "stratum_2",
+    "stratum_3",
+    "stratum_4",
+    "stratum_5",
+    "count_value",
+    "min_value",
+    "avg_value",
+    "median_value",
+    "p10_value",
+    "p25_value",
+    "p75_value",
+    "p90_value",
 ])
 
 logger = logging
@@ -54,7 +54,7 @@ async def init_statistics_producer():
 
 async def launch_workers(upload_info):
     async with applications.applications_mtx.reader_lock:
-        for application in applications.applications[upload_info["filter_id"]]:
+        for application in applications.applications[upload_info["filter_id"]].values():
             asyncio.create_task(send_updates(upload_info, application))
 
 
@@ -64,11 +64,10 @@ async def send_updates(upload_info: dict, application: applications.Application)
         application.id, upload_info["database_identifier"],
     )
 
-    filter = filters.filters.get(upload_info["filter_id"])
-    if not filter:
-        return
-
-    data_file = transform_avro_records_to_csv_file(filter, upload_info)
+    data_file = await transform_avro_records_to_csv_file(
+        filters.filters.get(upload_info["filter_id"]),
+        upload_info,
+    )
 
     data_file.seek(0)
     with data_file, requests.Session() as session:
@@ -91,7 +90,7 @@ async def send_updates(upload_info: dict, application: applications.Application)
                 SENDER_STATISTICS_TOPIC,
                 {
                     "application_id": application.id,
-                    "time": datetime.datetime.now(),
+                    "time": datetime.datetime.now().isoformat(),
                     "response_code": 0,
                     "response_data": str(e),
                 },
@@ -101,7 +100,7 @@ async def send_updates(upload_info: dict, application: applications.Application)
                 SENDER_STATISTICS_TOPIC,
                 {
                     "application_id": application.id,
-                    "time": datetime.datetime.now(),
+                    "time": datetime.datetime.now().isoformat(),
                     "response_code": response.status_code,
                     "response_data": response.content.decode("utf-8"),
                 },
@@ -115,7 +114,7 @@ async def transform_avro_records_to_csv_file(filter_selections, upload_info: dic
         data_file.write(all_normal_order)
         order = all_normal_order
     else:
-        order = [col[0].upper() for col in filter_selections]
+        order = filter_selections
         for i, column in enumerate(order):
             data_file.write(column)
             if i != len(order) - 1:
@@ -140,8 +139,8 @@ async def transform_avro_records_to_csv_file(filter_selections, upload_info: dic
             record = reader.read(decoder)
 
             for i, column in enumerate(order):
-                if record[column] is not None:
-                    data_file.write(str(record[column]))
+                if record[column.upper()] is not None:
+                    data_file.write(str(record[column.upper()]))
                 if i != len(order) - 1:
                     data_file.write(",")
 
