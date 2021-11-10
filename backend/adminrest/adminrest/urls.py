@@ -35,6 +35,7 @@ router.register(r'agentshealthchecks', views.AgentHealthCheckViewSet)
 urlpatterns = [
     path('api/', include(router.urls)),
 
+    path('api/databases/<int:database_id>/request_health_check/', views.request_health_check),
     path('api/filters/<int:filter_id>/stop/', views.stop_filter),
     path('api/applications/<int:application_id>/stop/', views.stop_application),
     path('api/applications/<int:application_id>/start/', views.start_application),

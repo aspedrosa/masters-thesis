@@ -1,4 +1,10 @@
+import json
+
+import rest_framework.filters
+from django.conf import settings
+from kafka import KafkaProducer
 from rest_framework import viewsets
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django_filters.rest_framework import DjangoFilterBackend
@@ -75,8 +81,6 @@ def start_application(request, application_id):
         filter.status = models.STATUS_ACTIVE
         filter.save(update_fields=("status",))
 
-    # TODO send kafka messages
-
     return Response()
 
 
@@ -85,8 +89,6 @@ def stop_application(request, application_id):
     application, change = _manage_application(application_id, models.STATUS_STOPPED)
     if not change:
         return Response()
-
-    # TODO send kafka messages
 
     filter = application.filter
     if filter.status == models.STATUS_ACTIVE and not filter.applications.filter(status=models.STATUS_ACTIVE).exists():
@@ -106,3 +108,16 @@ def _manage_application(application_id, new_status):
     application.save(update_fields=("status",))
 
     return application, True
+
+
+@api_view(["POST"])
+def request_health_check(request, database_id):
+    database_identifier = get_object_or_404(models.Database, id=database_id).database_identifier
+
+    producer = KafkaProducer(bootstrap_servers=settings.BOOTSTRAP_SERVERS)
+    producer.send(
+        "HEALTH_CHECKS_REQUESTS",
+        database_identifier.encode("utf-8"),
+    )
+
+    return Response()

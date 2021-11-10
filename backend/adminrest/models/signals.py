@@ -22,15 +22,24 @@ def database_create(instance, created, **kwargs):
             json={
                 "ksql":
                     f"""
-                        CREATE STREAM db_{instance.database_identifier}_status (status VARCHAR, offset STRUCT<rows BIGINT>)
+                        CREATE STREAM db_{instance.database_identifier}_healthchecks (reason string, time timestamp)
+                        WITH (kafka_topic='db_{instance.database_identifier}_healthchecks', partitions=1, value_format='json');
+                        
+                        CREATE STREAM healthchecks_{instance.database_identifier}
+                        WITH (kafka_topic='	AGENTS_HEALTH_CHECKS') AS
+                        SELECT {instance.id} as "database_id", time as "time", reason as "reason"
+                        FROM db_{instance.database_identifier}_healthchecks;
+                    
+                        CREATE STREAM db_{instance.database_identifier}_status (status VARCHAR, offset STRUCT<rows BIGINT, timestamp timestamp>)
                         WITH (kafka_topic='db_{instance.database_identifier}_status', partitions=1, value_format='json');
+                        
                         CREATE STREAM upload_notifications_{instance.database_identifier}
                         WITH (kafka_topic='DATABASES_UPLOAD_NOTIFICATIONS') AS
                         SELECT
-                        '{instance.database_identifier}' as database_identifier,
-                        '{instance.id}' as database_id,
-                        ROWTIME as time,
-                        offset->rows - 1 AS rows
+                        '{instance.database_identifier}' as "database_identifier",
+                        {instance.id} as "database_id",
+                        offset->timestamp as "time",
+                        offset->rows - 1 AS "rows"
                         FROM db_{instance.database_identifier}_status WHERE status = 'COMPLETED';
                     """,
             },
@@ -44,6 +53,8 @@ def database_delete(instance, **kwargs):
         json={
             "ksql":
                 f"""
+                    DROP STREAM db_{instance.database_identifier}_healthchecks;
+                    DROP STREAM healthchecks_{instance.database_identifier};
                     DROP STREAM upload_notifications_{instance.database_identifier};
                     DROP STREAM db_{instance.database_identifier}_status;
                 """,
