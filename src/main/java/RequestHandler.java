@@ -1,3 +1,4 @@
+import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -51,6 +52,12 @@ public class RequestHandler extends Thread {
     private static Properties redirect_streams_props() {
         final var props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, Orchestrator.APP_NAME + "_redirect_stream");
+        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, GenericAvroSerde.class);
+        props.put("schema.registry.url", String.format(
+            "http://%s:%s",
+            Variables.get(Variables.SCHEMA_REGISTRY_HOST),
+            Variables.get(Variables.SCHEMA_REGISTRY_PORT)
+        ));
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, Variables.get(Variables.BOOTSTRAP_SERVERS));
 

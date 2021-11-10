@@ -3,6 +3,8 @@ import java.util.logging.Logger;
 public class Variables {
 
     public static final String BOOTSTRAP_SERVERS = "BOOTSTRAP_SERVERS";
+    public static final String SCHEMA_REGISTRY_HOST = "SCHEMA_REGISTRY_HOST";
+    public static final String SCHEMA_REGISTRY_PORT = "SCHEMA_REGISTRY_PORT";
 
     private static final Logger LOGGER = Logger.getLogger(Variables.class.getName());
 
