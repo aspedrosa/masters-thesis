@@ -25,8 +25,12 @@ def database_create(instance, created, **kwargs):
                         CREATE STREAM db_{instance.database_identifier}_status (status VARCHAR, offset STRUCT<rows BIGINT>)
                         WITH (kafka_topic='db_{instance.database_identifier}_status', partitions=1, value_format='json');
                         CREATE STREAM upload_notifications_{instance.database_identifier}
-                        WITH (kafka_topic='DATABASES_UPLOAD_NOTIFICATIONS', partitions=1) AS
-                        SELECT '{instance.database_identifier}' as database_identifier, offset->rows - 1 AS rows
+                        WITH (kafka_topic='DATABASES_UPLOAD_NOTIFICATIONS') AS
+                        SELECT
+                        '{instance.database_identifier}' as database_identifier,
+                        '{instance.id}' as database_id,
+                        ROWTIME as time,
+                        offset->rows - 1 AS rows
                         FROM db_{instance.database_identifier}_status WHERE status = 'COMPLETED';
                     """,
             },
@@ -49,7 +53,7 @@ def database_delete(instance, **kwargs):
 
 @receiver(signals.post_save, sender=models.Filter)
 def filter_change(instance, created, update_fields, **kwargs):
-    if not created and "status" in update_fields:
+    if not created and (update_fields is not None and "status" in update_fields):
         message = dict(
             action=instance.status,
             filter_id=instance.id,
