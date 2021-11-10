@@ -46,7 +46,11 @@ func filter_main(
 	wg := sync.WaitGroup{}
 
 	for {
-		wg.Add(2)
+		if empty_filter {
+			wg.Add(1)
+		} else {
+			wg.Add(2)
+		}
 
 		// read messages that can be committed
 		//  these messages objects only hold the necessary values to commit then
