@@ -2,14 +2,20 @@ FROM node:16.13-alpine AS build
 
 WORKDIR /app
 
-COPY package.json /app
+COPY package.json yarn.lock /app/
+
+RUN yarn install
+
 COPY public /app/public
 COPY src /app/src
+COPY .env /app
 
-RUN yarn install && yarn build \
- && rm -rf /app/public /app/src /app/node_modules \
- && yarn global add serve
+RUN yarn build
 
-EXPOSE 5000
+FROM nginx:1.21-alpine
 
-CMD serve -s build
+EXPOSE 80
+
+COPY --from=build /app/build /usr/share/nginx/html
+COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx/replace_envs.sh /docker-entrypoint.d
