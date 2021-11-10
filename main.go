@@ -39,16 +39,19 @@ func main() {
 			log.Printf("Launching filter with id %d\n", filter.Id)
 
 			Launch_filter(filter, true)
-
 		} else if message_value["action"].(string) == "STOPPED" {
 			log.Printf("Stopping filter with id %d\n", filter.Id)
 
 			Stop_filter(filter.Id)
+		} else if message_value["action"].(string) == "EDIT" {
+			json.Unmarshal(message.Value, &filter)
+
+			log.Printf("Editting filter with id %d\n", filter.Id)
+
+			Edit_filter(filter)
 		} else {
 			log.Printf("Invalid action %s\n", message_value["action"].(string))
 		}
-
-		// TODO edit filter
 	}
 }
 
