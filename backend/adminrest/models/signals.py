@@ -64,19 +64,32 @@ def database_delete(instance, **kwargs):
 
 @receiver(signals.post_save, sender=models.Filter)
 def filter_change(instance, created, update_fields, **kwargs):
-    if not created and (update_fields is not None and "status" in update_fields):
-        message = dict(
-            action=instance.status,
-            filter_id=instance.id,
-        )
+    if not created:
+        if update_fields is not None and "status" in update_fields:
+            message = dict(
+                action=instance.status,
+                filter_id=instance.id,
+            )
 
-        if instance.status == "ACTIVE":
+            if instance.status == "ACTIVE":
+                filter = serializers.FilterSerializer().to_representation(instance)
+                for key in ("status", "id"):
+                    filter.pop(key)
+                message.update(filter)
+
+            producer.send("FILTER_WORKERS_MANAGEMENT", message)
+        elif instance.status == "ACTIVE":
+            message = dict(
+                action="EDIT",
+                filter_id=instance.id,
+            )
+
             filter = serializers.FilterSerializer().to_representation(instance)
             for key in ("status", "id"):
                 filter.pop(key)
             message.update(filter)
 
-        producer.send("FILTER_WORKERS_MANAGEMENT", message)
+            producer.send("FILTER_WORKERS_MANAGEMENT", message)
 
 
 @receiver(signals.post_delete, sender=models.Filter)
@@ -90,16 +103,27 @@ def filter_delete(instance, **kwargs):
 
 @receiver(signals.post_save, sender=models.Application)
 def application_change(instance: models.Application, created, update_fields, **kwargs):
-    if not created and "status" in update_fields:
-        message = dict(
-            action=instance.status,
-            filter_id=instance.filter.id,
-            application_id=instance.id,
-            community=instance.community.name,
-            request_template=instance.request_template
-        )
+    if not created:
+        if update_fields is not None and "status" in update_fields:
+            message = dict(
+                action=instance.status,
+                filter_id=instance.filter.id,
+                application_id=instance.id,
+                community=instance.community.name,
+                request_template=instance.request_template
+            )
 
-        producer.send("SENDERS_MANAGEMENT", message)
+            producer.send("SENDERS_MANAGEMENT", message)
+        elif instance.status == "ACTIVE":
+            message = dict(
+                action="EDIT",
+                filter_id=instance.filter.id,
+                application_id=instance.id,
+                community=instance.community.name,
+                request_template=instance.request_template
+            )
+
+            producer.send("SENDERS_MANAGEMENT", message)
 
 
 @receiver(signals.post_delete, sender=models.Filter)
