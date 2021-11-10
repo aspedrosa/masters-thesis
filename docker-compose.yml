@@ -2,7 +2,7 @@ version: '3'
 
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.0.0
+    image: confluentinc/cp-zookeeper:6.2.1
     ports:
       - "2181:2181"
     environment:
@@ -13,7 +13,7 @@ services:
       - kafka_zookeeper_log:/var/lib/zookeeper/log
 
   broker:
-    image: confluentinc/cp-kafka:7.0.0
+    image: confluentinc/cp-kafka:6.2.1
     depends_on:
       - zookeeper
     ports:
@@ -31,14 +31,14 @@ services:
       - kafka_broker:/var/lib/kafka/data
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:7.0.0
+    image: confluentinc/cp-schema-registry:6.2.1
     depends_on:
       - broker
       - zookeeper
     ports:
       - "8081:8081"
     environment:
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "broker:9092"
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://broker:9092
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
 
   ui:
@@ -56,7 +56,7 @@ services:
       - "8080:8080"
 
   ksqldb-server:
-    image: confluentinc/cp-ksqldb-server:7.0.0
+    image: confluentinc/cp-ksqldb-server:6.2.1
     depends_on:
       - broker
       - schema-registry
@@ -68,10 +68,10 @@ services:
       KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
-      KSQL_KSQL_SERVICE_ID: "ksql-server"
+      KSQL_KSQL_SERVICE_ID: "ksqldb-server"
 
   ksqldb-cli:
-    image: confluentinc/cp-ksqldb-cli:7.0.0
+    image: confluentinc/cp-ksqldb-cli:6.2.1
     depends_on:
       - broker
       - schema-registry
@@ -83,25 +83,11 @@ services:
     build: ../MetadataOrchestrator
     depends_on:
       - broker
-    environment:
-      BOOTSTRAP_SERVERS: broker:9092
-
-  orchestrator:
-    build: ../FilterWorker
-    depends_on:
-      - broker
-      - ksqldb-server
       - schema-registry
     environment:
-      KSQLDB_HOST: ksqldb-server
-      KSQLDB_PORT: 8088
-      ADMIN_PORTAL_HOST: localhost
-      ADMIN_PORTAL_PORT: 8000
-      ADMIN_PORTAL_USER: admin
-      ADMIN_PORTAL_PASSWORD: admin
+      BOOTSTRAP_SERVERS: broker:9092
       SCHEMA_REGISTRY_HOST: schema-registry
       SCHEMA_REGISTRY_PORT: 8081
-      BOOTSTRAP_SERVERS: broker:9092
 
   filter-worker:
     build: ../FilterWorker
@@ -121,11 +107,28 @@ services:
       SCHEMA_REGISTRY_PORT: 8081
       BOOTSTRAP_SERVERS: broker:9092
 
+  sender:
+    build: ../MetadataSender
+    depends_on:
+      - broker
+      - schema-registry
+      - admin-portal-backend
+    environment:
+      ADMIN_PORTAL_HOST: admin-portal-backend
+      ADMIN_PORTAL_PORT: 8000
+      ADMIN_PORTAL_USER: admin
+      ADMIN_PORTAL_PASSWORD: admin
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      BOOTSTRAP_SERVERS: broker:9092
+
   admin-portal-backend:
     build: ../AdminPortal/backend
     depends_on:
       - broker
+      - schema-registry
       - ksqldb-server
+      - db
     ports:
       - 8000:8000
     environment:
@@ -139,6 +142,8 @@ services:
       KSQLDB_HOST: ksqldb-server
       KSQLDB_PORT: 8088
       BOOTSTRAP_SERVERS: broker:9092
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
 
   agent:
     build: ./agent
@@ -162,10 +167,13 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  redis:
-    image: redis:6.2
-    ports:
-      - 6379:6379
+  environment-initializer:
+    build: ./environment_initializer
+    depends_on:
+      - ksqldb-server
+    environment:
+      KSQLDB_HOST: ksqldb-server
+      KSQLDB_PORT: 8088
 
 volumes:
   kafka_zookeeper:
