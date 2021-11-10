@@ -2,11 +2,13 @@ FROM maven:3.8-openjdk-11 AS build
 
 WORKDIR /app
 
-COPY src /app/src
+COPY pom.xml .
 
-COPY pom.xml /app
+RUN mvn clean verify && rm -rf target
 
-RUN mvn package
+COPY src ./src
+
+RUN mvn clean package
 
 FROM openjdk:11.0-jre-slim
 
