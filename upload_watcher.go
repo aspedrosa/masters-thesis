@@ -24,8 +24,8 @@ func upload_watcher() {
 		var upload map[string]interface{}
 		json.Unmarshal(msg.Value, &upload)
 
-		database_identifier := upload["DATABASE_IDENTIFIER"].(string)
-		rows := uint32(upload["ROWS"].(float64))
+		database_identifier := upload["database_identifier"].(string)
+		rows := uint32(upload["rows"].(float64))
 
 		log.Printf("Received an upload with %d rows from %s\n", rows, database_identifier)
 
