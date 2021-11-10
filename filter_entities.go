@@ -46,10 +46,10 @@ func filter_main(
 	wg := sync.WaitGroup{}
 
 	for {
-		if empty_filter {
-			wg.Add(1)
-		} else {
+		if !empty_filter {
 			wg.Add(2)
+		} else {
+			wg.Add(1)
 		}
 
 		// read messages that can be committed
