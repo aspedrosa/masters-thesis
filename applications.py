@@ -48,4 +48,9 @@ async def stop_application(filter_id, application_id, **kwargs):
 
 async def edit_application(filter_id, application_id, community, request_template):
     async with applications_mtx.writer_lock:
+        for filter_applications in applications.values():
+            try:
+                del filter_applications[application_id]
+            except KeyError:
+                pass
         applications[filter_id][application_id] = Application(application_id, community, request_template)
