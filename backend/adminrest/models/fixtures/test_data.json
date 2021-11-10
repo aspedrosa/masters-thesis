@@ -1,0 +1,72 @@
+[
+    {
+        "model": "models.database",
+        "pk": 1,
+        "fields": {
+            "community": 1,
+            "name": "aveiro",
+            "database_identifier": "hashhashhashhashhashhash"
+        }
+    },
+    {
+        "model": "models.community",
+        "pk": 1,
+        "fields": {
+            "name": "EHDEN"
+        }
+    },
+    {
+        "model": "models.filter",
+        "pk": 1,
+        "fields": {
+            "name": "count",
+            "filter": "analysis_id = 0",
+            "status": "STOPPED",
+            "communities": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "models.filterselection",
+        "pk": 1,
+        "fields": {
+            "filter": 1,
+            "column": "count_value"
+        }
+    },
+    {
+        "model": "models.filter",
+        "pk": 2,
+        "fields": {
+            "name": "all",
+            "filter": null,
+            "status": "STOPPED",
+            "communities": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "models.application",
+        "pk": 1,
+        "fields": {
+            "community": 1,
+            "filter": 1,
+            "name": "montra",
+            "request_template": "{\n\"method\": \"POST\",\n\"url\": \"http://localhost:8001/{{ database_identifier }}/\",\n\"json\": {\"patient_count\": {{ filtered_data[\"count_value\"][0] }}},\n}",
+            "status": "STOPPED"
+        }
+    },
+    {
+        "model": "models.application",
+        "pk": 2,
+        "fields": {
+            "community": 1,
+            "filter": 2,
+            "name": "dashboards",
+            "request_template": "{\n\"method\": \"POST\",\n\"url\": \"http://localhost:8001/{{ database_identifier }}/\",\n\"json\": {\"patient_count\": {{ filtered_data[\"count_value\"][0] }}},\n}",
+            "status": "STOPPED"
+        }
+    }
+]
