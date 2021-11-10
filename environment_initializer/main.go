@@ -44,14 +44,18 @@ func main() {
 }
 
 func wait_until_active() {
+    duration, _ := time.ParseDuration("5s")
+
     for {
-        _, err := http.Get(KSQLDB_URL)
-        if err != nil {
-            duration, _ := time.ParseDuration("5s")
-            time.Sleep(duration)
-        } else {
-            break
+        response, err := http.Get(KSQLDB_URL)
+        if err == nil {
+            response, _ := ioutil.ReadAll(response.Body)
+            if !strings.Contains(string(response), "KSQL is not yet ready to serve requests") {
+                break
+            }
         }
+
+        time.Sleep(duration)
     }
 }
 
