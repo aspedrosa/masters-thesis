@@ -15,42 +15,46 @@ from . import models, serializers
 class CommunityViewSet(viewsets.ModelViewSet):
     queryset = models.Community.objects.all()
     serializer_class = serializers.CommunitySerializer
+    filter_backends = (DjangoFilterBackend, rest_framework.filters.OrderingFilter,)
 
 
 class DatabaseViewSet(viewsets.ModelViewSet):
     queryset = models.Database.objects.all()
     serializer_class = serializers.DatabaseSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, rest_framework.filters.OrderingFilter,)
     filter_fields = ("database_identifier",)
 
 
 class FilterViewSet(viewsets.ModelViewSet):
     queryset = models.Filter.objects.all()
     serializer_class = serializers.FilterSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, rest_framework.filters.OrderingFilter,)
     filter_fields = ("status",)
 
 
 class ApplicationViewSet(viewsets.ModelViewSet):
     queryset = models.Application.objects.all()
     serializer_class = serializers.ApplicationSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, rest_framework.filters.OrderingFilter,)
     filter_fields = ("status",)
 
 
 class ApplicationDataSentViewSet(viewsets.ModelViewSet):
     queryset = models.ApplicationSentData.objects.all()
     serializer_class = serializers.ApplicationDataSentSerializer
+    filter_backends = (rest_framework.filters.OrderingFilter,)
 
 
 class AgentHealthCheckViewSet(viewsets.ModelViewSet):
     queryset = models.DatabaseHealthCheck.objects.all()
     serializer_class = serializers.AgentHealthCheckSerializer
+    filter_backends = (rest_framework.filters.OrderingFilter,)
 
 
 class DatabaseUploadViewSet(viewsets.ModelViewSet):
     queryset = models.DatabaseUpload.objects.all()
     serializer_class = serializers.DatabaseUploadSerializer
+    filter_backends = (rest_framework.filters.OrderingFilter,)
 
 
 @api_view(["PUT"])

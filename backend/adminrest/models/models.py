@@ -47,11 +47,17 @@ class DatabaseHealthCheck(models.Model):
     time = models.DateTimeField()
     reason = models.TextField()
 
+    class Meta:
+        ordering = ("-time",)
+
 
 class DatabaseUpload(models.Model):
     database = models.ForeignKey(Database, on_delete=models.CASCADE)
     time = models.DateTimeField()
     rows = models.IntegerField()
+
+    class Meta:
+        ordering = ("-time",)
 
 
 class ApplicationSentData(models.Model):
@@ -59,6 +65,9 @@ class ApplicationSentData(models.Model):
     time = models.DateTimeField()
     response_code = models.IntegerField()
     response_data = models.TextField()
+
+    class Meta:
+        ordering = ("-time",)
 
 
 """
