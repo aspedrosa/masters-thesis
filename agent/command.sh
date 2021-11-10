@@ -55,6 +55,8 @@ sed -i "s/BOOTSTRAP_SERVERS/$CONNECT_BOOTSTRAP_SERVERS/g" /app/file_pulse/config
 
 curl -sX PUT http://localhost:8083/connectors/achillesresults/config -d @/app/file_pulse/config.json --header "Content-Type: application/json"
 
-# TODO start health check replier app
+
+health_check_handler &
+
 
 tail -f /dev/null

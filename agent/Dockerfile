@@ -1,12 +1,17 @@
 FROM golang:1.17 AS build
 
-# COPY  TODO copy data
+WORKDIR /app
 
-RUN go build
+COPY health_check_handler/*.go health_check_handler/go.sum health_check_handler/go.mod /app/
+
+RUN go get . && go build main.go
 
 FROM streamthoughts/kafka-connect-file-pulse:2.4.0
 
-ENV CONNECT_PLUGIN_PATH="/usr/share/confluent-hub-components" \
+WORKDIR /app
+
+ENV KAFKA_HEAP_OPTS="-Xms256M -Xmx500M" \
+    CONNECT_PLUGIN_PATH="/usr/share/confluent-hub-components" \
     CONNECT_KEY_CONVERTER=org.apache.kafka.connect.storage.StringConverter \
     CONNECT_VALUE_CONVERTER=io.confluent.connect.avro.AvroConverter \
     CONNECT_INTERNAL_KEY_CONVERTER=org.apache.kafka.connect.json.JsonConverter \
@@ -20,14 +25,9 @@ ENV CONNECT_PLUGIN_PATH="/usr/share/confluent-hub-components" \
     # maybe these replication factor are not required if the topic is already created.
     #  which could be created only after the admin register the database on the admin dashboard
 
-
-RUN mkdir /app \
- && mkdir /app/healthcheck_handler \
- && mkdir /app/file_pulse
-
-COPY command.sh /app
+COPY command.sh /usr/local/bin
 COPY achilles.json /app/file_pulse/config.json
 
-CMD "/app/command.sh"
+ENTRYPOINT command.sh
 
-COPY --form build /healthcheck_replier /app/healthcheck_handler
+COPY --from=build /go/bin/health_check_handler /usr/local/bin
