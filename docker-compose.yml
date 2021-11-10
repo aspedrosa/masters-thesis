@@ -145,6 +145,16 @@ services:
       SCHEMA_REGISTRY_HOST: schema-registry
       SCHEMA_REGISTRY_PORT: 8081
 
+  admin-portal-frontend:
+    build: ../AdminPortal/frontend
+    depends_on:
+      - admin-portal-backend
+    environment:
+      ADMIN_PORTAL_BACKEND_HOST: admin-portal-backend
+      ADMIN_PORTAL_BACKEND_PORT: 8000
+    ports:
+      - 80:80
+
   agent:
     build: ./agent
     depends_on:

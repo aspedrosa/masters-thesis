@@ -27,7 +27,7 @@ if ! [ -f .working_instalation ] ; then
 fi
 
 docker-compose up -d admin-portal-backend orchestrator statistics-recorder agent
-docker-compose up -d ui
+#docker-compose up -d ui
 
 while true ; do
     docker-compose exec -T admin-portal-backend bash -c "curl localhost:8000"
@@ -38,4 +38,4 @@ while true ; do
     fi
 done
 
-docker-compose up -d filter-worker sender
+docker-compose up -d filter-worker sender admin-portal-frontend
