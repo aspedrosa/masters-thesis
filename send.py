@@ -90,7 +90,7 @@ async def send_updates(upload_info: dict, application: applications.Application)
                 SENDER_STATISTICS_TOPIC,
                 {
                     "application_id": application.id,
-                    "time": datetime.datetime.now().isoformat(),
+                    "time": int(datetime.datetime.now().timestamp() * 1000),
                     "response_code": 0,
                     "response_data": str(e),
                 },
@@ -100,7 +100,7 @@ async def send_updates(upload_info: dict, application: applications.Application)
                 SENDER_STATISTICS_TOPIC,
                 {
                     "application_id": application.id,
-                    "time": datetime.datetime.now().isoformat(),
+                    "time": int(datetime.datetime.now().timestamp() * 1000),
                     "response_code": response.status_code,
                     "response_data": response.content.decode("utf-8"),
                 },
