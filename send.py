@@ -19,7 +19,7 @@ import filters
 import globals
 
 
-all_normal_order = "".join([
+all_normal_order = [
     "analysis_id",
     "stratum_1",
     "stratum_2",
@@ -34,7 +34,7 @@ all_normal_order = "".join([
     "p25_value",
     "p75_value",
     "p90_value",
-])
+]
 
 logger = logging
 logging.root.setLevel(logging.INFO)
@@ -111,7 +111,7 @@ async def transform_avro_records_to_csv_file(filter_selections, upload_info: dic
     data_file = tempfile.TemporaryFile("w+")
 
     if len(filter_selections) == 0:
-        data_file.write(all_normal_order)
+        data_file.write(",".join(all_normal_order))
         order = all_normal_order
     else:
         order = filter_selections
