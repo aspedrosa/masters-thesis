@@ -10,6 +10,10 @@ if ! [ -f .working_instalation ] ; then
         if [ $? -ne 0 ] ; then
             sleep 2
         else
+            docker-compose ps environment-initializer | grep "Exit 0"
+            if [ $? -ne 0 ] ; then
+                exit 1
+            fi
             break
         fi
     done
