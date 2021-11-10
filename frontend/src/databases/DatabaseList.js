@@ -13,7 +13,7 @@ const DatabasesList = (props) => (
                 <TextField source="name" />
             </ReferenceField>
             <TextField source="name" />
-            <TextField source="unique_identifier" />
+            <TextField source="database_identifier" />
         </Datagrid>
     </List>
 );

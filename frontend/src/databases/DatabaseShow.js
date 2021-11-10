@@ -1,9 +1,32 @@
 import * as React from "react";
-import { Show, TabbedShowLayout, Datagrid, Tab, TextField, ReferenceField, ReferenceManyField, DateField, NumberField } from 'react-admin';
+import Button from '@material-ui/core/Button';
+import { TopToolbar, EditButton, Show, TabbedShowLayout, Datagrid, Tab, TextField, ReferenceField, ReferenceManyField, DateField, NumberField } from 'react-admin';
+
+const request_health_check = (record) => {
+    fetch(
+        `/api/databases/${record.id}/request_health_check/`,
+        {
+            method: "POST",
+            headers: {
+                Authorization: "Bearer " + localStorage.getItem("access"),
+            },
+        }
+    )
+    .then(window.location.reload);
+};
+
+const PostShowActions = ({ basePath, data, resource }) => {
+    return (
+        <TopToolbar>
+            <EditButton basePath={basePath} record={data} />
+            <Button color="primary" onClick={() => request_health_check(data)}>Request Health Check</Button>
+        </TopToolbar>
+    );
+}
 
 const DatabasesShow = (props) => {
     return (
-        <Show {...props}>
+        <Show actions={<PostShowActions/>} {...props}>
             <TabbedShowLayout>
                 <Tab label="Info">
                     <ReferenceField
@@ -15,7 +38,7 @@ const DatabasesShow = (props) => {
                         <TextField source="name" />
                     </ReferenceField>
                     <TextField source="name" />
-                    <TextField source="unique_identifier" />
+                    <TextField source="database_identifier" />
                 </Tab>
                 <Tab label="Uploads">
                     <ReferenceManyField reference="databasesuploads" target="database_id" addLabel={false}>

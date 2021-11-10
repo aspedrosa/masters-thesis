@@ -8,7 +8,7 @@ const DatabasesCreate = (props) => (
                 <SelectInput optionText="name"/>
             </ReferenceInput>
             <TextInput source="name" />
-            <TextInput source="unique_identifier" />
+            <TextInput source="database_identifier" />
         </SimpleForm>
     </Create>
 );

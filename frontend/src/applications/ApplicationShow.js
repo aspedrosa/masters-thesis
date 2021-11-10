@@ -11,9 +11,8 @@ const start = (record) => {
                 Authorization: "Bearer " + localStorage.getItem("access"),
             },
         }
-    );
-
-    window.location.reload();
+    )
+    .then(window.location.reload);
 };
 
 const stop = (record) => {
@@ -25,9 +24,8 @@ const stop = (record) => {
                 Authorization: "Bearer " + localStorage.getItem("access"),
             },
         }
-    );
-
-    window.location.reload();
+    )
+    .then(window.location.reload);
 };
 
 
@@ -72,6 +70,9 @@ const ApplicationsShow = (props) => {
                     <TextField source="request_template" />
                 </Tab>
                 <Tab label="Data Sent">
+                    <br/>
+                    <span>Note: A response code of "0" means that something wrong when building request's arguments or the HTTP request failed.</span>
+                    <br/>
                     <ReferenceManyField reference="applicationdatasent" target="application_id" addLabel={false}>
                         <Datagrid>
                             <DateField showTime={true} source="time"></DateField>
