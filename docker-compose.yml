@@ -167,11 +167,30 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  statistics-recorder:
+    build: ./statistics_recorder
+    depends_on:
+      - zookeeper
+      - broker
+      - schema-registry
+      - db
+    environment:
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      CONNECT_BOOTSTRAP_SERVERS: broker:9092
+      CONNECT_ZOOKEEPER_CONNECT: zookeeper:2181
+      DB_DATABASE: adminrest
+      DB_USER: adminrest
+      DB_PASSWORD: adminrest
+      DB_HOST: db
+      DB_PORT: 5432
+
   environment-initializer:
     build: ./environment_initializer
     depends_on:
       - ksqldb-server
     environment:
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      BOOTSTRAP_SERVERS: broker:9092
       KSQLDB_HOST: ksqldb-server
       KSQLDB_PORT: 8088
 

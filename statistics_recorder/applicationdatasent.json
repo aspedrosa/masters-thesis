@@ -1,0 +1,11 @@
+{
+  "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+  "connection.url": "jdbc:postgresql://DB_HOST:DB_PORT/DB_DATABASE",
+  "connection.user": "DB_USER",
+  "connection.password": "DB_PASSWORD",
+  "insert.mode": "insert",
+  "batch.size": 0,
+  "table.name.format": "models_applicationsentdata",
+  "topics": "SENDER_STATISTICS_AVRO",
+  "auto.create": false
+}
