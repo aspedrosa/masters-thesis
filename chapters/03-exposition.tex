@@ -76,7 +76,7 @@ choice-multiple-freeform          & Multiple choice with and open text fields   
 choice-multiple-freeform-options  & Multiple choice with and open text fields                   \\ \hline
 choice-tabular                    & Creates a table with single, multiple choices or text by row      \\ \hline
 choice-yesno                      & Single choice with yea and no choices                       \\ \hline
-choice-yesnodontknow              & Single choice with yes, no and don't know choices           \\ \hline
+choice-yesnodontknow              & Single choice with yes, no and do not know choices          \\ \hline
 comment                           & Used to separate groups of questions                        \\ \hline
 custom                            & Mirrors another question by its type                        \\ \hline
 datepicker                        & Field with date picker widget                               \\ \hline
@@ -118,7 +118,7 @@ Data owners can start to answer the questions to build the profile of their data
 \end{figure}
 
 On the list presented in figure \ref{fig:listings}, we can notice that the only fingerprint present is marked as draft.
-This is a state of the fingerprint which prevents from non-ready or non-approved fingerprints won't show to the regular community users.
+This is a state of the fingerprint which prevents from non-ready or non-approved fingerprints will not show to the regular community users.
 With this, for such users the list showed above would be empty.
 Fingerprints can be published depending on the chosen settings for the community.
 After the data source owners request to publish a fingerprint the framework allows to either automatically accept or require a community manger to accept it.
@@ -205,7 +205,7 @@ On this view, by hovering over an empty answer container the user can send a req
 
 The MONTRA framework also offers an ``Advanced Search'' feature, allowing to perform searches for fingerprints.
 The overall interface used is identical to the ones presented above, where the user answers the questions of the specific questionnaire of the community.
-The main difference to the other versions of the fingerprint view is that the only control buttons available are just the navigation ones, and all the questions don't have any validation.
+The main difference to the other versions of the fingerprint view is that the only control buttons available are just the navigation ones, and all the questions do not have any validation.
 Additionally, at the bottom of the page, it is provided to the user a way to customize the search query, allowing to create complex search criteria through a drag and drop interface, as is presented in figure \ref{fig:boolean-query}.
 
 \begin{figure}[H]
@@ -393,7 +393,7 @@ With the PUT request, a fingerprint owner can update data of specific answers wh
 Existing two different types of endpoints to retrieve answers data makes sense since the returned format is returned in a way that is easier to handle data by the target entity that will consume that endpoint.
 If the fingerprint pages receive the data in \gls{html} format they can just put the \gls{html} in the determined container instead of having to build the entire container and insert the data on each input.
 Accordingly, if data is returned in a \gls{json} format it can easily access the data and perform some data processing avoiding going transverse the \gls{html} and retrieve the data from each input.
-However, having two different endpoints to update data doesn't make that much sense since current \gls{http} requests libraries offer an easy way to build a request in the required format as the one's browsers automatically build whenever a form is submitted.
+However, having two different endpoints to update data does not make that much sense since current \gls{http} requests libraries offer an easy way to build a request in the required format as the one's browsers automatically build whenever a form is submitted.
 
 \subsection*{Draft}
 
@@ -463,7 +463,7 @@ On the latter, the text of the question in the most upper level is used as the t
     \label{fig:question-group-levels}
 \end{figure}
 
-It's important to highlight that the category way to create question groups is not independent of levels.
+It is important to highlight that the category way to create question groups is not independent of levels.
 If both a category row and a question are on the most upper level, MONTRA will render two separate collapsable containers, where the first one will be empty, as is shown in figure \ref{fig:question-group-category-wrong-levels}.
 
 \begin{figure}[H]
@@ -488,12 +488,12 @@ Choices are separated by a ``|'' character and the extra text field can be set b
     \caption{Multiple choice question with some extra text fields associated with the several choices}
 \end{figure}
 
-Although the framework allows the extensibility to have an additional text field, these don't support other types of input and also have no validation.
+Although the framework allows the extensibility to have an additional text field, these do not support other types of input and also have no validation.
 Also, if the number of choices is high and the text of them is long, there starts to exist some clutter on the spreadsheet.
 With this, the person creating the spreadsheet will have problems perform edits and check if there is something wrong or missing.
 
 To facilitate the job of who is filling the spreadsheet, some question types are shortcuts.
-For example, the choice-yesnodontknow is a question of type choice with three possible options: Yes, No, Don't Know.
+For example, the choice-yesnodontknow is a question of type choice with three possible options: Yes, No, Do not Know.
 Choice variants with freeform on the name, besides the usual choices, always have an additional text field, associated with the question instead of a choice.
 
 \subsubsection*{Open Multiple Composition}
@@ -576,7 +576,7 @@ On figure \ref{fig:dependencies-excel}, since a choice-yesnodontknow question ty
     \label{fig:dependencies-yes}
 \end{figure}
 
-Besides such restrictions are imposed on the user when he visits the web page, if the API was used directly, such dependencies would not be checked, which would lead to unnecessary data be stored on the database since it won't be displayed to the user.
+Besides such restrictions are imposed on the user when he visits the web page, if the API was used directly, such dependencies would not be checked, which would lead to unnecessary data be stored on the database since it will not be displayed to the user.
 
 \subsection{Data Models}
 % Diagrama de classes
@@ -730,7 +730,7 @@ Taking into account figure \ref{fig:old-models}, since both the Community and De
 This leaves us with both the Fingerprint and Questionnaire applications.
 Regarding the Fingerprint application, the fingerprint model is one of the main models of the framework, affecting several features of the framework, so we intend to perform minimal changes on it.
 However, the remaining models associated with the answers of a fingerprint and submissions will have a new models design.
-Respecting the Questionnaire application both the Questionnaire and QuestionSet models are represent well-defined concepts and don't require any changes, yet, the remaining models, mainly the models storing the structure of the questions, their dependencies, choices, etc.\, will also have a new design.
+Respecting the Questionnaire application both the Questionnaire and QuestionSet models are represent well-defined concepts and do not require any changes, yet, the remaining models, mainly the models storing the structure of the questions, their dependencies, choices, etc.\, will also have a new design.
 
 \begin{figure}
     \center
@@ -745,7 +745,7 @@ This way, the migration process is an iterative process where the framework is a
 Then with the help of an \gls{ide}, we can search for usages of the old models and migrate each feature at the time.
 
 Let's start with the fingerprint-related changes.
-Now there is a new Answer model that doesn't hold directly the content of answers, instead the content is stored on data-specific models such as IntegerAnswer and DateAnswer.
+Now there is a new Answer model that does not hold directly the content of answers, instead the content is stored on data-specific models such as IntegerAnswer and DateAnswer.
 For choice-based questions, instead of storing the value of the selected choice(s), a single or multiple choice answer contains a foreign key(s) for the selected choices.
 To establish the connection between the main Answer model and the data-specific model, the main model contains a \textit{type} field that indicates the data type of the answer.
 Then the primary keys of the data-specific answer model are the same as the associated record of the Answer model, which allows fetching the data-specific answers of an Answer.
@@ -827,7 +827,7 @@ By default, the only button visible on the Questionnaire buttons is the Summary,
 
 As can be observed in figure \ref{fig:fingerprint-show-summary-after-diagram}, when the user switches to the summary view, by clicking on the Summary Questionnaire button, the detailed view container is hidden, and the summary view container is displayed.
 
-It's important to note again that the overall aesthetics and workflow of the page were not changed.
+It is important to note again that the overall aesthetics and workflow of the page were not changed.
 The only major change was to divide the fingerprint view into several, reusable components.
 
 When we went over how question sets were rendered, we saw that each question set had its container and they are only rendered when is accessed for the first time.
@@ -952,7 +952,7 @@ POST [base url]/api/draft/[fingerprint hash]
 \end{verbatim}
 
 This endpoint expects the same data in the same format, though takes different actions according to the community of the fingerprint at issue.
-Also, on the previous versions of publishing endpoints, there was a possibility to publish fingerprints that weren't complete, not having answers to required answers.
+Also, on the previous versions of publishing endpoints, there was a possibility to publish fingerprints that were not complete, not having answers to required answers.
 Now, a validation is implemented when the user wants to publish its fingerprint, not completing the change on the publish status if the fingerprint is not complete.
 This avoids notifications being sent to the community manager telling that a user wants to publish a fingerprint, although such fingerprints might be incomplete.
 
@@ -1018,7 +1018,7 @@ ColumnChoice                  &                                                 
 \end{table}
 
 Using the new row types described in table \ref{tab:excel-row-types}, the spreadsheet itself will be longer, however, it will be easier to read.
-In figures \ref{fig:choice-tabular-neu}, \ref{fig:open-multiple-neu} and \ref{fig:choice-neu}, it's presented three before and after of how questions that require extra configuration were and are now defined with the new spreadsheet version.
+In figures \ref{fig:choice-tabular-neu}, \ref{fig:open-multiple-neu} and \ref{fig:choice-neu}, it is presented three before and after of how questions that require extra configuration were and are now defined with the new spreadsheet version.
 
 \begin{figure}[H]
     \center
@@ -1050,13 +1050,13 @@ Figure \ref{fig:excel-end-group} shows how the change would affect the spreadshe
 \begin{figure}[h]
     \center
     \includegraphics[width=\textwidth]{excel-end-group}
-    \caption{A possible solution to avoid relying on the Level column to create subgroups of questions. On the new solution proposed it's much difficult to know at which level the specific question is located, without looking at the rows above.}
+    \caption{A possible solution to avoid relying on the Level column to create subgroups of questions. On the new solution proposed it is much difficult to know at which level the specific question is located, without looking at the rows above.}
     \label{fig:excel-end-group}
 \end{figure}
 
 Even with colors, the user editing has to look several rows above to know at each level it is so he can match the ``EndGroud'' rows with the respective ``Group'' rows.
 This is the same problem as matching if open and closing brackets on C-like programming languages.
-Such a problem is alleviated since indentation is allowed, which can't be achieved on a spreadsheet.
+Such a problem is alleviated since indentation is allowed, which can not be achieved on a spreadsheet.
 For those reasons, the Level column was kept, however, when a questionnaire is imported, whenever there are nested levels the framework will create groups with empty text.
 
 \subsection*{Data Type}
@@ -1084,7 +1084,7 @@ Next is the list of question types available after the refactoring:
     \item open multiple: Can achieve both the old open-multiple and open-multiple composition.
 \end{itemize}
 
-Open-location and timeperiod were removed since they weren't being used on any of the active installations of the MONTRA framework.
+Open-location and timeperiod were removed since they were not being used on any of the active installations of the MONTRA framework.
 The same happened with sameas and custom as additionally, they were shortcut type questions.
 
 \subsection*{Slug and Dependencies}

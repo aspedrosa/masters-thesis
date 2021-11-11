@@ -17,7 +17,7 @@ Agents are software that runs on the data owner's deployment, in charge of extra
 \section{Requirement Analysis}
 
 When we enter the realm of accessing an institution's sensitive data, some problems start to arise.
-Not all data owners are willing to, or legally can't, provide direct access to their data.
+Not all data owners are willing to, or legally can not, provide direct access to their data.
 When building this part of the system, we have to consider this and have several options available that use different levels of access and according to the demands of each specific data owner, use the most appropriate one.
 In one end, a single solution could have full access to the data, extracting the metadata directly from the original data.
 At the other end of the scale, the burden of extracting data is removed from us and the system is dependent on the data owner providing the metadata and only then the system processes the metadata.
@@ -26,7 +26,7 @@ A more appropriate alternative is to have a single option, that is designed cons
 The only difference is that we are not the ones executing it.
 
 As the extracting tool has direct access to the data, using an existing and widely known tool is a must, so data owners are inclined to use it.
-Additionally, making fewer to no changes is preferable to ensure that data owners don't discard the tool because they don't trust the changes.
+Additionally, making fewer to no changes is preferable to ensure that data owners do not discard the tool because they do not trust the changes.
 
 \begin{figure}[H]
     \center
@@ -114,7 +114,7 @@ Some use all the data, others only need a value of such data.
         \begin{list}{}{}
             \item This was also applied in \cite{gaain}.
                 It gives yet another layer of control to the data owners over their data.
-          If at any time, they don't want to share their data, they can stop the agent.
+          If at any time, they do not want to share their data, they can stop the agent.
           This also poses a constraint in the system that it should not be designed assuming that the agents, once deployed, will always stay active.
         \end{list}
 
@@ -179,7 +179,7 @@ Such actions were divided into three groups: Agents, Metadata Extraction, action
 \begin{enumerate}
     \item Set up the agent on the local deployment system:
         \begin{list}{}{}
-            \item Since it's not expected that data owners provide access to their deployment environment, the responsibility to set up the agent is imposed on them.
+            \item Since it is not expected that data owners provide access to their deployment environment, the responsibility to set up the agent is imposed on them.
         \end{list}
 
     \item Stop the agent:
@@ -390,7 +390,7 @@ After researching on the Confluent Hub, three connectors were found to suit the 
                 These are not suitable for our use case, since it treats a table as an unbounded source of data;
 
             \item The other mode available is bulk, which sends all the rows of a table in one go.
-                However, this process isn't performed based on updates on data, instead, it is executed periodically on a configured interval.
+                However, this process is not performed based on updates on data, instead, it is executed periodically on a configured interval.
                 Furthermore, no feedback is provided after all the data is present in Kafka.
         \end{list}
 
@@ -455,7 +455,7 @@ As said in the requirement analysis, the deployment of the agent should be an ea
 At its core, the FilePulse connector is a Java application.
 With that, the agent requires that the data owner has both Go and Java runtime dependencies available so that the agent could be deployed in their local system.
 This could cause problems for the data owners since he could already have these dependencies, but the wrong versions, and installing a new version could cause problems.
-Also, different data owners could use a different operating system, which could change the way dependencies have to be installed, so it's hard to create install instruction that covers all the possible deployment environments.
+Also, different data owners could use a different operating system, which could change the way dependencies have to be installed, so it is hard to create install instruction that covers all the possible deployment environments.
 With the emerge of cloud computing, virtualization solutions started to be used, allowing to use a single physical machine for several purposes, taking more advantage of the available hardware.
 To achieve this, a software called Hypervisor sits on top of the host machine, which divides the hardware resources so that they can be used by separate virtual machines~\cite{virtualization}.
 However, such virtualization technology emulates an entire operating system, on every virtual machine, which is a heavy option to deploy a simple agent.
@@ -828,7 +828,7 @@ The second solution had better flexibility compared to the first one, however, p
 With this, we decided to separate this component into two parts, a web interface app and a backend app exposing an \gls{api} for the web interface app to use.
 This allows using technologies that are better suited for such types of applications.
 Regarding the web interface, there are several popular web frameworks/libraries such as React\footnote{\url{https://reactjs.org/}}, Angular\footnote{\url{https://angular.io/}} and Vue\footnote{\url{https://vuejs.org/}} that intend to facilitate the process of creating web applications.
-However, we didn't want to build something from scratch, for that, we performed a new search for framework/libraries that used those web technologies, but were specialized to build an admin interface.
+However, we did not want to build something from scratch, for that, we performed a new search for framework/libraries that used those web technologies, but were specialized to build an admin interface.
 The solution found was React-Admin\footnote{\url{https://marmelab.com/react-admin/}}, a frontend framework to build data-driven applications.
 React~\cite{react} is a library that allows dividing a page into components that can be reused across the web application.
 Each component them as an internal state, and React will automatically update and render the associated components as the data changes.

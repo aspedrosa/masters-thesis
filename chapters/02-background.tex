@@ -14,7 +14,7 @@ From the study of such solutions, hopefully, some can be reused avoiding impleme
 Starting on explored existing visualization platforms that enhance data discovery
 by presenting summaries or metadata of records (data sources, datasets).
 
-In some cases data can't be publicly available because it contains sensitive data or
+In some cases data can not be publicly available because it contains sensitive data or
 simply the data owner might not want to share some portions of the data, for that the
 tools analyzed should have privacy protection mechanisms, allowing to customize the
 access and manipulation of data stored.
@@ -55,7 +55,7 @@ Initially, the same approach was taken, now considering a time window starting i
 However, after the second step, no new platforms were found.
 Because of that, a variation of the search method mentioned before was undertaken.
 The first step was skipped and some of the final tools presented on the systematic review were considered as a base set for the next steps.
-From the 20 presented, only 8 were used on this initial set, since some tools weren't active or didn't have any feature mentioned in the previous section (FAIR and data protection).
+From the 20 presented, only 8 were used on this initial set, since some tools were not active or did not have any feature mentioned in the previous section (FAIR and data protection).
 Nonetheless, besides being discarded in terms of their metadata visualization features, 1 of these tools was analyzed for its metadata extraction features and 3 of them were analyzed for their metadata sharing network architecture, which will be detailed in the next sections.
 Coming back to the search method, the 20 similar publications for each of the 8 papers considered were fetched, and the title filtering process was done, followed by an abstract filtering process and finally a full-text evaluation.
 With this search method, 2 additional tools were considered, making a total of 10 tools to analyze on the section of metadata visualization tools.
@@ -134,7 +134,7 @@ To the administrator, it is given the ability to determine which data fields can
 For a data seeker, the number of records that match the search term(s) are split by data source and also split into three categories:
 \begin{itemize}
     \item open access: the user is allowed to see the data present on the system;
-    \item linked access: the user can't see directly the data stored in the system.
+    \item linked access: the user can not see directly the data stored in the system.
         An external data source data link or data source contact information is provided;
     \item restricted access: the user has to make a data request to access the data.
 \end{itemize}
@@ -165,7 +165,7 @@ Users are capable of claiming records for resources they manage, allowing not on
 This Community curation feature, together with the coupling and enclosure of each record into standards and databases, helps FAIRSharing become a correct and complete representation of metadata standards, databases and policies in the life sciences.
 
 \subsection*{Dataverse}
-One of the tools that weren't present on the previous systematic review, and were found on the new search process was created by the Dataverse Project~\cite{dataverse}, an open-source web application to store, share, explore, analyze and cite research data.
+One of the tools that were not present on the previous systematic review, and were found on the new search process was created by the Dataverse Project~\cite{dataverse}, an open-source web application to store, share, explore, analyze and cite research data.
 
 Before the Dataverse Project, researchers had to choose between receiving credit for their data, by handling distribution themselves, however, it is difficult to have long-term preservation guarantees.
 The latter could be solved by sending the data to a third-party archive system but without receiving much credit.
@@ -321,7 +321,7 @@ Despite the chosen arrangement, each node can choose to customize the access pol
 One more tool analyzed because of its metadata sharing network its \gls{gaain}~\cite{gaain}, in which its main objective is to organize a community for sharing Alzheimer's-related from diverse repositories around the world, where data from different medical fields are combined together, taking into account existing policies of these repositories and preserving the ownership of the data being shared.
 
 The architecture of \gls{gaain} contains a central server that interacts with multiple client nodes, which are installed in the data partners site (\gls{dpc}).
-These \gls{gaain} \gls{dpc}s don't gather data directly from their data partner production environment, instead, data is locally exported and transformed into a CSV file and only then loaded into the \gls{dpc}.
+These \gls{gaain} \gls{dpc}s do not gather data directly from their data partner production environment, instead, data is locally exported and transformed into a CSV file and only then loaded into the \gls{dpc}.
 With this process a \gls{dpc} will have a low footprint, not interfering with the data parters system, and also is given the freedom to the data owners to update their data when they find it convenient.
 To have this \gls{dpc} running on the data partner's site, the only requirement imposed is to adapt current firewall configurations to allow incoming HTTPS traffic from the central server into their network.
 Data owners still have full control over their data, and to do so every \gls{gaain} \gls{dpc} has ``on/off switch'' which gives the possibility to immediately detach the data from the network.
