@@ -65,7 +65,7 @@
             "community": 1,
             "filter": 2,
             "name": "dashboards",
-            "request_template": "{\n\"method\": \"POST\",\n\"url\": \"http://localhost:8001/{{ database_identifier }}/\",\n\"json\": {\"patient_count\": {{ filtered_data[\"count_value\"][0] }}},\n}",
+            "request_template": "{\n\"method\": \"POST\",\n\"url\": \"http://nginx/uploader/{{ database_identifier }}/\",\n\"files\": {\"results_file\": data_file},\n}",
             "status": "STOPPED"
         }
     }
