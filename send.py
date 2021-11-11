@@ -55,8 +55,10 @@ async def init_statistics_producer():
 
 
 async def launch_workers(upload_info):
+    logger.info("get application lock")
     async with applications.applications_mtx.reader_lock:
         for application in applications.applications[upload_info["filter_id"]].values():
+            logger.info("created task for app " + str(application.id))
             asyncio.create_task(send_updates(upload_info, application))
 
 
@@ -66,6 +68,7 @@ async def send_updates(upload_info: dict, application: applications.Application)
         application.id, upload_info["database_identifier"],
     )
 
+    logger.info("generating file")
     data_file = await transform_avro_records_to_csv_file(
         filters.filters.get(upload_info["filter_id"]),
         upload_info,
@@ -73,6 +76,7 @@ async def send_updates(upload_info: dict, application: applications.Application)
 
     data_file.seek(0)
     with data_file, requests.Session() as session:
+        logger.info("generating contexts")
         jinja_context = {
             "community": application.community,
             "database_identifier": upload_info["database_identifier"],
@@ -84,10 +88,13 @@ async def send_updates(upload_info: dict, application: applications.Application)
         }
 
         try:
+            logger.info("rendering template")
             render_result = Template(application.request_template).render(**jinja_context)
 
+            logger.info("sending request")
             response = session.request(**eval(render_result, eval_context))  # TODO check if a dict was returned
         except Exception as e:
+            logger.info("exception")
             await statistics_producer.send(
                 SENDER_STATISTICS_TOPIC,
                 {
@@ -98,6 +105,7 @@ async def send_updates(upload_info: dict, application: applications.Application)
                 },
             )
         else:
+            logger.info("all good")
             await statistics_producer.send(
                 SENDER_STATISTICS_TOPIC,
                 {
@@ -112,6 +120,7 @@ async def send_updates(upload_info: dict, application: applications.Application)
 async def transform_avro_records_to_csv_file(filter_selections, upload_info: dict[str, any]):
     data_file = tempfile.TemporaryFile("w+")
 
+    logger.info("writting header")
     if len(filter_selections) == 0:
         data_file.write(",".join(all_normal_order))
         order = all_normal_order
@@ -126,8 +135,8 @@ async def transform_avro_records_to_csv_file(filter_selections, upload_info: dic
     topic = f'FILTER_WORKER_{upload_info["filter_worker_id"]}_FILTER_{upload_info["filter_id"]}'
     topic_partition = TopicPartition(topic, 0)
 
-    async with AIOKafkaConsumer(bootstrap_servers=globals.BOOTSTRAP_SERVERS) as consumer:
-        consumer.assign((topic_partition,))
+    logger.info("initilize consumer to read from data topic")
+    async with AIOKafkaConsumer(topic, bootstrap_servers=globals.BOOTSTRAP_SERVERS) as consumer:
         consumer.seek(topic_partition, upload_info["last_offset"] + 1 - upload_info["count"])
 
         schema = globals.SCHEMA_REGISTRY_CLIENT.get_schema(f"{topic}-value", "latest").schema.raw_schema
@@ -135,6 +144,7 @@ async def transform_avro_records_to_csv_file(filter_selections, upload_info: dic
         reader = avro.io.DatumReader(schema)
 
         count = 0
+        logger.info("will read from data topic")
         async for record in consumer:
             # the first 5 bytes are the schema id
             decoder = avro.io.BinaryDecoder(io.BytesIO(record.value[5:]))
