@@ -17,9 +17,8 @@ const stop = (record) => {
                 Authorization: "Bearer " + localStorage.getItem("access"),
             },
         }
-    );
-
-    window.location.reload();
+    )
+    .then(() => window.location.reload());
 };
 
 

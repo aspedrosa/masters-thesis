@@ -12,7 +12,7 @@ const request_health_check = (record) => {
             },
         }
     )
-    .then(window.location.reload);
+    .then(() => window.location.reload());
 };
 
 const PostShowActions = ({ basePath, data, resource }) => {

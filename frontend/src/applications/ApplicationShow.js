@@ -12,7 +12,7 @@ const start = (record) => {
             },
         }
     )
-    .then(window.location.reload);
+    .then(() => window.location.reload());
 };
 
 const stop = (record) => {
@@ -25,7 +25,7 @@ const stop = (record) => {
             },
         }
     )
-    .then(window.location.reload);
+    .then(() => window.location.reload());
 };
 
 

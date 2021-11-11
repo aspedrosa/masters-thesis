@@ -1,10 +1,11 @@
 import * as React from "react";
-import { Create } from 'react-admin';
-import ChangeForm from "./changeForm";
+import { Create, SimpleForm, TextInput } from 'react-admin';
 
 const CommunitiesCreate = (props) => (
     <Create {...props}>
-        <ChangeForm></ChangeForm>
+        <SimpleForm>
+            <TextInput source="name" />
+        </SimpleForm>
     </Create>
 );
 
