@@ -11,6 +11,8 @@ services:
     volumes:
       - kafka_zookeeper:/var/lib/zookeeper/data
       - kafka_zookeeper_log:/var/lib/zookeeper/log
+    networks:
+      - all
 
   broker:
     image: confluentinc/cp-kafka:6.2.1
@@ -29,6 +31,8 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
     volumes:
       - kafka_broker:/var/lib/kafka/data
+    networks:
+      - all
 
   schema-registry:
     image: confluentinc/cp-schema-registry:6.2.1
@@ -40,6 +44,8 @@ services:
     environment:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://broker:9092
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
+    networks:
+      - all
 
   ui:
     image: provectuslabs/kafka-ui:latest
@@ -54,6 +60,8 @@ services:
       - schema-registry
     ports:
       - "8080:8080"
+    networks:
+      - all
 
   ksqldb-server:
     image: confluentinc/cp-ksqldb-server:6.2.1
@@ -69,6 +77,8 @@ services:
       KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
       KSQL_KSQL_SERVICE_ID: "ksqldb-server"
+    networks:
+      - all
 
   ksqldb-cli:
     image: confluentinc/cp-ksqldb-cli:6.2.1
@@ -78,6 +88,8 @@ services:
       - ksqldb-server
     entrypoint: /bin/sh
     tty: true
+    networks:
+      - all
 
   orchestrator:
     build: ../MetadataOrchestrator
@@ -88,6 +100,8 @@ services:
       BOOTSTRAP_SERVERS: broker:9092
       SCHEMA_REGISTRY_HOST: schema-registry
       SCHEMA_REGISTRY_PORT: 8081
+    networks:
+      - all
 
   filter-worker:
     build: ../FilterWorker
@@ -106,6 +120,8 @@ services:
       SCHEMA_REGISTRY_HOST: schema-registry
       SCHEMA_REGISTRY_PORT: 8081
       BOOTSTRAP_SERVERS: broker:9092
+    networks:
+      - all
 
   sender:
     build: ../MetadataSender
@@ -121,6 +137,9 @@ services:
       SCHEMA_REGISTRY_HOST: schema-registry
       SCHEMA_REGISTRY_PORT: 8081
       BOOTSTRAP_SERVERS: broker:9092
+    networks:
+      - applications
+      - all
 
   admin-portal-backend:
     build: ../AdminPortal/backend
@@ -144,6 +163,8 @@ services:
       BOOTSTRAP_SERVERS: broker:9092
       SCHEMA_REGISTRY_HOST: schema-registry
       SCHEMA_REGISTRY_PORT: 8081
+    networks:
+      - all
 
   admin-portal-frontend:
     build: ../AdminPortal/frontend
@@ -154,6 +175,8 @@ services:
       ADMIN_PORTAL_BACKEND_PORT: 8000
     ports:
       - 80:80
+    networks:
+      - all
 
   agent:
     build: ./agent
@@ -165,6 +188,8 @@ services:
       AGENT_DATABASE_IDENTIFIER: hashhashhashhashhashhash
     volumes:
       - ./achilles_files:/app/catalogue_export_files
+    networks:
+      - all
 
   db:
     image: postgres:13.3
@@ -176,6 +201,8 @@ services:
       POSTGRES_PASSWORD: adminrest
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - all
 
   statistics-recorder:
     build: ./statistics_recorder
@@ -193,6 +220,8 @@ services:
       DB_PASSWORD: adminrest
       DB_HOST: db
       DB_PORT: 5432
+    networks:
+      - all
 
   environment-initializer:
     build: ./environment_initializer
@@ -203,6 +232,8 @@ services:
       BOOTSTRAP_SERVERS: broker:9092
       KSQLDB_HOST: ksqldb-server
       KSQLDB_PORT: 8088
+    networks:
+      - all
 
 volumes:
   kafka_zookeeper:
@@ -210,3 +241,7 @@ volumes:
   kafka_broker:
   postgres_data:
 
+networks:
+  all:
+  applications:
+    external: true
