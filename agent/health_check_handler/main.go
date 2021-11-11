@@ -63,7 +63,7 @@ func periodic_sender()  {
             requested = false
             sleep_duration = time.Now().Sub(requested_time.Add(sleep_duration))
         } else {
-            send_health_check("Period")
+            send_health_check("Periodic")
         }
         requested_mtx.Unlock()
 
