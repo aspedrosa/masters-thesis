@@ -67,37 +67,37 @@ Some use all the data, others only need a value of such data.
 \subsection{Functional Requirements}
 
 \begin{enumerate}
-    \item Databases must be registered on the central component
+    \item Databases must be registered on the central component:
         \begin{list}{}{}
         \item By having a record of the databases that are attached to the network, the system can avoid accepting data from databases that were not registered in the system.
         \end{list}
 
-    \item It must be possible to check what agents are active at a certain point
+    \item It must be possible to check what agents are active at a certain point:
         \begin{list}{}{}
             \item This allows giving feedback on the state of the network to the admin.
         \end{list}
 
-    \item The system should allow managing the destination applications
+    \item The system should allow managing the destination applications:
         \begin{list}{}{}
             \item The applications to where the data of the databases are sent, should not be hard-coded, for that, the network admin should be able to perform \gls{crud} operations on such.
                 The term application should be interpreted as web applications that have \gls{rest} \gls{api} endpoints available to receive data.
         \end{list}
 
-    \item The system should provide statistics on the data that has circulated
+    \item The system should provide statistics on the data that has circulated:
         \begin{list}{}{}
             \item This is yet another feature to give feedback to the network admin about, now allowing to both check the amount of data that each database sent, and the amount of data that each application received.
         \end{list}
 
-    \item The format of the request sent with the metadata to each application must be customizable
+    \item The format of the request sent with the metadata to each application must be customizable:
         \begin{list}{}{}
             \item This is important since different applications expect to receive metadata in distinct formats since each application has a different \gls{api}.
         \end{list}
 
     % eu não falo aqui das pipelines, que permitem filtrar os dados, pk isso foi algo que adicionei como consequencia consequencia em termos usado kafka
 
-    \item The system should allow to group Databases
+    \item The system should allow to group Databases:
         \begin{list}{}{}
-            \item In a scenario where both all the destination applications and all databases belong to the same project, the metadata of the databases makes sense in all applications.
+            \item In a scenario where both all the destination applications and all databases belong to the same project, the metadata of the databases makes sense in all applications;
             \item Now consider a scenario where half of the databases are associated with one project and the rest with another.
           Each project has a destination application that receives the data.
           Considering that there is no concept of project or groups, both applications will receive data of both projects.
@@ -110,7 +110,7 @@ Some use all the data, others only need a value of such data.
 \subsection{Non-Functional Requirements}
 
 \begin{enumerate}
-    \item The data owner can stop the agent at any time
+    \item The data owner can stop the agent at any time:
         \begin{list}{}{}
             \item This was also applied in \cite{gaain}.
                 It gives yet another layer of control to the data owners over their data.
@@ -118,40 +118,40 @@ Some use all the data, others only need a value of such data.
           This also poses a constraint in the system that it should not be designed assuming that the agents, once deployed, will always stay active.
         \end{list}
 
-    \item The extraction tool should be based as much as possible on an already existing solution
+    \item The extraction tool should be based as much as possible on an already existing solution:
         \begin{list}{}{}
             \item Using a working solution avoids having to build a new tool from scratch.
               But apart from that, using a known solution as a base helps to gain the confidence of the data owners so that they use the resulting solution in their databases.
         \end{list}
 
-    \item The agents must not have direct access to the data
+    \item The agents must not have direct access to the data:
         \begin{list}{}{}
             \item This option assumes the least amount of access to the user's data so data owners are receptive to allow agents to be run on their local deployments.
               This will require that an agent has access to at least a shared storage where agents check for new data and data owners post their extracted metadata.
         \end{list}
 
-    \item The agent should easily deployable
+    \item The agent should easily deployable:
         \begin{list}{}{}
             \item As the installation of the agent will be done by a person not familiar with the project, this process should be as smooth as possible and well documented.
         \end{list}
 
-    \item Agents should spend few resources
+    \item Agents should spend few resources:
         \begin{list}{}{}
             \item Considering agents run on data owners' deployment environment, it should have a low resource footprint so it does not impose any disruption.
               For that, they must be designed to perform only the required task.
         \end{list}
 
-    \item The system should not require any open ports on the data owners' deployment environment
+    \item The system should not require any open ports on the data owners' deployment environment:
         \begin{list}{}{}
             \item As there might be communication between the central component and the agents, requesting an open port on the data owners' deployment environment might not be possible since it could require them to change firewall settings as was mentioned in \cite{popmednet}.
         \end{list}
 
-    \item Scalable
+    \item Scalable:
         \begin{list}{}{}
             \item As more databases are connected to the network, the system should allow increasing resources so that it handles processes faster.
         \end{list}
 
-    \item Microservice architecture
+    \item Microservice architecture:
         \begin{list}{}{}
             \item The system should be composed of simple and replaceable components that deal with well-defined tasks.
         \end{list}
@@ -177,47 +177,47 @@ Such actions were divided into three groups: Agents, Metadata Extraction, action
 \end{figure}
 
 \begin{enumerate}
-    \item Set up the agent on the local deployment system
+    \item Set up the agent on the local deployment system:
         \begin{list}{}{}
             \item Since it's not expected that data owners provide access to their deployment environment, the responsibility to set up the agent is imposed on them.
         \end{list}
 
-    \item Stop the agent
+    \item Stop the agent:
         \begin{list}{}{}
             \item As Data owners control their data and the access to it at all times, them stopping the agent should be an action expected by the system.
         \end{list}
 
-    \item Register a database
+    \item Register a database:
         \begin{list}{}{}
             \item As new databases enter the network and agents are deployed to gather their metadata, the system admin needs to register new databases on the central unit, so the data received is accepted into the system.
         \end{list}
 
-    \item Create communities
+    \item Create communities:
         \begin{list}{}{}
             \item In a scenario where there are several databases from distinct projects, there is the need to group databases to treat their data separately.
         \end{list}
 
-    \item Associate a database to a community
+    \item Associate a database to a community:
         \begin{list}{}{}
             \item Once there are databases and communities registered in the system, the system admin can do many-to-many associations between them.
         \end{list}
 
-    \item Check active agents/databases
+    \item Check active agents/databases:
         \begin{list}{}{}
             \item At any time, the system admin can check the state of the network and verify which databases have an agent active.
         \end{list}
 
-    \item Analyze statistics of data received from an agent/database
+    \item Analyze statistics of data received from an agent/database:
         \begin{list}{}{}
             \item As agents send data to the central component of the network, statistics can allow the system admin to see what databases contribute more data to the network and its frequency.
         \end{list}
 
-    \item Register an application and customize how data is sent
+    \item Register an application and customize how data is sent:
         \begin{list}{}{}
             \item The system admin will also define the destination applications for the data received from the agents, setting also the format of the request that sends the data to such applications.
         \end{list}
 
-    \item Analyze statistics of data sent to an application
+    \item Analyze statistics of data sent to an application:
         \begin{list}{}{}
             \item As metadata enters the system, having statistics of data sent to the application helps check if the system is working properly and if the applications are receiving the expected data.
         \end{list}
@@ -296,7 +296,7 @@ The message brokering responsibility is divided into exchanges and message queue
 
 \begin{itemize}
     \item Exchange: Accepts messages from the publishers and, based on a set of rules routes, messages to the indicated queues;
-    \item Message Queue: Holds messages and sends them to the consumers
+    \item Message Queue: Holds messages and sends them to the consumers.
 \end{itemize}
 
 \begin{figure}[H]
@@ -345,7 +345,7 @@ In the end, to achieve the high-throughput requirements, Kafka went on a differe
 \begin{itemize}
     \item It partitions up data so that the production, brokering, and consumption of such can be handled by a cluster of entities that can be scaled as load increases;
     \item Messages are not removed from the log, instead, they can be replayed by consumers;
-    \item Reader progress is maintained only by the consumers, so message deletion can only be managed based on a retention policy setting, based either on message count or age;
+    \item Reader progress is maintained only by the consumers, so message deletion can only be managed based on a retention policy setting, based either on message count or age.
 \end{itemize}
 
 \par\noindent\hfil\rule{.6\textwidth}{0.4pt}\hfil
@@ -381,36 +381,36 @@ In our case, considering that no other application will be running along with th
 After researching on the Confluent Hub, three connectors were found to suit the possible storage options:
 
 \begin{itemize}
-    \item \gls{jdbc} Source connector\footnote{\url{https://www.confluent.io/hub/confluentinc/kafka-connect-jdbc}}
+    \item \gls{jdbc} Source connector\footnote{\url{https://www.confluent.io/hub/confluentinc/kafka-connect-jdbc}}:
 
         \begin{list}{}{}
             \item It has four different modes of capturing data from tables.
                 Three of them provide incremental information, sending a message to Kafka after a row of a table or a custom query is created or updated.
                 The difference between these three modes is from what columns the connector tries to infer that a row has changed.
-                These are not suitable for our use case, since it treats a table as an unbounded source of data.
+                These are not suitable for our use case, since it treats a table as an unbounded source of data;
 
             \item The other mode available is bulk, which sends all the rows of a table in one go.
                 However, this process isn't performed based on updates on data, instead, it is executed periodically on a configured interval.
                 Furthermore, no feedback is provided after all the data is present in Kafka.
         \end{list}
 
-    \item FileSytem Source connector\footnote{\url{https://github.com/mmolimar/kafka-connect-fs}}
+    \item FileSytem Source connector\footnote{\url{https://github.com/mmolimar/kafka-connect-fs}}:
 
         \begin{list}{}{}
             \item On the contrary to the first connector, this one uses file systems as the source to insert data into Kafka.
                 Not only supports fetching files from a local file system, but also widely used cloud storage solutions such as \gls{hdfs}, Google Cloud Storage, and others.
                 In our case, we would be using the local file system approach, whereby the data owner places the output files of the Catalogue Export R package on a specified directory.
                 As both the extracting tool supports extracting the gathered metadata into a \gls{csv} file and the connector has a specialized reader to parse files in that format, that would be the agreed format to use.
-                The connector also supports either moving or deleting files once they are entirely uploaded into Kafka.
+                The connector also supports either moving or deleting files once they are entirely uploaded into Kafka;
 
             \item As a downside, this connector does not provide any feedback once it finishes uploading the file.
         \end{list}
 
-    \item FilePulse Source connector\footnote{\url{https://github.com/streamthoughts/kafka-connect-file-pulse}}
+    \item FilePulse Source connector\footnote{\url{https://github.com/streamthoughts/kafka-connect-file-pulse}}:
 
         \begin{list}{}{}
             \item This connector, is similar to the previous one, as it allows to load data from files into Kafka, having the possibility to also load from other file system solutions.
-                It supports reading \gls{csv} files, as it allows having a cleanup policy, which can move or delete files after they are uploaded.
+                It supports reading \gls{csv} files, as it allows having a cleanup policy, which can move or delete files after they are uploaded;
 
             \item However, contrary to the previous connector, this one sends messages regarding the progress of the upload of the file to a separate topic.
                 Not only sends when it ends but also sends the number of rows/messages that were sent into Kafka, which is ideal for our use case, as we can know when the whole file is processed if the rows go through a processing stream on Kafka.
@@ -435,7 +435,7 @@ The agent will have two internal components:
         The available \gls{csv} reader of this connector allows performing transformations on the data before sending it to Kafka.
         Such transformations include ignoring empty rows, converting values on a row, among others.
         One convenient transformation available transforms the string data of a row into a structure, so data sent in Kafka's messages values is a \gls{json} value instead of a string one.
-        This avoids further on the system having to parse strings received from this connector to get a specific field from the data.
+        This avoids further on the system having to parse strings received from this connector to get a specific field from the data;
 
     \item The other component is the Health Check Handler.
         It is in charge of sending messages periodically, telling that the agent is active, so when the admin checks the status of the agents it gets a more updated Last Time Active metric.
@@ -495,7 +495,7 @@ The second step is to define a set of environment variables that will be unique 
 
 \begin{itemize}
     \item AGENT\_DELETE\_CLEANUP\_POLICY: defines whether or not files must be deleted after their data is uploaded into Kafka.
-        By default, the file is moved into a \textit{succed} directory, so this variable is optional.
+        By default, the file is moved into a \textit{succed} directory, so this variable is optional;
     \item AGENT\_DATABASE\_IDENTIFIER: an identifier provided by the admin once the database is registered in the system.
 \end{itemize}
 
@@ -512,8 +512,8 @@ docker run
 Next is the description of each option:
 \begin{itemize}
     \item -v: binds a host directory to the one inside the container where FilePulse will read files from;
-    \item -e: sets the AGENT\_DATABASE\_IDENTIFIER environment variable
-    \item -d: runs the container in daemon mode
+    \item -e: sets the AGENT\_DATABASE\_IDENTIFIER environment variable;
+    \item -d: runs the container in daemon mode.
 \end{itemize}
 
 Regarding the extraction tool, we will also distribute a Docker image with the necessary dependencies preinstalled, where data owners will have to provide the necessary information for this tool to access the \gls{cdm} database and define a volume so files containing the metadata are accessible to the agent.
@@ -621,7 +621,7 @@ To develop these filtering streams, there are two options:
         Using it would imply implementing this Filter Worker component in Java, however, from the explanation of how a filter will be implemented, there will be several threads involved, requiring communication between them.
         Developing such an environment in Go is much easier as concurrency mechanisms are built in the language itself, and also if the number of filters gets high, threads might start to slow and use a lot of memory, as each has its own address space.
         Go, on the other hand, has goroutines, lightweight threads managed by the Go runtime, which run in the same address space.
-        Using Kafka Streams would also imply that the conditions defined by the Admin, would require to be written in Java code.
+        Using Kafka Streams would also imply that the conditions defined by the Admin, would require to be written in Java code;
     \item KsqlDB~\cite{ksql}: is a database that allows assembling stream processing applications on top of Kafka.
         It combines the power of stream processing with the known feel of a relational database through a \gls{sql}-like syntax, so stream applications can be set up with just \gls{sql} statements.
         As the data sent by the agents are messages extracted from a \gls{csv} file, the data can also be interpreted as a table, so the \gls{sql} language feats well in this case.
@@ -796,9 +796,9 @@ Once all data was filtered, the main goroutine of each Filter will send a messag
 \begin{itemize}
     \item Filter Worker application id: since several could be running at the same time;
     \item Filter id: through what filter did the data go;
-    \item Kafka topic offset: wherein Filter's data topic does the data start.
+    \item Kafka topic offset: wherein Filter's data topic does the data start;
     \item Records count: number of records that meet the filtering criteria;
-    \item Database identifier: to what database does the data belong;
+    \item Database identifier: to what database does the data belong.
 \end{itemize}
 
 The internal structure of the Sender component is similar to the Orchestrator components, having the main thread consuming from the Data Ready to Send topic, and then other threads will deal with the work of building and sending the request to the applications.
@@ -878,10 +878,10 @@ A complete diagram of the system is present in Appendix \ref{appendix:a}.
 
 Each component was separated into its own repository which is publicly available on GitHub:
 \begin{itemize}
-    \item Orchestrator\footnote{\url{https://github.com/aspedrosa/MetadataOrchestrator}}
-    \item Filter Worker\footnote{\url{https://github.com/aspedrosa/FilterWorker}}
-    \item Sender\footnote{\url{https://github.com/aspedrosa/MetadataSender}}
-    \item Admin\footnote{\url{https://github.com/aspedrosa/AdminPortal}}
+    \item Orchestrator\footnote{\url{https://github.com/aspedrosa/MetadataOrchestrator}};
+    \item Filter Worker\footnote{\url{https://github.com/aspedrosa/FilterWorker}};
+    \item Sender\footnote{\url{https://github.com/aspedrosa/MetadataSender}};
+    \item Admin\footnote{\url{https://github.com/aspedrosa/AdminPortal}};
     \item Files regarding deployment of agent, extraction tool and StatisticsRecorder\footnote{\url{https://github.com/aspedrosa/MetadataManagerDeployment}}.
 \end{itemize}
 

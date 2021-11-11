@@ -133,9 +133,9 @@ To the administrator, it is given the ability to determine which data fields can
 
 For a data seeker, the number of records that match the search term(s) are split by data source and also split into three categories:
 \begin{itemize}
-    \item open access: the user is allowed to see the data present on the system.
+    \item open access: the user is allowed to see the data present on the system;
     \item linked access: the user can't see directly the data stored in the system.
-        An external data source data link or data source contact information is provided.
+        An external data source data link or data source contact information is provided;
     \item restricted access: the user has to make a data request to access the data.
 \end{itemize}
 
@@ -190,12 +190,12 @@ These resources are convenient for researchers to see how the data have been use
 The level of access to the studies datasets can be controlled at the study level, allowing to have different access restrictions for distinct studies.
 The available access types are:
 \begin{itemize}
-    \item Data not available
-    \item Direct Access Data Files: no login required
-    \item Public Use Data Files: login required
-    \item Licensed Data Files: application required
-    \item Data available in an Enclave: application required and the data is stored on the data owners site
-    \item Data available at an external repository:  data is stored on the data owners site
+    \item Data not available;
+    \item Direct Access Data Files: no login required;
+    \item Public Use Data Files: login required;
+    \item Licensed Data Files: application required;
+    \item Data available in an Enclave: application required and the data is stored on the data owners site;
+    \item Data available at an external repository:  data is stored on the data owners site.
 \end{itemize}
 
 \section{Metadata Extraction Tools}
@@ -207,11 +207,11 @@ processes are relevant for the task of extracting/profiling datasets.
 
 To search for these tools, the following queries were used in both PubMed and Gooogle Scholar search engines:
 \begin{itemize}
-    \item metadata (extration or creation)
-    \item "metadata" (extraction or creation) from database
-    \item extraction from database
-    \item metadata fingerprinting a database
-    \item metadata updating
+    \item metadata (extration or creation);
+    \item "metadata" (extraction or creation) from database;
+    \item extraction from database;
+    \item metadata fingerprinting a database;
+    \item metadata updating.
 \end{itemize}
 
 Next are presented the tools found from that search, except the first tool, which was retrieved from the OHDSI tools catalogue~\cite{ohdsi-tools}, and the second, which was gathered from the search performed for Metadata visualization tools.
@@ -304,9 +304,9 @@ With this, it is often important to limit which persons can access the system an
 This leads to laboratories connecting in closed or semiclosed discovery networks with limited access.
 Cafe Variome offers the following network architectures:
 \begin{enumerate}
-    \item hub and spokes arrangement: it has a single discovery portal where searches can be performed across all partner in the network
-    \item all-to-all networks: each laboratory has an individual interface over their data, that can be used by other network members
-    \item combination of the previous architectures
+    \item hub and spokes arrangement: it has a single discovery portal where searches can be performed across all partner in the network;
+    \item all-to-all networks: each laboratory has an individual interface over their data, that can be used by other network members;
+    \item combination of the previous architectures.
 \end{enumerate}
 
 \begin{figure}[H]
@@ -354,8 +354,8 @@ It aims to create a robust and scalable platform to share data from distributed 
 
 The access to the clinical data present at each \gls{cdw} endpoint is done through three logical layers:
 \begin{itemize}
-    \item Legacy system layer: specific to the \gls{cdw}
-    \item Legacy Interface layer: deals with the complexity of translating queries against the EHR4RC data model to the terminology used by the specific \gls{cdw} or \gls{ehr} system and also convert the results of such queries to the common EHR4RC data model.
+    \item Legacy system layer: specific to the \gls{cdw};
+    \item Legacy Interface layer: deals with the complexity of translating queries against the EHR4RC data model to the terminology used by the specific \gls{cdw} or \gls{ehr} system and also convert the results of such queries to the common EHR4RC data model;
     \item EHR4CR Data source Endpoint layer: exposes a standard EHR4CR endpoint interface so other EHR4CR services can easily access the \gls{cdw} or \gls{ehr} system's data.
 \end{itemize}
 Once these layers are implemented and properly working, information about the service provider is added to the central registry of the platform, allowing users to discover and browse through them.
@@ -363,9 +363,9 @@ Once these layers are implemented and properly working, information about the se
 The platform's architecture was built around the Protocol Feasibility Scenario (PFS), which retrieved aggregated results from each data source about quantities of patients that fulfill a certain Eligibility Criteria (EC), and the Patient identification and Recruitment Scenario, that has the goal of retrieving patient information with consent to furder be used on research.
 The most important scenario to analyze is the PFS one, where makes use of three main components:
 \begin{itemize}
-    \item Workbench: acts as an interface where an end-user can issue EC queries to execute on the network and see the aggregated results.
-    \item Orchestrator: distributes the queries received from the workbench across the data endpoints of the network, joining the returned results and sending them back to the workbench.
-    \item Endpoint: services with \gls{cdw}s where the queries will execute
+    \item Workbench: acts as an interface where an end-user can issue EC queries to execute on the network and see the aggregated results;
+    \item Orchestrator: distributes the queries received from the workbench across the data endpoints of the network, joining the returned results and sending them back to the workbench;
+    \item Endpoint: services with \gls{cdw}s where the queries will execute.
 \end{itemize}
 
 \begin{figure}[H]
@@ -390,9 +390,9 @@ One of such solutions is NextGen Connect, where NextGen Healthcare's goal is to 
 NextGen Connect\cite{nextgen} contains an Integration Engine that, like a language interpreter who translates from one language into another, translates a message represented on a given format into another that the destination system understands.
 Whenever NextGen Connect receives a message from an external system, the Integration Engine perform:
 \begin{itemize}
-    \item Filtering: analyses the message parameters and transfers or discards it from going to the transformation phase.
-    \item Transformation: converts the message from its original format to the desired standard format (e.g., HL7 to XML) (Popular Medical standards supported, ex: DICOM, HL7). The tool also allows more customizable transformations by executing custom Javascript or Java code.
-    \item Extraction: retrieve data from and send to a database.
+    \item Filtering: analyses the message parameters and transfers or discards it from going to the transformation phase;
+    \item Transformation: converts the message from its original format to the desired standard format (e.g., HL7 to XML) (Popular Medical standards supported, ex: DICOM, HL7). The tool also allows more customizable transformations by executing custom Javascript or Java code;
+    \item Extraction: retrieve data from and send to a database;
     \item Routing: ensure that all messages are received by their destinations.
 \end{itemize}
 The components that are configured and execute the jobs mentioned above are called channels.
