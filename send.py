@@ -28,13 +28,15 @@ all_normal_order = [
     "stratum_5",
     "count_value",
     "min_value",
+    "max_value",
     "avg_value",
+    "stdev_value",
     "median_value",
     "p10_value",
     "p25_value",
     "p75_value",
     "p90_value",
-]
+]  # TODO receive this as a environment variable
 
 logger = logging
 logging.root.setLevel(logging.INFO)
