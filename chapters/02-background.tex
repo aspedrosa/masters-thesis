@@ -2,7 +2,7 @@
 \label{chapter:background}
 \graphicspath{{figs/02-background/}}
 
-In this chapter, a search will be performed to find existing solutions that might already achieve some of the goals defined previously.
+This chapter describes the search process to find existing solutions that might already achieve the goals defined previously.
 The chapter is divided into three sections, presenting tools regarding metadata visualizations, metadata extraction and metadata network architectures.
 From the study of such solutions, hopefully, some can be reused avoiding implementing new systems, however, if the implementation of new applications is required, these tools can give intel on some aspects that might need to be taken into account while developing.
 
@@ -67,8 +67,9 @@ One method to accomplish this is by having the data at a central repository and 
 However, because of legal and privacy rules, not all data can be stored on a public central repository.
 The software suite called the eGenVar~\cite{egenvar} data-management system, allows users to report, track, and share metadata on content, origin and history of files, without compromising privacy or security.
 The tool can be seen as a metadata portfolio since it could be used to search data while the original files remain in a protected location.
-Users need to have an account to access the system and once created can immediately start using the system for search operations, however, addition, deletion and update operations over content require a personal profile.
-It is designed to connect current Laboratory Information Management Systems and workflow processing systems and to keep the source of data that is being processed through distinct systems at different locations.
+Users need to have an account to access the system and once created can immediately start using the system for search operations.
+Nonetheless, addition, deletion and update operations over content require a personal profile.
+It was designed to connect current Laboratory Information Management Systems and workflow processing systems and to keep the source of data that is being processed through distinct systems at different locations.
 Central to the system is a tagging process that allows users to tag data with new or pre-existing information, such as ontology terms or controlled vocabularies, at their convenience.
 The system includes a server, a command-line client, other clients that can be developed in several programming languages and a web portal interface.
 
@@ -218,7 +219,7 @@ Next are presented the tools found from that search, except the first tool, whic
 
 \subsection*{ACHILLES}
 The \gls{ohdsi} project, already mentioned at the beginning of this chapter, offers a variety of open-source tools~\cite{ohdsi-tools} that can be used on several data-analytics use cases on observational patient-level data.
-Such tools can communicate with several databases that have adhered to the OMOP CDM, enabling them to homogenize the analytics for different use cases.
+Such tools can communicate with several databases that have adhered to the \gls{omop} \gls{cdm}, enabling them to homogenize the analytics for different use cases.
 With this, instead of having to build an analysis from scratch, a standard template can be used, turning the process of building analyses easier, and also enhancing transparency and reproducibility.
 
 One of such tools, \gls{achilles}~\cite{achilles-github}, can produce summaries and metadata of \gls{cdm} databases.
@@ -451,7 +452,7 @@ A possible configuration is to receive data over HTTP, then send the result of t
         NextGen Connect \cite{nextgen} & {\color{green} \cmark} \repo{https://github.com/nextgenhealthcare/connect} & \multicolumn{2}{c|}{\color{red} \xmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
 \hline
 \end{tabular}
-    \caption{A summary of the features present in each tool studied in this Background chapter}
+    \caption{A summary of the features present in each tool studied in this Background chapter.}
     \label{tab:background-resumo}
 \end{table}
 

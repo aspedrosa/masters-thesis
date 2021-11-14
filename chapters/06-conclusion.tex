@@ -2,7 +2,7 @@
 
 \chapter{Conclusion}
 \label{chapter:conclusion}
-After a thorough study on technologies to extract, mediate and visualize metadata, this work proposed a set of tools that cover and perform all these three actions.
+After a thorough study on technologies to extract, mediate and visualize metadata, this work proposed a set of tools covering these three objectives.
 
 It started by improving a fully-fledged tool for metadata visualization, making it more efficient and robust.
 Improvements range from making use of the correct data types to store data, enhancing the organization of data models and making use of the underlying framework used to build the system, instead of relying on custom code.
@@ -18,16 +18,17 @@ The result is was a simple solution, that is still capable of achieving the requ
 Finally, a system to gather the extracted metadata and send it to platforms exposing it was developed.
 The system was designed with a microservice approach, being composed of simple components, with well-defined objectives.
 Such components make sure that: only the required data is sent to the application, allowing to save computational resources; distribute the load of handling the received data from the several databases; allow customization of how data is sent to the applications; provide an intuitive and easy to use interface to manage the system; record statistics of data flowing the system to give better feedback to the person managing the system.
-Designing this system with an easily scalable capability was a challenge, requiring analyzing what was the better data flow along the components, that could allow such scalable architecture.
+Designing this system with scalable capability was a challenge, requiring analyzing what was the better data flow along the components, that could allow such scalable architecture.
 Hopefully, this system is used in future production systems or it contributes to the development of future systems with similar goals.
 
 Along the work, new technologies were explored, such as the Go programming language.
-The overall experience was good, mainly due to its simplicity and also for feating so well on our use cases.
+The overall experience was good, mainly due to its simplicity and also for fitting so well on our use cases.
 Its building concurrency mechanisms are intuitive and powerful.
 Overall the language proves their growth in popularity.
 
-As future work, as the only validation on data received from the agents it is to check if the database identifier provided is correct, Kafka authentication mechanisms could be used, removing this need to validate the received data.
+As future work, as the only validation on data received from the agents is to check if the database identifier provided is correct, Kafka authentication mechanisms could be used, removing this need to validate the received data.
 Additionally, when the user defines how data received from the databases should be filtered and how data should be sent to the applications receiving the metadata, a testing mechanism could be provided with some dummy data just for the admin to validate that the data is flowing in the desired format and no errors occur.
-Also, for now, the communication between the admin portal and the agents running the database owners system is only used to check if the agents are active, however, since the system was designed in a way to allow data to flow from the portal to the agents, it could be used for other extra uses.
+Also, for now, the communication between the admin portal and the agents running the database owners system is only used to check if the agents are active.
+However, since the system was designed in a way to allow data to flow from the portal to the agents, it could be used for other extra uses.
 Finally, although the several components of the update system allow configuring the format of the data that they will manipulate, deployment of a system will only support a given format of metadata.
-One possible solution would be to define the format of the metadata when at the community level, on the Admin Portal component of the update system.
+One possible solution would be to define the format of the metadata at the community level, on the Admin Portal component of the update system.

@@ -3,10 +3,10 @@
 \graphicspath{{figs/03-visualization/}}
 
 Among the presented tools in chapter \ref{chapter:background}, MONTRA was our go-to mainly because of its data source-centric approach.
-Also, no real data is shown here, only metadata is handled within the platform, however, it still allows to impose access permissions at several levels.
+Also, no real data is shown here, only metadata is handled within the platform.
+Yet, it still allows imposing access permissions at several levels.
 
-This chapter will detail the key concepts of the MONTRA framework and its internal data model.
-After this, there will be presented a refactoring process that was done to the platform, with its improvements and flaws fixed.
+This chapter will detail the crucial concepts of the MONTRA framework and its internal data model, followed by the description of the refactoring process that was done to the platform, with improvements and its flaws fixed.
 
 \section{MONTRA}
 % O que é o montra e o seu estado atual
@@ -23,8 +23,8 @@ The developer builds the main static structure of the page and then uses a speci
 Django also has an important form feature that allows to easily create a set of pages that allow performing the usual \gls{crud} operation over the database model.
 
 MONTRA's development started at the beginning of 2013 and ended in the middle of 2018.
-After this date, at the end of 2018, the framework started being used by the \gls{ehden} project, to develop a portal to allow discovery and analysis of health data of a federated network of data sources standardized to the \gls{omop} common data model in Europe.
-Currently, the project is being developed in a private repository but has intentions to make it public after the code base is more robust and well documented.
+After this, at the end of 2018, the framework was adopted by the \gls{ehden} project, to develop a portal to allow discovery and analysis of health data on their network of data sources.
+Currently, the project is being developed in a private repository but intends to make it public after the code base is more robust and well documented.
 
 \subsection{Communities}
 
@@ -96,7 +96,7 @@ publication                       & A custom widget that allows to attach a set 
 sameas                            & Mirrors another question by its number                      \\ \hline
 timeperiod                        & Numeric input + select to choose numeric unit               \\ \hline
 url                               & Text input with url validation                              \\ \hline
-\caption{All available question types that can be used to build a questionnaire}
+\caption{All available question types that can be used to build a questionnaire.}
 \label{tab:original-question-types}\\
 \end{longtable}
 
@@ -106,14 +106,14 @@ url                               & Text input with url validation              
 % validação feita toda do lado do cliente, existindo a possiblidade de ataques xss
 % a validação builtin do django não está a ser usada
 
-A fingerprint is a name given to the set of answers to the questions of a questionnaire.
-In other words, it is the metadata that betters describes the original data of the associated data source.
+A fingerprint is a name given to the set of answers to the questionnaire.
+In other words, it is the metadata that betters describes the original data source.
 Data owners can start to answer the questions to build the profile of their data sources once there are communities on the platform and, these have at least a questionnaire associated.
 
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{listings}
-    \caption{The user interface displayed after selecting a community, which shows the list of the fingerprints of the chosen community}
+    \caption{The user interface displayed after selecting a community, which shows the list of the fingerprints of the chosen community.}
     \label{fig:listings}
 \end{figure}
 
@@ -128,7 +128,7 @@ After the data source owners request to publish a fingerprint the framework allo
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{fingerprint-new}
-    \caption{User interface to create a fingerprint}
+    \caption{User interface to create a fingerprint.}
     \label{fig:fingerprint-new}
 \end{figure}
 
@@ -147,7 +147,7 @@ Besides the input widget where the data owner can insert its answers, the user a
                 \begin{figure}[H]
                     \center
                     \includegraphics[width=.2\linewidth]{listings-tools}
-                    \caption{Available tools on the fingerprint selection}
+                    \caption{Available tools on the fingerprint selection.}
                     \label{fig:listings-tools}
                 \end{figure}
             \item Allow indexing: If the data owner allows indexing of the answers, which will allow for other users to find fingerprints based on the answers to a question of this specific question set;
@@ -189,7 +189,7 @@ Similar to the create view, it is presented with some control buttons:
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{fingerprint-show-detailed}
-    \caption{A detailed version user interface to view and analyze fingerprints}
+    \caption{The detailed version of the interface to view and analyze fingerprints.}
     \label{fig:fingerprint-show-detailed}
 \end{figure}
 
@@ -199,7 +199,7 @@ On this view, by hovering over an empty answer container the user can send a req
 \begin{figure}
     \center
     \includegraphics[width=\textwidth]{fingerprint-show-summary}
-    \caption{A summary version user interface to view and analyze fingerprints}
+    \caption{The summary version of the interface to view and analyze fingerprints.}
     \label{fig:fingerprint-show-summary}
 \end{figure}
 
@@ -211,7 +211,7 @@ Additionally, at the bottom of the page, it is provided to the user a way to cus
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{boolean-query}
-    \caption{Interface to customize the fingerprint search query}
+    \caption{Interface to customize the search query.}
     \label{fig:boolean-query}
 \end{figure}
 
@@ -238,14 +238,14 @@ This can be further exploited, where the user visiting the fingerprint will not 
 \begin{figure}[H]
     \center
     \includegraphics[width=0.75\textwidth]{montra-xss-create}
-    \caption{Example of how an \gls{xss} attack could be done on MONTRA}
+    \caption{Example of how an \gls{xss} attack could be done on MONTRA.}
     \label{fig:montra-xss-create}
 \end{figure}
 
 \begin{figure}[H]
     \center
     \includegraphics[width=0.75\textwidth]{montra-xss}
-    \caption{Victim of a simple \gls{xss} attack}
+    \caption{Victim of a simple \gls{xss} attack.}
     \label{fig:montra-xss}
 \end{figure}
 
@@ -276,7 +276,7 @@ If I try to submit the form with invalid values, error messages are presented as
 \begin{figure}[H]
     \center
     \includegraphics[width=.3\textwidth]{html-form-validation}
-    \caption{Error messages that appear after submitting the form on a chromium based browser}
+    \caption{Error messages that appear after submitting the form on a chromium based browser.}
     \label{fig:html-form-validation}
 \end{figure}
 
@@ -294,7 +294,7 @@ These processes, however, have the problem that easily unnecessary dependencies 
 Currently, there are tools such as \gls{npm}\footnote{https://www.npmjs.com/} that help to manage these dependencies by defining, on a single file, the dependency and its version.
 This software will then download the dependency and subsequent dependencies.
 
-\subsection*{API}
+\subsection*{Programming Interface}
 % how submissions of fingerprint works
 
 It was mentioned several times that some checks are not enforced through the \gls{api}.
@@ -360,7 +360,8 @@ GET [base url]/c/[community slug]/searchqs/[questionnaire id]/[question set id]/
 For both cases where new data is stored, besides the usual GET that is used to load the question set, there is also a POST request that saves the progress done to a specific question set.
 The data for these requests are gathered natively by javascript once each question set container contains a \textit{form} tag englobing all the questions inputs.
 This way there is no need to iterate over the questions of a question set and append each response to the request's data.
-The \textit{save id} field of the endpoints tells to which question set the data is related to, however, there is already a \textit{question set} field which always has the value of 1, so one of these fields could be removed from the endpoint.
+The \textit{save id} field of the endpoints tells to which question set the data is related to
+However, there is already a \textit{question set} field which always has the value of 1, so one of these fields could be removed from the endpoint.
 
 The GET request is then used to load the \gls{html} to present the questions of a question set.
 Note that the returned data is just the \gls{html} data to be placed on the respective question set container and not the whole fingerprint page.
@@ -395,14 +396,14 @@ If the fingerprint pages receive the data in \gls{html} format they can just put
 Accordingly, if data is returned in a \gls{json} format it can easily access the data and perform some data processing avoiding going transverse the \gls{html} and retrieve the data from each input.
 However, having two different endpoints to update data does not make that much sense since current \gls{http} requests libraries offer an easy way to build a request in the required format as the one's browsers automatically build whenever a form is submitted.
 
-\subsection*{Draft}
+\subsection*{Draft Status Changes}
 
 We will also go over the \gls{api} endpoints that the front end code uses to request to change the fingerprint state from draft to published.
 Associated with this feature, there are two endpoints available:
 
 \begin{verbatim}
-POST [base url]/api/pending/[fingerprin hash]
-POST [base url]/api/draft/[fingerprin hash]
+POST [base url]/api/pending/[fingerprint hash]
+POST [base url]/api/draft/[fingerprint hash]
 \end{verbatim}
 
 The existence of two endpoints for the same purpose is because Communities have a setting that allows to auto-accept requests to publish a fingerprint.
@@ -450,7 +451,7 @@ The former is used to add a title with no question associated, resulting in what
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{category}
-    \caption{Create a group of questions with a title}
+    \caption{Create a group of questions with a title.}
     \label{fig:question-group-category}
 \end{figure}
 
@@ -459,7 +460,7 @@ On the latter, the text of the question in the most upper level is used as the t
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{levels}
-    \caption{Create a group of questions using a question's text as the title}
+    \caption{Create a group of questions using a question's text as the title.}
     \label{fig:question-group-levels}
 \end{figure}
 
@@ -469,7 +470,7 @@ If both a category row and a question are on the most upper level, MONTRA will r
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{category-levels}
-    \caption{Example to show that the category way to create question groups also depends on the values that are set on the level column}
+    \caption{Example to show that the category way to create question groups also depends on the values that are set on the level column.}
     \label{fig:question-group-category-wrong-levels}
 \end{figure}
 
@@ -485,11 +486,11 @@ Choices are separated by a ``|'' character and the extra text field can be set b
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{choice-freeforms}
-    \caption{Multiple choice question with some extra text fields associated with the several choices}
+    \caption{Multiple choice question with some extra text fields associated with the several choices.}
 \end{figure}
 
 Although the framework allows the extensibility to have an additional text field, these do not support other types of input and also have no validation.
-Also, if the number of choices is high and the text of them is long, there starts to exist some clutter on the spreadsheet.
+Also, if the number of choices is high and the text is long, there starts to exist some clutter on the spreadsheet.
 With this, the person creating the spreadsheet will have problems perform edits and check if there is something wrong or missing.
 
 To facilitate the job of who is filling the spreadsheet, some question types are shortcuts.
@@ -511,7 +512,7 @@ The MONTRA framework will then put the provided objects on the configuration arr
 \begin{figure}
     \center
     \includegraphics[width=\textwidth]{open-multiple}
-    \caption{How an open-multiple-composition question type is specified on the spreadsheet and how it is rendered}
+    \caption{How an open-multiple-composition question type is specified on the spreadsheet and how it is rendered.}
     \label{fig:open-multiple}
 \end{figure}
 
@@ -538,7 +539,7 @@ The components are the following:
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{choice-tabular}
-    \caption{How a tabular-choice question type is specified on the spreadsheet and how it is rendered}
+    \caption{How a tabular-choice question type is specified on the spreadsheet and how it is rendered.}
     \label{fig:choice-tabular}
 \end{figure}
 
@@ -546,7 +547,7 @@ Once again, we encounter the clutter problem, as shown in the spreadsheet sectio
 
 \subsection*{Dependencies}
 
-In several form applications, e.g. Google Forms, it is common to find situations where if a certain choice is selected, then other questions will show up.
+In several form applications, it is common to find situations where if a certain choice is selected, then other questions will show up.
 E.g. If a user answers ``Yes'' to the Question ``Have you visited Aveiro?'', then other questions such as ``Would you recommend it to a friend?'' would appear.
 
 MONTRA supports this kind of dependencies, which should be defined on the Dependencies column of the questionnaire spreadsheet.
@@ -565,14 +566,14 @@ On figure \ref{fig:dependencies-excel}, since a choice-yesnodontknow question ty
 \begin{figure}[H]
     \center
     \includegraphics[width=0.75\linewidth]{dependencies-no}
-    \caption{The questions with dependencies are not rendered if the specific choice is not selected}
+    \caption{The questions with dependencies are not rendered if the specific choice is not selected.}
     \label{fig:dependencies-no}
 \end{figure}
 
 \begin{figure}[H]
     \center
     \includegraphics[width=0.75\linewidth]{dependencies-yes}
-    \caption{Once the dependency of a specific question is meet it will be rendered}
+    \caption{Once the dependency of a specific question is meet it will be rendered.}
     \label{fig:dependencies-yes}
 \end{figure}
 
@@ -583,7 +584,7 @@ Besides such restrictions are imposed on the user when he visits the web page, i
 % Principal intuito de cada class
 % answers (todos os tipos guardados em texto)
 
-This section will be presented how the previous concepts are mapped to database models.
+This section will present how the previous concepts are mapped to database models.
 Taking advantage of Django's \gls{orm} feature, MONTRA's data models are defined as python classes that extend Django's base Model class.
 These Model classes belong to different applications, which are associated with distinct aspects of the platform.
 
@@ -613,7 +614,7 @@ Going into more detail on some models we can see some poor design decisions.
 \begin{figure}[H]
     \center
     \includegraphics[width=.4\linewidth]{answer-model}
-    \caption{Detailed information of the Answer model of the Fingerprint application}
+    \caption{Detailed information of the Answer model of the Fingerprint application.}
     \label{fig:answer-model}
 \end{figure}
 
@@ -621,7 +622,7 @@ Regarding fingerprint answers to a questionnaire, all the data is stored in the 
 Although this approach is much simpler in terms of data models, it leads to two problems:
 \begin{enumerate}
     \item this is not the most optimized way to store all the data types.
-        Some question types expect numeric values and other date values, which could use built-in field types of a relational BDMS;
+        Some question types expect numeric values and other date values, which could use built-in field types of a \gls{rdbms};
     \item for complex question types which the answer contains several fields, before and after storing such data in the database, some processing has to be made to convert the data to the necessary format.
         One example of this is multiple choice questions, where the value of the several selected choice is joined in a single string to then be stored on the database.
         Every time the answer needs to be displayed to a user, it is necessary to split that string by its separator.
@@ -633,7 +634,7 @@ Related to MONTRA itself, when a user provides no data to a specific question, a
 \begin{figure}[H]
     \center
     \includegraphics[width=.6\linewidth]{answer-changes-models}
-    \caption{Models that store the changes to answers of fingerprint}
+    \caption{Models that store the changes to answers of fingerprint.}
     \label{fig:answer-changes-models}
 \end{figure}
 
@@ -647,7 +648,7 @@ In this model, we can get the answers data duplicated three times since it is al
 \begin{figure}[H]
     \center
     \includegraphics[width=.6\linewidth]{fingerprint-pending-models}
-    \caption{The Model that stores the information telling if a fingerprint is waiting to be approved to be published}
+    \caption{The Model that stores the information telling if a fingerprint is waiting to be approved to be published.}
     \label{fig:fingerprint-pending-model}
 \end{figure}
 
@@ -665,7 +666,7 @@ However, this value is not required to be stored on the database since after a f
 \begin{figure}[H]
     \center
     \includegraphics[width=.6\textwidth]{questionnaire-import-models}
-    \caption{Questionnaire model and the model where questionnaire imports information is stored}
+    \caption{Questionnaire model and the model where questionnaire imports information is stored.}
     \label{fig:questionnaire-import-models}
 \end{figure}
 
@@ -686,7 +687,7 @@ If there are some user input errors, it could lead to unexpected behavior or int
 \begin{figure}[H]
     \center
     \includegraphics[width=.3\textwidth]{question-model}
-    \caption{Question model and its extensive number of fields}
+    \caption{Question model and its extensive number of fields.}
     \label{fig:question-model}
 \end{figure}
 
@@ -694,7 +695,7 @@ Associated with how the structure of a questionnaire is stored, there are only f
 All are associated with a specific concept of the questionnaire, although other concepts are not represented.
 First, there's the category, used to create question groups within a question set.
 It is represented as with a question record, where the ``category'' field of the question models has the value ``true''.
-For more complex question types that require extra configuration such as choice tabular, which requires information about the name of the rows and column, and open multiple, which expects the configuration of the columns, such data is stored in a metadata field of the associated question model.
+For more complex question types, that require extra configuration, such as choice tabular (name of the rows and column) and open multiple (name of the columns), such data is stored in a metadata field of the associated question model.
 Question types that do not make use of these fields, will have an empty value, leading to some database space being wasted.
 
 When the questionnaire's spreadsheet was explained, some fields were related to some old deprecated features.
@@ -730,12 +731,13 @@ Taking into account figure \ref{fig:old-models}, since both the Community and De
 This leaves us with both the Fingerprint and Questionnaire applications.
 Regarding the Fingerprint application, the fingerprint model is one of the main models of the framework, affecting several features of the framework, so we intend to perform minimal changes on it.
 However, the remaining models associated with the answers of a fingerprint and submissions will have a new models design.
-Respecting the Questionnaire application both the Questionnaire and QuestionSet models are represent well-defined concepts and do not require any changes, yet, the remaining models, mainly the models storing the structure of the questions, their dependencies, choices, etc.\, will also have a new design.
+Respecting the Questionnaire application both the Questionnaire and QuestionSet models represent well-defined concepts and do not require any changes.
+Yet, the remaining models, mainly the models storing the structure of the questions, their dependencies, choices, etc.\, will also have a new design.
 
 \begin{figure}
     \center
     \includegraphics[width=\textwidth]{new-models}
-    \caption{Model Diagram of the new models}
+    \caption{Model Diagram of the new models.}
     \label{fig:new-models}
 \end{figure}
 
@@ -792,7 +794,7 @@ Note that even within these new separate components, some parts of them might be
 In figures \ref{fig:fingerprint-new} and \ref{fig:fingerprint-show-detailed} we can see that some components are present on both views.
 The question set title, the questions, the question set menu, the fill progress bar, and the navigation buttons.
 However, we can also see some components in figure \ref{fig:fingerprint-show-detailed} which are not present on the on figure \ref{fig:fingerprint-new} such as the fingerprint statistics (hits, unique views and fill percentage), there are no fingerprint-related buttons, which are now questionnaire-wide buttons.
-Note that the name of the fingerprint (DemoAveiro), the several tabs (Fingerprint, Documents, ...), and the subscribe and Manage buttons are specific to the show Page.
+Note that the name of the fingerprint (DemoAveiro), the several tabs (Fingerprint, Documents, etc.) and the subscribe and Manage buttons are specific to the show Page.
 The new fingerprint template will only contain components to display within the Fingerprint tab.
 
 \begin{figure}
@@ -810,7 +812,7 @@ Additionally, different buttons appear on the question set buttons component acc
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{fingerprint-show-detailed-after-diagram}
-    \caption{New fingerprint template layout for the detailed show fingerprint view variation}
+    \caption{New fingerprint template layout for the detailed show fingerprint view variation.}
     \label{fig:fingerprint-show-detailed-after-diagram}
 \end{figure}
 
@@ -821,7 +823,7 @@ By default, the only button visible on the Questionnaire buttons is the Summary,
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{fingerprint-show-summary-after-diagram}
-    \caption{New fingerprint template layout for the summary show fingerprint view variation}
+    \caption{New fingerprint template layout for the summary show fingerprint view variation.}
     \label{fig:fingerprint-show-summary-after-diagram}
 \end{figure}
 
@@ -859,7 +861,7 @@ By removing all validations from the front end, client-side code is now only use
 All client-side code related to the fingerprint was either migrated or newly implemented using, as much as possible, plain javascript, avoiding any external library.
 It avoids adding yet another dependency to the project, and if in the future, upgrades are done to libraries such as JQuery\footnote{https://jquery.com/}, the code implemented here is not affected and does not require any refactoring.
 
-\subsection{API}
+\subsection{Programming interface}
 % UI changes
 % consequencia da alteração do front end devido à alateração do backend
 % passar toda a verificação para o backend, passando a usar a validação built in do Django
@@ -942,7 +944,7 @@ This implies that the answer's data sent on the Submissions Management endpoints
 However, one does not know the keys for each choice and also the available choice if the web view is not used.
 For that, the Questionnaire Information endpoints are used to get information of choice-based questions, so that the correct data is sent along with the Submissions Management endpoints.
 
-\subsection*{Draft}
+\subsection*{Draft Status API}
 
 There were also some modifications to the endpoints to change the publish status of a fingerprint.
 Instead of having two different endpoints for different community settings (to auto-accept or not fingerprint publish requests), but for the same purpose, now only one exists.
@@ -1127,7 +1129,7 @@ any                   & required    \\ \hline
                       & max\_date   \\ \cline{2-2}
                       & format      \\ \hline
 \end{tabular}
-\caption{Newly available constraints to apply to a question}
+\caption{Newly available constraints to apply to a question.}
 \end{table}
 
 

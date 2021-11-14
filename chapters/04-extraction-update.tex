@@ -4,8 +4,8 @@
 
 As we have an application ready to receive and display metadata, it is now crucial to turn the attention to extracting metadata from \gls{cdm} databases, which contain the actual data, allowing, then, to update the data stored on applications such as the MONTRA framework.
 
-Figure \ref{fig:overall-arch-v1} presents a high-level architecture of the desired system that extracts data from databases and sends it to the applications that need their local data updated.
-Agents are software that runs on the data owner's deployment, in charge of extracting metadata from the database and sending this metadata to the applications.
+Figure \ref{fig:overall-arch-v1} presents a high-level architecture of the desired system.
+Agents are software that runs on the data owner's deployment, with the role of extracting metadata from the database and sending this metadata to the applications.
 
 \begin{figure}[H]
     \center
@@ -20,7 +20,7 @@ When we enter the realm of accessing an institution's sensitive data, some probl
 Not all data owners are willing to, or legally can not, provide direct access to their data.
 When building this part of the system, we have to consider this and have several options available that use different levels of access and according to the demands of each specific data owner, use the most appropriate one.
 In one end, a single solution could have full access to the data, extracting the metadata directly from the original data.
-At the other end of the scale, the burden of extracting data is removed from us and the system is dependent on the data owner providing the metadata and only then the system processes the metadata.
+At the other end of the scale, the burden of extracting data is removed and the system is dependent on the data owner providing the metadata and only then the system processes the metadata.
 Having several options for different access levels is more flexible, however, it requires maintaining several tools which are not reliable.
 A more appropriate alternative is to have a single option, that is designed considering the most strict access to the data, however, we still need to provide a tool to extract the metadata.
 The only difference is that we are not the ones executing it.
@@ -31,7 +31,7 @@ Additionally, making fewer to no changes is preferable to ensure that data owner
 \begin{figure}[H]
     \center
     \includegraphics[width=.6\textwidth]{overall-arch-v2}
-    \caption{High-level architecture of the extraction and update process}
+    \caption{High-level architecture of the extraction and update process.}
     \label{fig:overall-arch-v2}
 \end{figure}
 
@@ -130,7 +130,7 @@ Some use all the data, others only need a value of such data.
               This will require that an agent has access to at least a shared storage where agents check for new data and data owners post their extracted metadata.
         \end{list}
 
-    \item The agent should easily deployable:
+    \item The agent should be easily deployable:
         \begin{list}{}{}
             \item As the installation of the agent will be done by a person not familiar with the project, this process should be as smooth as possible and well documented.
         \end{list}
@@ -172,7 +172,7 @@ Such actions were divided into three groups: Agents, Metadata Extraction, action
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{use-cases}
-    \caption{Use case diagram of the metadata extraction and update system}
+    \caption{Use case diagram of the metadata extraction and update system.}
     \label{fig:use-cases}
 \end{figure}
 
@@ -237,7 +237,7 @@ With the requirements analysis done, let's first go over the portion of the syst
 % a query for each analaysis
 % Catalogue Export
 
-Regarding the extracting tool, from the ones presented in chapter \ref{chapter:background}, the most indicated for our use case is \gls{achilles}, developed by \gls{ohdsi}, or a variation of such.
+Regarding the extraction tool, from the ones presented in chapter \ref{chapter:background}, the most indicated for our use case is \gls{achilles}, developed by \gls{ohdsi}, or a variation of such.
 This choice was mainly because of its database, instead of the dataset, focused design, and because it was built to extract metadata from databases that follow the \gls{omop} \gls{cdm}.
 
 The most adequate option is Catalogue Export~\cite{peters-tool} which was built using \gls{achilles} as the base, the main difference being that it only exports the required data to the \gls{ehden} project.
@@ -245,7 +245,7 @@ The most adequate option is Catalogue Export~\cite{peters-tool} which was built 
 These tools are distributed as an R\footnote{https://www.r-project.org/} package, which uses a set of third-party packages that allow the extraction of metadata from different \gls{rdbms}s.
 Metadata is separated into analyses, where each one captures a specific metadata metric of the database.
 Each analysis is captured through a different \gls{sql} query, allowing to extract all analyses through a multithreading approach.
-To make use of the package, the user must provide the information to connect to the database, such as user and password, an output directory to export the results, and the name of three schemas, which are, in most \gls{rdbms}s, a way to group tables within a database within the \gls{rdbms}.
+To make use of the package, the user must provide the information to connect to the database, such as user and password, an output directory to export the results, and the name of three schemas, which are, in most \gls{rdbms}s, a way to group tables within a database.
 The schemas to provide are:
 
 \begin{itemize}
@@ -265,7 +265,7 @@ This plugin makes use of the metadata from the uploaded file to build several da
 \begin{figure}
     \center
     \includegraphics[width=\textwidth]{dashboards}
-    \caption{Network Dashboards tool used as a plugin on the \gls{ehden} Portal}
+    \caption{Network Dashboards tool used as a plugin on the \gls{ehden} Portal.}
     \label{fig:dashboards}
 \end{figure}
 
@@ -279,32 +279,10 @@ One solution would be to have a persistent connection between both ends, however
 An alternative is to follow a pull philosophy.
 The central component can put requests on a message queue, the agent checks periodically this queue and if it finds any request, responds to it.
 This can be interpreted as following the publish-subscriber pattern.
-This solution also aids achieve the ``Microservice architecture'' non-function requirement as it helps decouple services since they do not require to be aware of each other.
+This solution allows answering the ``Microservice architecture'' non-function requirement as it helps decoupling services since they do not require to be aware of each other.
 Additionally, the publisher service will not necessarily block waiting for the subscriber service to receive the message, also known as an asynchronous message system.
 
 There are two well know and widely used implementations of such systems: RabbitMQ and Kafka\cite{kafka-vs-rabbitmq}.
-
-\subsubsection{RabbitMQ}
-
-It is recognized implementation of the \gls{amqp} protocol, which this last appears appeared from the need to have interoperability between distinct asynchronous messaging systems.
-Before the specification of the \gls{amqp} protocol, there were already several standards for synchronous messaging, however, the asynchronous world did not have such standards.
-There was the open \gls{jms}, however, it was limited to java and was simply an interface standard, not specifying a standard protocol.
-\gls{amqp} defines a binary protocol implementation, ensuring interoperability between tools implementing the protocol individually.
-
-Figure \ref{fig:rabbitmq} presents the architecture of RabbitMQ/\gls{amqp}.
-The message brokering responsibility is divided into exchanges and message queues:
-
-\begin{itemize}
-    \item Exchange: Accepts messages from the publishers and, based on a set of rules routes, messages to the indicated queues;
-    \item Message Queue: Holds messages and sends them to the consumers.
-\end{itemize}
-
-\begin{figure}[H]
-    \center
-    \includegraphics[width=.9\textwidth]{rabbitmq}
-    \caption{RabbitMQ(AMQP) Architecture. Retrieved from \cite{kafka-vs-rabbitmq}}
-    \label{fig:rabbitmq}
-\end{figure}
 
 \subsubsection{Kafka}
 
@@ -332,7 +310,7 @@ Due to its simple storage layout, every time a producer publishes a message to a
 \begin{figure}[H]
     \center
     \includegraphics[width=.8\textwidth]{kafka}
-    \caption{Kafka Architecture. Retrieved from \cite{kafka-vs-rabbitmq}}
+    \caption{Kafka Architecture. Retrieved from \cite{kafka-vs-rabbitmq}.}
     \label{fig:kafka}
 \end{figure}
 
@@ -375,7 +353,7 @@ Since the extraction of metadata through the Catalogue Export R package is a bul
 As there is no way to know, on the central component side, when all the data is in Kafka, the connector should deal with metadata as a bounded source of data, providing some kind of feedback that all data was uploaded to Kafka.
 
 Confluent\footnote{\url{https://www.confluent.io/}}, a streaming platform based on Kafka that aims to aid in optimizing and managing Kafka clusters, has available a search engine, Confluent Hub\footnote{\url{https://www.confluent.io/hub/}}, that allows searching for Kafka connectors and more.
-The different connectors available range from known database systems (MongoDB, InfluxDB, ...) to internet protocols (\gls{http}, \gls{ftp}, ...)
+The different connectors available range from known database systems (MongoDB, InfluxDB, etc.) to internet protocols (\gls{http}, \gls{ftp}, etc.).
 In our case, considering that no other application will be running along with the agents, the only storage options available are either a single table on the data owner's relational database or a directory on the disk where metadata is placed in files.
 
 After researching on the Confluent Hub, three connectors were found to suit the possible storage options:
@@ -394,7 +372,7 @@ After researching on the Confluent Hub, three connectors were found to suit the 
                 Furthermore, no feedback is provided after all the data is present in Kafka.
         \end{list}
 
-    \item FileSytem Source connector\footnote{\url{https://github.com/mmolimar/kafka-connect-fs}}:
+    \item FileSystem Source connector\footnote{\url{https://github.com/mmolimar/kafka-connect-fs}}:
 
         \begin{list}{}{}
             \item On the contrary to the first connector, this one uses file systems as the source to insert data into Kafka.
@@ -467,7 +445,7 @@ Containers run in an operating system as they were yet another process, but for 
 \begin{figure}[H]
     \center
     \includegraphics[width=.6\textwidth]{virtualization}
-    \caption{Comparison between virtual machines and containers}
+    \caption{Comparison between virtual machines and containers.}
     \label{fig:virtualization}
 \end{figure}
 
@@ -479,7 +457,7 @@ With a deployment strategy in mind, figure \ref{fig:agent-architecture} shows th
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{agent-architecture}
-    \caption{Agent + Catalogue Extractor architecture}
+    \caption{Agent + Catalogue Extractor architecture.}
     \label{fig:agent-architecture}
 \end{figure}
 
@@ -519,20 +497,6 @@ Next is the description of each option:
 Regarding the extraction tool, we will also distribute a Docker image with the necessary dependencies preinstalled, where data owners will have to provide the necessary information for this tool to access the \gls{cdm} database and define a volume so files containing the metadata are accessible to the agent.
 Concerning the automation of the extraction process, the image will contain Linux's cron command-line utility, which allows to schedule tasks.
 The data owners will only have to provide the periodicity of the extraction process, using Cron's time and date syntax to define a cronjob.
-\begin{verbatim}
-.---------- minute
-| .-------- hour
-| | .------ day of month
-| | | .---- month
-| | | | .-- day of week
-| | | | |
-* * * * *
-\end{verbatim}
-If the extraction process were to run two times a month at three in the morning, the following configuration is used:
-\begin{verbatim}
-0 1 1,15 * *
-\end{verbatim}
-The task will execute on days 1 and 15 of every month at three in the morning.
 However, if it is preferable for the data owner, he can set up his automation, or no automation, of the extraction process.
 
 \section{Publishing}
@@ -580,7 +544,7 @@ For the communication between components, Kafka topics are used, however their o
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{metadata-manager}
-    \caption{High-level architecture of the Metadata Manager components}
+    \caption{High-level architecture of the Metadata Manager components.}
     \label{fig:metadata-manager}
 \end{figure}
 
@@ -595,7 +559,8 @@ As these components will be implemented from scratch, the programming language t
 
 Data comes from the agents in several Kafka messages, which need to be gathered together to then be used to build the custom request for each application.
 As gathering all the uploaded data in memory is not a scalable option, and implementing a system with memory usage management is a complex task, the system must first filter out unnecessary data and only allow the Admin to build and send the request to the applications.
-A Filter operation will remove entire rows, however, only a subset of columns might be required, for that, the system should also allow choosing which columns of the metadata are required.
+A Filter operation will remove entire rows, however, only a subset of columns might be required.
+For that, the system should also allow choosing which columns of the metadata are required.
 
 That's what the Pipeline Worker component is supposed to do.
 Extract only the essential data from all the data uploaded by an agent and then send it to the Sender component, who will be in charge of building and sending the request to the applications.
@@ -607,7 +572,7 @@ This can be achieved by creating two streams with opposite filtering conditions 
 \begin{figure}[H]
     \center
     \includegraphics[width=.7\textwidth]{filter}
-    \caption{How Filter Workers process unbounded data received from agents}
+    \caption{How Filter Workers process unbounded data received from agents.}
     \label{fig:filter}
 \end{figure}
 One will be used to get the actual data, the other, with the filtering condition negated, will be used just as an auxiliary.
@@ -631,7 +596,8 @@ To develop these filtering streams, there are two options:
 We opted to go with KsqlDB as it allows us to build the application in Go, taking advantage of its lightweight goroutines, allowing the system to scale better and the system to receive data from more databases.
 
 Until now, it was assumed that each application has its filtering condition over the data.
-However, two distinct applications might benefit from the same filtering condition, for that, the relationship between filters on data for an application is a one-to-many relationship, so the data resulting from one filter might be used to build and send data to several applications.
+However, two distinct applications might benefit from the same filtering condition.
+For that, the relationship between filters on data for an application is a one-to-many relationship, so the data resulting from one filter might be used to build and send data to several applications.
 
 In terms of internal organization, displayed in figure \ref{fig:filter-workers}, the main goroutine is in charge of managing the several active Filters, stopping existing ones and starting new ones, according to the orders received from the Admin Portal component.
 Each filter runs in a separate goroutine, which by itself launches other two goroutines.
@@ -642,7 +608,7 @@ When it reaches the number of messages that the agent sent, it tells the other c
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{filter-workers}
-    \caption{The internal organization of a Filter Worker}
+    \caption{The internal organization of a Filter Worker.}
     \label{fig:filter-workers}
 \end{figure}
 
@@ -671,7 +637,7 @@ For that, there is no need to implement a balancing algorithm to balance the dat
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{orchestrator-role}
-    \caption{The workflow of how data uploaded from the agents is balanced across Filter Workers instances}
+    \caption{The workflow of how data uploaded from the agents is balanced across Filter Workers instances.}
     \label{fig:orchestrator-role}
 \end{figure}
 
@@ -681,7 +647,7 @@ On the Filter Worker component, another goroutine will have to be created, which
 \begin{figure}[H]
     \center
     \includegraphics[width=.6\textwidth]{filter-worker-uploads}
-    \caption{New ententies achitecture on a Filter Worker component}
+    \caption{New ententies achitecture on a Filter Worker component.}
     \label{fig:filter-worker-uploads}
 \end{figure}
 This new entity, Upload Watcher, will broadcast the notification using Go's channels, a built-in language feature that allows having pipes of communication between goroutines.
@@ -704,7 +670,7 @@ Internally, the Orchestrator is composed of two entities:
 
 At this point, the system contains the data required to build the requests and then send them to the applications.
 It is now required to get, from the Admin, the configuration of the \gls{http} request to send the data.
-An interface to build \gls{http} requests would require several components to allow customizations of the several items of an \gls{http} request: authorization, headers, method, \ldots
+An interface to build \gls{http} requests would require several components to allow customizations of the several items of an \gls{http} request: authorization, headers, method, etc.
 To allow flexibility on the configuration of the \gls{http} request, such an interface would either be too complex or some features would not be allowed to simplify the implementation of such interface.
 
 Many programming languages have libraries that allow performing \gls{http} requests and customization is provided by passing different parameters to functions of such libraries.
@@ -778,7 +744,7 @@ Let's sum up the process of building and sending the requests to the application
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{sender-request}
-    \caption{Process of generating the parameters of the \gls{http} request to send to an application}
+    \caption{Process of generating the parameters of the \gls{http} request to send to an application.}
     \label{fig:sender-request}
 \end{figure}
 
@@ -787,7 +753,7 @@ Note that, in figure \ref{fig:sender-request}, the value of the files dictionary
 \begin{figure}[H]
     \center
     \includegraphics[width=.5\textwidth]{sender-interaction}
-    \caption{Interaction between the Filter Worker and Sender components}
+    \caption{Interaction between the Filter Worker and Sender components.}
     \label{fig:sender-interaction}
 \end{figure}
 
@@ -814,8 +780,7 @@ For that, consumers used by their main thread all must belong to the same group 
 % models and their relasionships
 % Allows to perform all the use cases
 
-Moving to the component where the Admin will use to manage the whole metadata manager.
-It will allow performing the several use cases defined on the requirement analysis stage: managing communities, databases, filters and target applications, and checking statistics of the system.
+The Admin area will allow performing the several use cases defined on the requirement analysis stage: managing communities, databases, filters and target applications, and checking statistics of the system.
 
 As this component is mainly just a web interface, a search was performed for Go packages that allowed to create some kind of admin dashboard.
 Some solutions were found such as Qor Admin\footnote{\url{https://github.com/qor/admin}} and GoAdminGroup/go-admin\footnote{\url{https://www.go-admin.com/}}.
@@ -847,7 +812,7 @@ Additionally, this framework supports relationships, which allows displaying ext
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{data-models}
-    \caption{Data models managed on the Admin Portal component}
+    \caption{Data models managed on the Admin Portal component.}
     \label{fig:data-models}
 \end{figure}
 
@@ -898,7 +863,7 @@ Finally, the admin can view statistics of the data that flowed on the system by 
 % referencias para um anexo onde tem um diagrama completo do sistema
 % sistema capaz de automatizar o processo de atualizar metadtados nas apps
 
-This chapter it was explained the entire development process around a system capable of automating the procedure of updating metadata stored on web applications about clinical databases.
+This chapter explained the entire development process around a system capable of automating the procedure of updating metadata stored on web applications about clinical databases.
 A solution was provided to the data owners to automatize the process of extracting metadata from their databases and then the system will make sure that that data will reach the desired web applications.
 
 %The next chapter will present the system developed in this chapter in action, using an installation of the Montra framework improved in chapter \ref{chapter:metadata-visualization} as a target web application of the metadata.
