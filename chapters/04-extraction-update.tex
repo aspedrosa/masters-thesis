@@ -28,13 +28,6 @@ The only difference is that we are not the ones executing it.
 As the extracting tool has direct access to the data, using an existing and widely known tool is a must, so data owners are inclined to use it.
 Additionally, making fewer to no changes is preferable to ensure that data owners do not discard the tool because they do not trust the changes.
 
-\begin{figure}[H]
-    \center
-    \includegraphics[width=.6\textwidth]{overall-arch-v2}
-    \caption{High-level architecture of the extraction and update process.}
-    \label{fig:overall-arch-v2}
-\end{figure}
-
 In figure \ref{fig:overall-arch-v2} is presented the overall architecture of the system, where the agent is the tool in charge of parsing the metadata provided by the data owner, which is then sent to the applications.
 Regarding this last point, there needs to be a way for the data to go from the agents to the applications.
 One ambitious solution is to create a decentralized peer-to-peer network of agents, avoiding developing a central component.
@@ -42,7 +35,14 @@ In such solution, the agents are in charge of managing and sending the data to t
 However, data owners might not want to spend their hardware resources to maintain a network.
 Since the agents are executed on the data owner's system, they should do only the required and minimal functionality, spending the few resources as possible.
 
-A more executable solution is to have an intermediate component that receives the metadata from the agents and then distributes that data across the applications, following a centralized network architecture as it is presented in figure \ref{fig:overall-arch-v2}.
+\begin{figure}[H]
+    \center
+    \includegraphics[width=.6\textwidth]{overall-arch-v2}
+    \caption{High-level architecture of the extraction and update process.}
+    \label{fig:overall-arch-v2}
+\end{figure}
+
+A more executable solution is to have an intermediate component that receives the metadata from the agents and then distributes that data across the applications, following a centralized network architecture as it is presented in figure \ref{fig:overall-arch-v3}.
 
 \begin{figure}[H]
     \center
@@ -262,7 +262,7 @@ Regarding the results schema, read and write permissions are required to insert 
 The package also allows exporting the results data to a \gls{csv} file, which, on the \gls{ehden} project, is then uploaded into a plugin of \gls{ehden} Portal~\cite{ehden-portal}, which was built using the MONTRA framework, the main topic of the previous chapter, called Network Dashboards~\cite{dashboards}.
 This plugin makes use of the metadata from the uploaded file to build several dashboards (figure \ref{fig:dashboards}), which allow researchers to better analyze and compare the data of clinical databases.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{dashboards}
     \caption{Network Dashboards tool used as a plugin on the \gls{ehden} Portal.}
@@ -282,21 +282,11 @@ This can be interpreted as following the publish-subscriber pattern.
 This solution allows answering the ``Microservice architecture'' non-function requirement as it helps decoupling services since they do not require to be aware of each other.
 Additionally, the publisher service will not necessarily block waiting for the subscriber service to receive the message, also known as an asynchronous message system.
 
-There are two well know and widely used implementations of such systems: RabbitMQ and Kafka\cite{kafka-vs-rabbitmq}.
+A well know and widely used implementation of such systems is Kafka
+Originally, the intent was to use a publish-subscriber system just for the communication between the agents and the central component.
+However, Kafka has some functionalities that appeal to use also to manage metadata, working as a central component.
 
-\subsubsection{Kafka}
-
-Kafka was built at LinkedIn, as its central event pipelining platform.
-Before developing it, the team tested alternatives, such as ActiveMQ, a popular messaging system based on \gls{jms}.
-However, two problems arose during production tests:
-\begin{enumerate}
-    \item If the queue started filling up to the point of not being able to store all the messages in memory, performance would sharply drop due to I/O;
-    \item To be able to send the same data to a different consumer implies duplicating that data in another queue.
-\end{enumerate}
-
-They concluded that the explored messaging systems were designed to target low-latency use cases instead of high-volume scale-out deployment that was needed at LinkedIn.
-The team decided to build their custom infrastructure that produces efficient persistence, supports several consumers with a low-performance penalty, and mainly supports distributed consumers while maintaining a real-time messaging abstraction usually obtained from messaging systems.
-
+Kafka was built at LinkedIn after they tested other messaging alternatives and concluded that they were designed to target low-latency use cases instead of their needed high-volume scale-out deployment.
 As a result, the produced system is a scalable publish-subscribe messaging system designed around a distributed commit log.
 With this, high throughput is achieved due to data being written to log files with no immediate flush to disk, which allows to build the system with efficient I/O patterns.
 
@@ -307,7 +297,7 @@ A partition is an ordered append-only log of messages that are persisted in disk
 All topics are accessible for reading by any number of consumers, and new consumers have no performance penalty.
 Due to its simple storage layout, every time a producer publishes a message to a topic, the broker simply appends the message to the file corresponding to the associated partition.
 
-\begin{figure}[H]
+\begin{figure}
     \center
     \includegraphics[width=.8\textwidth]{kafka}
     \caption{Kafka Architecture. Retrieved from \cite{kafka-vs-rabbitmq}.}
@@ -321,21 +311,15 @@ Then, partitions allow to control the level of parallelism of consumers, as diff
 In the end, to achieve the high-throughput requirements, Kafka went on a different road compared to the classic principles of messaging systems in several ways.
 
 \begin{itemize}
-    \item It partitions up data so that the production, brokering, and consumption of such can be handled by a cluster of entities that can be scaled as load increases;
-    \item Messages are not removed from the log, instead, they can be replayed by consumers;
+    \item It partitions up data so that the production, brokering, and consumption of such can be handled by a cluster of entities that can be easily scaled as load increases, making it well suited for our use case;
+    \item Messages are not removed from the log, instead, they can be replayed by consumers, allowing to easily build a fault-tolerant system;
     \item Reader progress is maintained only by the consumers, so message deletion can only be managed based on a retention policy setting, based either on message count or age.
 \end{itemize}
 
-\par\noindent\hfil\rule{.6\textwidth}{0.4pt}\hfil
-
-Originally, the intent was to use a publish-subscriber system just for the communication between the agents and the central component.
-However, Kafka has some functionalities that appeal to use also to manage metadata, working as a central component.
-Having long-term message storage allows to easily build a fault-tolerant system since consumers can easily replay the message received on a topic.
-Furthermore, due to the popularity of Kafka, several libraries and frameworks were developed to extend their usage.
+Due to the popularity of Kafka, several libraries and frameworks were developed to extend its functionality.
 One of them is Kafka Connect, a framework that allows to reliably and easily stream data between Kafka and external systems.
 There is also a Kafka Streams\footnote{\url{https://kafka.apache.org/documentation/streams/}} library to perform processing on streams of data on top of Kafka.
 As stated before, a different application might not be expecting the entire data from the databases, for that, stream processing features could be useful to filter the data before reaching the target applications.
-Finally, with its easily scalable modular architecture, Kafka is well suited to our use case.
 
 \subsection{Kafka Source Connectors}
 % kafka tem algumas appllicação ja devenvolvida que tiram dados de uma source e metem mensagem no kafka
@@ -442,19 +426,19 @@ Such technology can be seen as a very lightweight virtual machine since a contai
 Containers are also more efficient in taking advantage of the hardware available, as portions of the hardware are not statically allocated to each container~\cite{containers}.
 Containers run in an operating system as they were yet another process, but for the code running in a container, the appearance is that they are running in an isolated machine.
 
-\begin{figure}[H]
+Figure \ref{fig:virtualization} presents a visual comparison between virtual machines and containers.
+As can be seen, the virtual machine technology has to simulate two operating systems, in contrast to the container solution where there is only one operating system and the container engine.
+
+\begin{figure}
     \center
     \includegraphics[width=.6\textwidth]{virtualization}
     \caption{Comparison between virtual machines and containers.}
     \label{fig:virtualization}
 \end{figure}
 
-Figure \ref{fig:virtualization} presents a visual comparison between virtual machines and containers.
-As can be seen, the virtual machine technology has to simulate two operating systems, in contrast to the container solution where there is only one operating system and the container engine.
-
 With a deployment strategy in mind, figure \ref{fig:agent-architecture} shows the final architecture around the agents and pieces that connect to the data owner's system.
 
-\begin{figure}[H]
+\begin{figure}
     \center
     \includegraphics[width=\textwidth]{agent-architecture}
     \caption{Agent + Catalogue Extractor architecture.}
@@ -483,8 +467,7 @@ After getting the Docker image of the agent, the data owners only have to execut
 docker run
   -v ./catalogue_export_files:/app/catalogue_export_files
   -e AGENT_DATABASE_IDENTIFIER=unique_db_identifier
-  -d
-  AGENT_IMAGE
+  -d AGENT_IMAGE
 \end{verbatim}
 
 Next is the description of each option:
@@ -568,7 +551,7 @@ Extract only the essential data from all the data uploaded by an agent and then 
 Since data is already in Kafka, we can take advantage of its stream processing features to filter data received from the agents.
 But, once again, streams imply an unbounded size of data, so additional processing has to be built on top of such stream processing.
 If a stream is created to get the data that satisfies a given condition, we need to make sure that all the uploaded data went through that given stream.
-This can be achieved by creating two streams with opposite filtering conditions (figure \ref{fig:filter-workers}).
+This can be achieved by creating two streams with opposite filtering conditions (figure \ref{fig:filter}).
 \begin{figure}[H]
     \center
     \includegraphics[width=.7\textwidth]{filter}
@@ -634,22 +617,24 @@ This will require that this redistribution of work has to be written in Java, bu
 Previously, it was mentioned that the concept of a consumer in Kafka is a group of co-operating processes running as a cluster, so messages of a topic are distributed in a balancing manner, sending a message to only one process of a given group.
 For that, there is no need to implement a balancing algorithm to balance the data uploaded from the agents, as Kafka can achieve that already.
 
+As shown in figure \ref{fig:orchestrator-role}, every Filter Worker will have a consumer for the Upload Notifications topic, which all will belong to the same group.
+This ensures that only one Filter Worker instance will receive a given message, thus implementing a balancing policy with Kafka.
+On the Filter Worker component, another goroutine will have to be created, which will consume from the Upload Notifications topic and then broadcast this notification to the active Filters (Figure \ref{fig:filter-worker-uploads}).
+
 \begin{figure}[H]
     \center
-    \includegraphics[width=\textwidth]{orchestrator-role}
+    \includegraphics[width=.9\textwidth]{orchestrator-role}
     \caption{The workflow of how data uploaded from the agents is balanced across Filter Workers instances.}
     \label{fig:orchestrator-role}
 \end{figure}
 
-As shown in figure \ref{fig:orchestrator-role}, every Filter Worker will have a consumer for the Upload Notifications topic, which all will belong to the same group.
-This ensures that only one Filter Worker instance will receive a given message, thus implementing a balancing policy with Kafka.
-On the Filter Worker component, another goroutine will have to be created, which will consume from the Upload Notifications topic and then broadcast this notification to the active Filters (Figure \ref{fig:filter-worker-uploads}).
 \begin{figure}[H]
     \center
-    \includegraphics[width=.6\textwidth]{filter-worker-uploads}
+    \includegraphics[width=.55\textwidth]{filter-worker-uploads}
     \caption{New ententies achitecture on a Filter Worker component.}
     \label{fig:filter-worker-uploads}
 \end{figure}
+
 This new entity, Upload Watcher, will broadcast the notification using Go's channels, a built-in language feature that allows having pipes of communication between goroutines.
 Additionally, this entity will also send a message to the Data Request topic, telling the Orchestrator that his Filter Worker instance is in charge of parsing the data associated with a specific upload of an agent.
 The Orchestrator will then create the necessary redirection stream between the database's data topic and the specific Filter Worker instance's data topic.
@@ -741,6 +726,8 @@ Let's sum up the process of building and sending the requests to the application
     \item The dictionary is used to provide the parameters to the request function to perform the \gls{http} request.
 \end{enumerate}
 
+Note that, in figure \ref{fig:sender-request}, the value of the files dictionary is a variable name, which will be a local Python variable containing the file pointer to a temporary file containing the records received from the Filter Worker component.
+
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{sender-request}
@@ -748,7 +735,7 @@ Let's sum up the process of building and sending the requests to the application
     \label{fig:sender-request}
 \end{figure}
 
-Note that, in figure \ref{fig:sender-request}, the value of the files dictionary is a variable name, which will be a local Python variable containing the file pointer to a temporary file containing the records received from the Filter Worker component.
+Regarding how data is transferred from the Filter Worker component to the Sender, figure \ref{fig:sender-interaction} shows a representation of the process.
 
 \begin{figure}[H]
     \center
@@ -757,7 +744,6 @@ Note that, in figure \ref{fig:sender-request}, the value of the files dictionary
     \label{fig:sender-interaction}
 \end{figure}
 
-Regarding how data is transferred from the Filter Worker component to the Sender, figure \ref{fig:sender-interaction} shows a representation of the process.
 Once all data was filtered, the main goroutine of each Filter will send a message to the Data Ready to Send topic with the following metadata:
 \begin{itemize}
     \item Filter Worker application id: since several could be running at the same time;
@@ -809,15 +795,15 @@ With this integration between the frontend app and the backend app set up by Rea
 There is no need to implement calls to the \gls{api} exposed by the backend app, as the React-admin framework will take of this automatically.
 Additionally, this framework supports relationships, which allows displaying extra data associated with a model, for example, if a database belongs to a community we can also display the Community information on the database page.
 
+Concerning the models' organization, figure \ref{fig:data-models} shows the relationship between models of the Metadata Manager system.
+Models marks with green the admin can perform all \gls{crud} operations, models in yellow are only for reading as they are created by the Statistics Recorder component, and models in blue are dependent models, which are defined when the main model is created, in this case, FilterSelection entries are created when the Admin is creating a Filter.
+
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{data-models}
     \caption{Data models managed on the Admin Portal component.}
     \label{fig:data-models}
 \end{figure}
-
-Concerning the models' organization, figure \ref{fig:data-models} shows the relationship between models of the Metadata Manager system.
-Models marks with green the admin can perform all \gls{crud} operations, models in yellow are only for reading as they are created by the Statistics Recorder component, and models in blue are dependent models, which are defined when the main model is created, in this case, FilterSelection entries are created when the Admin is creating a Filter.
 
 To communicate any changes on the models the remaining components, a management topic is used.
 For example, if a Filter is deleted on the Admin Portal component by an Admin, then the Filter Worker component, after reading a delete message from such management topic, will stop the main goroutine associated with that Filter.

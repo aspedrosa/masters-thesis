@@ -110,6 +110,12 @@ A fingerprint is a name given to the set of answers to the questionnaire.
 In other words, it is the metadata that betters describes the original data source.
 Data owners can start to answer the questions to build the profile of their data sources once there are communities on the platform and, these have at least a questionnaire associated.
 
+On the list presented in figure \ref{fig:listings}, we can notice that the only fingerprint present is marked as draft.
+This is a state of the fingerprint which prevents from non-ready or non-approved fingerprints will not show to the regular community users.
+With this, for such users the list showed above would be empty.
+Fingerprints can be published depending on the chosen settings for the community.
+After the data source owners request to publish a fingerprint the framework allows to either automatically accept or require a community manger to accept it.
+
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{listings}
@@ -117,13 +123,11 @@ Data owners can start to answer the questions to build the profile of their data
     \label{fig:listings}
 \end{figure}
 
-On the list presented in figure \ref{fig:listings}, we can notice that the only fingerprint present is marked as draft.
-This is a state of the fingerprint which prevents from non-ready or non-approved fingerprints will not show to the regular community users.
-With this, for such users the list showed above would be empty.
-Fingerprints can be published depending on the chosen settings for the community.
-After the data source owners request to publish a fingerprint the framework allows to either automatically accept or require a community manger to accept it.
-
 \subsection*{Views}
+
+In figure \ref{fig:fingerprint-new} it is presented the user interface where a data owner can answer the questions of a questionnaire.
+Each question of the questionnaire is placed under a container that can be collapsed, as is shown for question \textit{Instituition name}.
+However, if multiple questions are grouped, the collapsable container will affect all questions of the group.
 
 \begin{figure}[H]
     \center
@@ -132,9 +136,6 @@ After the data source owners request to publish a fingerprint the framework allo
     \label{fig:fingerprint-new}
 \end{figure}
 
-In figure \ref{fig:fingerprint-new} it is presented the user interface where a data owner can answer the questions of a questionnaire.
-Each question of the questionnaire is placed under a container that can be collapsed, as is shown for question \textit{Instituition name}.
-However, if multiple questions are grouped, the collapsable container will affect all questions of the group.
 Besides the input widget where the data owner can insert its answers, the user also has some additional control buttons:
 
 \begin{enumerate}
@@ -143,7 +144,7 @@ Besides the input widget where the data owner can insert its answers, the user a
     \item Allows the data owners to set permissions at the question set level;
         \begin{itemize}
             \item Visibility: Let plugins have access to answers data;
-            \item Allow printing: On the fingerprints list page, showed in figure \ref{fig:listings}, there is a dropdown with tools, being the only one the "Print" tool (\ref{fig:listings-tools}). However, this feature is not correctly implemented since it calls the browser's built-int printing function on the fingerprint list page, so no actual fingerprint data will be printed. This permission ends up being useless. Additionally, if a user calls the browser's print function (e.g. hitting Ctrl+P) when viewing the data of a fingerprint, the platform will not block the action;
+            \item Allow printing: On the fingerprints list page, showed in figure \ref{fig:listings}, there is a dropdown with tools, being the only one the "Print" tool (figure \ref{fig:listings-tools}). However, this feature is not correctly implemented since it calls the browser's built-int printing function on the fingerprint list page, so no actual fingerprint data will be printed. This permission ends up being useless. Additionally, if a user calls the browser's print function (e.g. hitting Ctrl+P) when viewing the data of a fingerprint, the platform will not block the action;
                 \begin{figure}[H]
                     \center
                     \includegraphics[width=.2\linewidth]{listings-tools}
@@ -157,7 +158,7 @@ Besides the input widget where the data owner can insert its answers, the user a
     \item Permits to save or cancel all the changes made to the current question set.
 \end{enumerate}
 
-Once the fingerprint is filled and published, a regular user can consult the metadata, which will be displayed by default in detailed view.
+Once the fingerprint is filled and published, a regular user can consult the metadata, which will be displayed by default in detailed view (figure \ref{fig:fingerprint-show-detailed}).
 Similar to the create view, it is presented with some control buttons:
 
 \begin{enumerate}
@@ -232,7 +233,7 @@ In some cases there might exist some validation code on the server-side, however
 
 Second, there is no escaping procedure done to the user's input when it is fetched from the database which allows that \gls{xss} attacks can be easily performed and put users that consult a compromised fingerprint at risk.
 As an example, on figure \ref{fig:montra-xss-create} on the Database Name field, I added a \textit{script} tag with code that shows a popup and also a valid database name after.
-Once a user opens the fingerprint to check the data, the code will execute but the dummy name will render on the Database Name field.
+Once a user opens the fingerprint to check the data, the code will execute, but the dummy name will render on the Database Name field, as seen in figure \ref{fig:montra-xss}.
 This can be further exploited, where the user visiting the fingerprint will not notice that malicious code was executed.
 
 \begin{figure}[H]
@@ -307,15 +308,6 @@ For a regular user to use, there are other set o \gls{api} endpoints that are mo
 First, we will go over the \gls{api} used by the fingerprint views.
 But before showing the available endpoints, let's go over how the fingerprint views are organized and how they show only the questions of a certain question set at a time.
 
-\begin{figure}[H]
-    \center
-    \includegraphics[width=\textwidth]{fingerprint-hidden-question-sets}
-    \caption{Each question set has its container.
-    Here the current container is presented within the red rectangle.
-    The other existing question sets are represented through the blue lines, which currently are hidden.}
-    \label{fig:fingerprint-hidden-question-sets}
-\end{figure}
-
 Let use figure \ref{fig:fingerprint-hidden-question-sets} as example.
 According to the right side menu, there are six question sets and currently the question set ``Contact Details'' is being presented.
 In the middle of the page, we then see the content of the question set: questions, title, control buttons, and permissions.
@@ -325,6 +317,15 @@ The other question sets are also present on the page, however, are hidden.
 Every question set has its container, so whenever the user clicks on the previous or next buttons or selects another question set on the question set side menu bar, the current question set container is hidden and the new is shown.
 For questionnaires with a high number of question sets, rendering all available question sets could not be necessary.
 For that, a question set is loaded only when accessed the first time and following accesses will not require a load.
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=\textwidth]{fingerprint-hidden-question-sets}
+    \caption{Each question set has its container.
+    Here the current container is presented within the red rectangle.
+    The other existing question sets are represented through the blue lines, which currently are hidden.}
+    \label{fig:fingerprint-hidden-question-sets}
+\end{figure}
 
 The fingerprint view can be used for four different use cases:
 \begin{itemize}
@@ -509,7 +510,7 @@ The configuration of such widget, expects an array of \gls{json} objects, each s
 To configure the open multiple composition question type, the value list column expects these \gls{json} objects, where the date column is implicit.
 The MONTRA framework will then put the provided objects on the configuration array that the Tabulator widgets expects, adding the configuration for the date column.
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{open-multiple}
     \caption{How an open-multiple-composition question type is specified on the spreadsheet and how it is rendered.}
@@ -536,14 +537,14 @@ The components are the following:
     \item type of the information: available values are choice, multiple-choice and text.
 \end{itemize}
 
+Once again, we encounter the clutter problem, as shown in the spreadsheet section of figure \ref{fig:choice-tabular}, which hampers readability and update of the value list field.
+
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{choice-tabular}
     \caption{How a tabular-choice question type is specified on the spreadsheet and how it is rendered.}
     \label{fig:choice-tabular}
 \end{figure}
-
-Once again, we encounter the clutter problem, as shown in the spreadsheet section of figure \ref{fig:choice-tabular}, which hampers readability and update of the value list field.
 
 \subsection*{Dependencies}
 
@@ -591,7 +592,7 @@ These Model classes belong to different applications, which are associated with 
 In figure \ref{fig:old-models} is presented the class diagram of the classes that are related to features and/or concepts that were mentioned in previous sections.
 Classes with the same color belong to the same Django application, dividing them into specific purposes.
 
-\begin{figure}
+\begin{figure}[H]
     \includegraphics[width=\textwidth]{old-models}
     \caption{Class diagram of MONTRA's Model classes. Each color has a Django application associated. Gray: Community; Purple: Questionnaire; Orange: Fingerprint; Light Blue: Plugin; Blue: Django Auth. MONTRA's data model is much more complex, however, it is just presented the ones that impact the features and/or concepts mentioned previously.}
     \label{fig:old-models}
@@ -611,6 +612,8 @@ Classes with the same color belong to the same Django application, dividing them
 
 Going into more detail on some models we can see some poor design decisions.
 
+Regarding fingerprint answers to a questionnaire, all the data is stored in the Answer model on the data field, which is a variable-length string field type.
+
 \begin{figure}[H]
     \center
     \includegraphics[width=.4\linewidth]{answer-model}
@@ -618,7 +621,6 @@ Going into more detail on some models we can see some poor design decisions.
     \label{fig:answer-model}
 \end{figure}
 
-Regarding fingerprint answers to a questionnaire, all the data is stored in the Answer model on the data field, which is a variable-length string field type.
 Although this approach is much simpler in terms of data models, it leads to two problems:
 \begin{enumerate}
     \item this is not the most optimized way to store all the data types.
@@ -631,6 +633,11 @@ Although this approach is much simpler in terms of data models, it leads to two 
 
 Related to MONTRA itself, when a user provides no data to a specific question, an empty string will still be sent for that question on the submission of the answers to a question set, which will create unnecessary records on the database.
 
+As mentioned previously, MONTRA records the history of submissions for a specific fingerprint.
+Each submission has an associated FingerprintHead record, which its name might have been inspired by the HEAD concept of Git\footnote{https://git-scm.com/}, a version control system.
+For every FingerprintHead there is a set of answers that suffer changes which are then recorded on the AnswerChange model.
+In this model, we can get the answers data duplicated three times since it is already stored on the Answer model and can also be stored again as text in both \textit{old\_value} and \textit{new\_value}.
+
 \begin{figure}[H]
     \center
     \includegraphics[width=.6\linewidth]{answer-changes-models}
@@ -638,12 +645,12 @@ Related to MONTRA itself, when a user provides no data to a specific question, a
     \label{fig:answer-changes-models}
 \end{figure}
 
-As mentioned previously, MONTRA records the history of submissions for a specific fingerprint.
-Each submission has an associated FingerprintHead record, which its name might have been inspired by the HEAD concept of Git\footnote{https://git-scm.com/}, a version control system.
-For every FingerprintHead there is a set of answers that suffer changes which are then recorded on the AnswerChange model.
-In this model, we can get the answers data duplicated three times since it is already stored on the Answer model and can also be stored again as text in both \textit{old\_value} and \textit{new\_value}.
-
 % ---
+
+As mentioned previously, a fingerprint is not immediately available to all regular users, since it first enters on a draft state.
+To transit to the published state, a request needs to be made to the community owner.
+Such requests are stored on the FingerprintPending table, where the pending value will be \textit{true}.
+Once a request is rejected or accepted, the value of the pending value is changed to \textit{false}.
 
 \begin{figure}[H]
     \center
@@ -652,16 +659,17 @@ In this model, we can get the answers data duplicated three times since it is al
     \label{fig:fingerprint-pending-model}
 \end{figure}
 
-As mentioned previously, a fingerprint is not immediately available to all regular users, since it first enters on a draft state.
-To transit to the published state, a request needs to be made to the community owner.
-Such requests are stored on the FingerprintPending table, where the pending value will be \textit{true}.
-Once a request is rejected or accepted, the value of the pending value is changed to \textit{false}.
-
 On the Fingerprint model, there is also a \textit{draft} value that indicates if the fingerprint is published or not.
 Once a fingerprint is published, the value of the \textit{draft} will be true, and on the FingerprintPending table, the associated record will have the pending value at \textit{false}.
 However, this value is not required to be stored on the database since after a fingerprint is published, the fingerprint will not be pending therefore, the associated FingerprintPending record could be deleted.
 
 % ---
+
+Whenever a questionnaire is imported, a QuestionnaireImportFile record is created containing the information of the uploaded file and the user that uploaded it.
+Also contains a status field to give some feedback to the user.
+Associated with every import will also be created a Questionnaire record.
+It contains an in\_preview variable that is set to \textit{true} whenever a questionnaire is in the import process.
+If it fails to import, only the QuestionnaireImportFile record will be kept, which the status will change to \textit{Failed} and an error message will also be attached to the import record.
 
 \begin{figure}[H]
     \center
@@ -669,12 +677,6 @@ However, this value is not required to be stored on the database since after a f
     \caption{Questionnaire model and the model where questionnaire imports information is stored.}
     \label{fig:questionnaire-import-models}
 \end{figure}
-
-Whenever a questionnaire is imported, a QuestionnaireImportFile record is created containing the information of the uploaded file and the user that uploaded it.
-Also contains a status field to give some feedback to the user.
-Associated with every import will also be created a Questionnaire record.
-It contains an in\_preview variable that is set to \textit{true} whenever a questionnaire is in the import process.
-If it fails to import, only the QuestionnaireImportFile record will be kept, which the status will change to \textit{Failed} and an error message will also be attached to the import record.
 
 If the questionnaire is valid, the user will be redirected to a page where he can preview the result and can accept or reject it.
 It is important to point out that for the preview process a new Fingerprint object is created so \gls{api} calls can be performed.
@@ -684,19 +686,19 @@ If there are some user input errors, it could lead to unexpected behavior or int
 
 % ---
 
-\begin{figure}[H]
-    \center
-    \includegraphics[width=.3\textwidth]{question-model}
-    \caption{Question model and its extensive number of fields.}
-    \label{fig:question-model}
-\end{figure}
-
 Associated with how the structure of a questionnaire is stored, there are only four models to do so: Questionnaire, QuestionSet, Question, and Choice.
 All are associated with a specific concept of the questionnaire, although other concepts are not represented.
 First, there's the category, used to create question groups within a question set.
 It is represented as with a question record, where the ``category'' field of the question models has the value ``true''.
 For more complex question types, that require extra configuration, such as choice tabular (name of the rows and column) and open multiple (name of the columns), such data is stored in a metadata field of the associated question model.
 Question types that do not make use of these fields, will have an empty value, leading to some database space being wasted.
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=.3\textwidth]{question-model}
+    \caption{Question model and its extensive number of fields.}
+    \label{fig:question-model}
+\end{figure}
 
 When the questionnaire's spreadsheet was explained, some fields were related to some old deprecated features.
 The question model contains the same fields that map to the questionnaire's spreadsheet deprecated fields: stats, visible\_default, and disposition.
@@ -734,17 +736,17 @@ However, the remaining models associated with the answers of a fingerprint and s
 Respecting the Questionnaire application both the Questionnaire and QuestionSet models represent well-defined concepts and do not require any changes.
 Yet, the remaining models, mainly the models storing the structure of the questions, their dependencies, choices, etc.\, will also have a new design.
 
-\begin{figure}
+In Figure \ref{fig:new-models} it is presented the new models in light green.
+The decided approach to implement these models was to create a new Django application and create all these new models on that application.
+This way, the migration process is an iterative process where the framework is always operational since the previous models still exist.
+Then with the help of an \gls{ide}, we can search for usages of the old models and migrate each feature at the time.
+
+\begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{new-models}
     \caption{Model Diagram of the new models.}
     \label{fig:new-models}
 \end{figure}
-
-In Figure \ref{fig:new-models} it is presented the new models in light green.
-The decided approach to implement these models was to create a new Django application and create all these new models on that application.
-This way, the migration process is an iterative process where the framework is always operational since the previous models still exist.
-Then with the help of an \gls{ide}, we can search for usages of the old models and migrate each feature at the time.
 
 Let's start with the fingerprint-related changes.
 Now there is a new Answer model that does not hold directly the content of answers, instead the content is stored on data-specific models such as IntegerAnswer and DateAnswer.
@@ -797,13 +799,6 @@ However, we can also see some components in figure \ref{fig:fingerprint-show-det
 Note that the name of the fingerprint (DemoAveiro), the several tabs (Fingerprint, Documents, etc.) and the subscribe and Manage buttons are specific to the show Page.
 The new fingerprint template will only contain components to display within the Fingerprint tab.
 
-\begin{figure}
-    \center
-    \includegraphics[width=\textwidth]{fingerprint-other-after-diagram}
-    \caption{New fingerprint template for the create, edit, search and preview fingerprint views variations.}
-    \label{fig:fingerprint-other-after-diagram}
-\end{figure}
-
 In Figure \ref{fig:fingerprint-other-after-diagram} is presented a two-column layout for the create, edit, search and preview variations of the fingerprint view.
 Although, some components are not displayed in certain variations, such as the Cancel and Save buttons.
 The Cancel button is not displayed on the preview variation, and both Cancel and Save buttons are replaced by a Search button on the search button.
@@ -811,9 +806,9 @@ Additionally, different buttons appear on the question set buttons component acc
 
 \begin{figure}[H]
     \center
-    \includegraphics[width=\textwidth]{fingerprint-show-detailed-after-diagram}
-    \caption{New fingerprint template layout for the detailed show fingerprint view variation.}
-    \label{fig:fingerprint-show-detailed-after-diagram}
+    \includegraphics[width=\textwidth]{fingerprint-other-after-diagram}
+    \caption{New fingerprint template for the create, edit, search and preview fingerprint views variations.}
+    \label{fig:fingerprint-other-after-diagram}
 \end{figure}
 
 The show variation, as shown in figure \ref{fig:fingerprint-show-detailed-after-diagram}, uses a single column with two rows layout.
@@ -822,12 +817,19 @@ By default, the only button visible on the Questionnaire buttons is the Summary,
 
 \begin{figure}[H]
     \center
+    \includegraphics[width=\textwidth]{fingerprint-show-detailed-after-diagram}
+    \caption{New fingerprint template layout for the detailed show fingerprint view variation.}
+    \label{fig:fingerprint-show-detailed-after-diagram}
+\end{figure}
+
+As can be observed in figure \ref{fig:fingerprint-show-summary-after-diagram}, when the user switches to the summary view, by clicking on the Summary Questionnaire button, the detailed view container is hidden, and the summary view container is displayed.
+
+\begin{figure}[H]
+    \center
     \includegraphics[width=\textwidth]{fingerprint-show-summary-after-diagram}
     \caption{New fingerprint template layout for the summary show fingerprint view variation.}
     \label{fig:fingerprint-show-summary-after-diagram}
 \end{figure}
-
-As can be observed in figure \ref{fig:fingerprint-show-summary-after-diagram}, when the user switches to the summary view, by clicking on the Summary Questionnaire button, the detailed view container is hidden, and the summary view container is displayed.
 
 It is important to note again that the overall aesthetics and workflow of the page were not changed.
 The only major change was to divide the fingerprint view into several, reusable components.
@@ -1029,14 +1031,14 @@ In figures \ref{fig:choice-tabular-neu}, \ref{fig:open-multiple-neu} and \ref{fi
     \label{fig:choice-tabular-neu}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=.75\textwidth]{open-multiple-neu}
     \caption{Differences between how a open multiple question was versus how is now defined on the questionnaire spreadsheet.}
     \label{fig:open-multiple-neu}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
     \center
     \includegraphics[width=.75\textwidth]{choice-neu}
     \caption{Differences between how a open multiple question was versus how is now defined on the questionnaire spreadsheet.
