@@ -1,0 +1,86 @@
+Good morning/afternoon, I will present my master's dissertation with title "Development of scalable architecture to extract metadata from distributed medical databases", which was done with the supervision of the professor José Luís Oliveira.
+
+--- intro
+
+Some medical researchers do studies associated with diseases, such as determining the impact of a certain drug.
+To perform such studies and have reliable results, a great amount of data is required.
+To obtain that data, these researchers have to contact medical data owners.
+
+However it is hard to find institutions willing to share data and also the process of contacting data providers can be tedious.
+Several platforms have been developed with the purpose of making this process of data discovery easier.
+One important aspect of such platforms is that they present to the researcher metadata, which can be summaries of the original data.
+With this dependency on the original data, emerges an important problem which is metadata can easily be outdated after a small time window.
+This could not raise a big problem, if the records were updated regularly, however this rarely happens, mainly because either the update process is complex or because metadata has to be manually extracted and uploaded to these platforms.
+Another problem that still might arise from such platforms, is that different datasets have different representations of data.
+The research is then hampered since different methods have to be taken to analyze each dataset.
+
+--- intro 2
+
+EHDEN is a project with affiliations with several institutions, data sources and data custodians across the european union, where their main goal is to, within a network, harmonize data to the OMOP common data model.
+With a commom data model, the problem of existing different representations for the same data across distinct data sources is not a concern.
+Researchers can now develop a single analysis method and then apply it to all datasets.
+
+--- objectives
+
+The purpose of this dissertation is to create a system that can automate the update process of metadata stored in metadta visualization platforms.
+With that, the following goals were established:
+• have a platform capable of holding and displaying metadata in an intuitive and user-friendly way;
+• develop or find a tool that extracts metadata from a database;
+• design a system capable of sending data to an application, to keep their data up-to-date;
+• as new software components might be developed, it is a great opportunity to try new technologies with growing popularity.
+
+--- background
+
+A research was performed to find existing solutions that might already achieve the goals mentioned previously.
+This research was divided into three sections, presenting tools regarding metadata visualization extraction and network architectures.
+
+Its not mandatory but considered tools should contain:
+- data privacy mechanisms, since we could be dealing with sensitive data;
+- follow the FAIR Guiding Principles, which contain a series of considerations for data publishing to support both human and machine operations.
+- be open source
+
+--- montra
+
+MONTRA was proposed as a flexible base architecture for building biomedical data integration platforms, allowing to centralize and share data from heterogeneous sources.
+This last point is achievable, by requiring the definition of a metadata skeleton, which describes the original data.
+Whi this, different data sources following the same skeleton will have a common representation.
+Then, the framework allows users to view, search, modify and delete information, where access is controlled via a Role-Based Access Control system.
+
+--- achilles
+
+ACHILLES, can produce summaries and metadata of databases conforming to the OMOP CDM.
+These allow for characterization and quality assessment of observational health databases.
+It is implemented as a package written in R, which executes a series of SQL queries over the original CDM database to calculate all the specific summaries.
+The resulting summaries can be used by researchers to evaluate if the contents of databases can be used on studies that they intend to perform.
+
+--- gaain
+
+GAAINs objective is to organize a community for sharing Alzheimer's-related data from repositories around the world.
+
+GAAIN is composed by a central server that interacts with multiple client nodes, which are installed in the data partners deployment environment.
+These GAAIN clients do not gather data directly from data partner production environment, instead, data is locally exported and then loaded into the client.
+With this a client will have a low footprint and also it is given the freedom to the data owners to update their data when they find it convenient.
+To have this client running on the data partner's site, it is required to adapt current firewall configurations to allow incoming traffic from the central server.
+Data owners still have full control over their data, and to do so every GAAIN client can be deactivated.
+
+--- popmednet
+
+Popmednet appears to facilitate the creation and management of distributed health networks.
+Researchers have available a set of features that aid in the processes of finding possible data owner collaborators, finding previously carried out research and learn more about the data in the network.
+
+The platform is made of two components:
+a web-based portal for issuing research requests and managing the network,
+the clients' DataMart.
+
+They communicate with each other following a publish-subscribe philosophy, which removes the need for data owners to have open ports on their systems, solving an important security concern of existing direct external access to local data.
+
+--- background summary
+
+As a summary several tools were analyzed regarding metadata visualization, extraction, and tools implementing networks of metadata.
+
+On this table we can see all the tools that were analysed.
+They are dividived into the tree groups of features that we looked for in tools.
+A green check means that the tool contains the certain feature and a red cross means that it does not.
+
+As we can see, no tool supports all desidered features.
+It is then required to either build a system that supports all these features or make integration of a set of these tools.
