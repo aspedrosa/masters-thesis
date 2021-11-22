@@ -19,15 +19,12 @@ simply the data owner might not want to share some portions of the data, for tha
 tools analyzed should have privacy protection mechanisms, allowing to customize the
 access and manipulation of data stored.
 
-Furthermore, considering we want to improve and assist data discovery and reuse it is
-important to have good data management to simplify such processes.
+Furthermore, considering we want to improve and assist data discovery, it is important to have good data management to simplify such processes.
 However, humans fail to achieve the necessary processing levels with present-day
 scientific data.
 It is then important that data is provided in such a way that machines can fetch,
 understand, analyze and act on data.
-For that the \gls{fair} Guiding Principles were established which contain a series of
-considerations for data publishing to supports both human and machine operations such
-as deposition, exploration, sharing and reuse~\cite{fair}.
+For that the \gls{fair} Guiding Principles were established which contain a series of considerations for data publishing to support both human and machine operations such as deposition, exploration, sharing and reuse~\cite{fair}.
 
 %32620019,From Raw Data to FAIR Data: The FAIRification Workflow for Health Research.
 
@@ -55,7 +52,7 @@ Initially, the same approach was taken, now considering a time window starting i
 However, after the second step, no new platforms were found.
 Because of that, a variation of the search method mentioned before was undertaken.
 The first step was skipped and some of the final tools presented on the systematic review were considered as a base set for the next steps.
-From the 20 presented, only 8 were used on this initial set, since some tools were not active or did not have any feature mentioned in the previous section (FAIR and data protection).
+From the 20 presented, only 8 were used on this initial set, since some tools were not active or did not have any feature mentioned in the previous section (\gls{fair} and data protection).
 Nonetheless, besides being discarded in terms of their metadata visualization features, 1 of these tools was analyzed for its metadata extraction features and 3 of them were analyzed for their metadata sharing network architecture, which will be detailed in the next sections.
 Coming back to the search method, the 20 similar publications for each of the 8 papers considered were fetched, and the title filtering process was done, followed by an abstract filtering process and finally a full-text evaluation.
 With this search method, 2 additional tools were considered, making a total of 10 tools to analyze on the section of metadata visualization tools.
@@ -78,7 +75,7 @@ Data catalogs are a good way to gather and present information of different area
 To aid this creation, MONTRA~\cite{montra} was proposed as a flexible base architecture for composing data integration platforms, mainly associated with the biomedical field, allowing to centralize and share data originating from several and heterogeneous sources.
 MONTRA can achieve this last point, by requiring the definition of a metadata skeleton within a community of data sources, which describes the original data, so different data sources following the same skeleton template will have a common representation, leading to a homogeneous representation of their metadata.
 Yet, it is important to salient that the system only contains a skeleton of the underlying data sources, the original data is still stored in the cataloged sources' system.
-The skeleton definition is an easy process any data custodian can do by saving it as a spreadsheet file and then submitting it through the application's web interface.
+The skeleton definition is an easy process as any data custodian can do by saving it as a spreadsheet file and then submitting it through the application's web interface.
 Then, the framework allows users to view, search, modify and delete information through simple forms, where access is controlled via a Role-Based Access Control system to ensure that proper access restrictions are imposed.
 Also, a RESTful API is available which provides a set of programmatic endpoints which allows the creation of third-party applications on top of the framework.
 
@@ -322,7 +319,7 @@ Despite the chosen arrangement, each node can choose to customize the access pol
 One more tool analyzed because of its metadata sharing network its \gls{gaain}~\cite{gaain}, in which its main objective is to organize a community for sharing Alzheimer's-related from diverse repositories around the world, where data from different medical fields are combined together, taking into account existing policies of these repositories and preserving the ownership of the data being shared.
 
 The architecture of \gls{gaain} contains a central server that interacts with multiple client nodes, which are installed in the data partners site (\gls{dpc}).
-These \gls{gaain} \gls{dpc}s do not gather data directly from their data partner production environment, instead, data is locally exported and transformed into a CSV file and only then loaded into the \gls{dpc}.
+These \gls{gaain} \gls{dpc}s do not gather data directly from their data partner production environment, instead, data is locally exported, transformed into a CSV file and only then loaded into the \gls{dpc}.
 With this process a \gls{dpc} will have a low footprint, not interfering with the data parters system, and also is given the freedom to the data owners to update their data when they find it convenient.
 To have this \gls{dpc} running on the data partner's site, the only requirement imposed is to adapt current firewall configurations to allow incoming HTTPS traffic from the central server into their network.
 Data owners still have full control over their data, and to do so every \gls{gaain} \gls{dpc} has ``on/off switch'' which gives the possibility to immediately detach the data from the network.
@@ -333,17 +330,17 @@ Data owners still have full control over their data, and to do so every \gls{gaa
     \caption{Network architecture of the \gls{gaain}. Image created based on an original retrieved from~\cite{gaain}.}
 \end{figure}
 
-Then, with this network architecture, \gls{gaain} researchers can query the network through its web interfaces, which forwarded the search requests to the central server component which then queries every individual \gls{dpc}.
+Then, with this network architecture, \gls{gaain} researchers can query the network through its web interfaces, which forwards the search requests to the central server component which then queries every individual \gls{dpc}.
 The results are sent back to the central server that aggregates them into a response to then be displayed on the web interface.
 
 \subsection*{PopMedNet}
 With the increase of availability of electronic health information, the engagement to distributed health data research networks has risen.
 Popmednet~\cite{popmednet} appears to facilitate the creation and management of distributed health networks, taking into account the demands of different data owners and researchers.
-The platform's adaptable architecture allows network designs that satisfy important requirements of data owners of a network, including data privacy and security requirements and network monitoring functionalities.
+The platform's adaptable architecture allows network designs that satisfy important requirements of data owners of a network, including data privacy, security requirements and network monitoring functionalities.
 Researchers have available a set of features that aid in the processes of finding possible data owner collaborators, finding previously carried out research and learn more about the data in the network, thus the system is going beyond of just issuing queries.
 
 The platform is made of two components: a web-based portal for issuing research requests and managing the network, and the clients' DataMart.
-They communicate with each other following a publish-subscriber philosophy, which removes the need for data owners to have open ports on their systems, solving an important security concern of existing direct external access to local data.
+They communicate with each other following a publish-subscribe philosophy, which removes the need for data owners to have open ports on their systems, solving an important security concern of existing direct external access to local data.
 With this approach, the DataMart Client is present at the data owner's local machine, behind their firewall, and all queries from the network portal are pulled from it, instead of them being pushed through an open port.
 Data owners can then use the DataMart Client to review requests fetched from the network portal by analyzing its metadata such as information of the requester and the description and purpose of the request.
 Then it can opt to execute the query and send the results back to the network portal, keep it for additional review or refuse it.
@@ -419,7 +416,7 @@ A possible configuration is to receive data over HTTP, then send the result of t
 \hline
         Data Sphere \cite{datasphere} & {\color{red} \xmark} & {\color{green} \cmark} (Authorized Users Only) & {\color{red} \xmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
 \hline
-        MOLGENIS \cite{molgenis} & {\color{green} \cmark} \repo{https://github.com/molgenis/molgenis} & {\color{green} \cmark} (Role based) & {\color{green} \xmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
+        MOLGENIS \cite{molgenis} & {\color{green} \cmark} \repo{https://github.com/molgenis/molgenis} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} & {\color{red} \xmark} & {\color{red} \xmark} \\
 \hline
         Cafe Variome \cite{cafevariome} & {\color{red} \xmark} & {\color{green} \cmark} (Role based) & {\color{green} \cmark} & {\color{red} \xmark} & {\color{green} \cmark} \\
 \hline

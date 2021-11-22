@@ -5,42 +5,24 @@ Oftentimes medical researchers do studies associated with diseases, such as dete
 To perform such studies and have reliable results, a great amount of data is required.
 To obtain that data, these researchers have to contact medical data owners to have access to relevant data that can help improve their analysis and/or findings.
 
-With this procedure emerges several problems for the researcher such as he has to find
-institutions willing to share data and the process of contacting the data providers can
-be cumbersome.
-To aid in this whole process, several data hubs have been developed with the purpose of
-making the process of data discovery easier.
-One important aspect of such data hubs is that they present to the researcher meta
-data, which is aggregations or summaries of the original data.
-Metadata has the advantage that one does not have to deal with the anonymization process
-of medical records, since only summaries of the initial data are retrieved
-~\cite{egenvar, montra}.
-With this dependency on the original data, emerges an important problem of data hubs
-which is, metadata can easily be outdated after a small time window.
-This could not raise a big problem, if the records were updated regularly, however this
-rarely happens, mainly because either the update process is difficult or because
-metadata has to be manually extracted and uploaded to the data hub.
-A problem that still might arise from such platforms, is those different datasets very
-often have different representation for the same concept or the data is organized in a
-different layout.
-The research is then hampered since either different approaches have to be taken to
-analyze each dataset.
+With this procedure emerges several problems for the researcher such as he has to find institutions willing to share data and the process of contacting the data providers can be cumbersome.
+To aid in this whole process, several data hubs have been developed with the purpose of making the process of data discovery easier.
+One important aspect of such data hubs is that they present to the researcher metadata, which is aggregations or summaries of the original data.
+Metadata has the advantage that one does not have to deal with the anonymization process of medical records, since only summaries of the initial data are retrieved ~\cite{egenvar, montra}.
+With this dependency on the original data, emerges an important problem of data hubs which is, metadata can easily be outdated after a small time window.
+This could not raise a big problem, if the records were updated regularly, however this rarely happens, mainly because either the update process is difficult or because metadata has to be manually extracted and uploaded to the data hub.
+A problem that still might arise from such platforms, is those different datasets very often have different representation for the same concept or the data is organized in a different layout.
+The research is then hampered since different approaches have to be taken to analyze each dataset.
 
 The \gls{ehden}~\cite{ehden} project has affiliations with several institutions, data sources and data custodians across the \gls{eu}.
 Their main goal is to, within a federated network~\cite{ehden-datapartners}, harmonize data to the \gls{omop} \gls{cdm}.
 This model was developed by \gls{ohdsi}, a multi-stakeholder, interdisciplinary and collaborative organization that brings out the value of health data through large-scale analytics~\cite{ohdsi-site}.
-With a \gls{cdm}, the problem of having different representations for the same data
-across distinct data sources is solved.
-Researchers can now develop a single analysis method and then apply it to all gathered
-datasets.
-These methods can then be optimized for this specific data model, which allows
-large-scale analytics.
+With a \gls{cdm}, the problem of having different representations for the same data across distinct data sources is solved.
+Researchers can now develop a single analysis method and then apply it to all gathered datasets.
+These methods can then be optimized for this specific data model, which allows large-scale analytics.
 Furthermore, it improves collaborative research~\cite{ohdsi-site}.
-Still, within the scope of the \gls{ehden} project, the project has a database catalog~\cite{ehden-portal},
-built with the MONTRA framework~\cite{montra}, where data owners fill metadata about
-their data source manually, which brings the outdated problem already mentioned before.
-Additionally, whenever new metadata fields are introduced, the data owners of all data
-sources have to go manually update their metadata form.
+Still, within the scope of the \gls{ehden} project, the project has a database catalog~\cite{ehden-portal}, built with the MONTRA framework~\cite{montra}, where data owners fill metadata about their data source manually, which brings the outdated problem already mentioned before.
+Additionally, whenever new metadata fields are introduced, the data owners of all data sources have to go manually update their metadata form.
 
 \section{Objectives}
 The purpose of this dissertation is to create a system that can automate the update process of metadata stored in online platforms, that aids in the procedure of finding the correct data set for a specific study.
