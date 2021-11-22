@@ -24,7 +24,7 @@ Researchers can now develop a single analysis method and then apply it to all da
 
 The purpose of this dissertation is to create a system that can automate the update process of metadata stored in metadta visualization platforms.
 With that, the following goals were established:
-• have a platform capable of holding and displaying metadata in an intuitive and user-friendly way;
+• have a platform capable of holding and displaying metadata in an intuitive way;
 • develop or find a tool that extracts metadata from a database;
 • design a system capable of sending data to an application, to keep their data up-to-date;
 • as new software components might be developed, it is a great opportunity to try new technologies with growing popularity.
@@ -32,7 +32,7 @@ With that, the following goals were established:
 --- background
 
 A research was performed to find existing solutions that might already achieve the goals mentioned previously.
-This research was divided into three sections, presenting tools regarding metadata visualization extraction and network architectures.
+This research was divided into three sections, presenting tools regarding metadata visualization extraction and metadta network architectures.
 
 Its not mandatory but considered tools should contain:
 - data privacy mechanisms, since we could be dealing with sensitive data;
@@ -84,3 +84,189 @@ A green check means that the tool contains the certain feature and a red cross m
 
 As we can see, no tool supports all desidered features.
 It is then required to either build a system that supports all these features or make integration of a set of these tools.
+
+--- metadata visualization
+
+Now we move to the development slash usage of a platform that is capable of storing and displaying metadata.
+MONTRA was our go-to mainly because of its datasource-centric approach.
+As it contains several API endpoints, it exposes data in a way that both humans and machines can interact with the platform, in another words, follows the FAIR guidelines.
+The framework was developed in Django, a high-level Python Web framework.
+
+Before going into more detail about what was done on this tool, first lets go over some key concepts of the platforms.
+- a community is a way to create networks or groups databases on the same portal.
+- then associated with each community, to the skeleton that describes the original content of a database, we call it the questionnaire, which allows to define a series of questions that data owners should answer to describe its database data.
+- A fingerprint is a name given to the set of answers to a questionnaire.
+  In other words, it is the metadata that describes the original data source.
+
+--- fingerprint views figura
+
+MONTRA offers a set of views to create, edit, search and consult fingerprint answers as the one presented here.
+This one in specificaly used to create, however, the other variations a very similiar in terms of looks and organization.
+
+--- fingerprint views
+
+These views were developed in a way that do not that advantage of Django's built-in form system, with that, all data validation is done on the client side through javascript code.
+Additionnaly, besides the different variations of the fingerprint view having a similar look, all use a different template, for that, if a change is done to a common component, that change as to be applied to all variations.
+
+--- fingerprint schema
+
+Questionnaires are defined through an excel file, where the community manager must detail each question and sections of the questionnaire.
+Here is a simple example of a group of question that accept open text.
+
+--- fingerprint schema multiple choice
+
+But the structure of this excel, suffers from clutter.
+For example, to define a multiple choice question, all choices are defined in a value list column separated by a pipe.
+Then if a specific choice supports an additional text we must add this three dot thing.
+As it clear, its hard to see what are the choices and what will be output from this specific configuration.
+
+--- fingerprint schema choice tabular
+
+But this gets worse for more complex data types, such as this one that allows to have a table, where the user has to define the columns, rows and the type of input.
+So here on the value list we have columns separated by pipes, then this double back slash separator, then rows, then this seprator again and the input type.
+
+--- data models
+
+Regarding the data models that stored both the questionnaire strucutre and the fingerprint answers data.
+All answers data are stored in text, so if there is a numeric question on the questionnaire, instead of being stored on a integer or a float field type is being stored in text, taking some additional space on the database.
+
+The questionnaire strucutre, is stored using only 4 data models, which lead to the question data model to have a high number of fields, mainly to specify the configurations for more complex question types.
+
+--- data models 2
+
+On other models we can see data duplication, such as an answer data is stored both on a answer model an on a answer change model, since MONTRA contains the hsitory of asnwers to a given fingerprint.
+
+On several models it can also be found some incorrect types being used.
+Such as on questionnaire data model, the disabled field uses a character type field instead of a boolean field.
+
+--- Refactoring models
+
+With all this flaws detect we decided to perform a refactoring process on the platform, with the goal of not changing how the use cases are performed, but instead improving the system performance and maintainability.
+
+Regarding the datamodels, we created new ones to store type specific answers data.
+SO we have the main model, Answer, and then the data itself is stored on textanswer or dateanswer and so on.
+
+There were some other corrections, one being removing several fields from the question data model that defined question related configurations and created more data models to store those extra configurations, such as the label and choice tabular question.
+
+--- Refactoring views
+
+The fingerprint views were divided into reusable components which were then used to build a single fingerprint template.
+With this a change made to a shared component, will take effect on the several fingerprint views variations.
+
+Regarding the api that was sending the answers data to the backend, it was refactored to make use of Django's built-in form system, with that, all data validation is now performed on the backend.
+
+--- refactoring excel
+
+Finally, the structure of the excel that is used to defined a questionnaire was improved to solve the clutter problem,
+Here is an example of how a type of question was and how is now defined.
+Mainly the data is now spread across more rows, and for that we created more types of rows, instead of having just 3 basic types.
+
+--- Metadata extraction update 1
+
+Now we move to the part of the system that extracts data from CDM databases and sends it to applications, so their data is up-to-date.
+By application we are only considering web application that expect data though HTTP requests.
+
+Here we have a high level arhitecture of the desired system.
+Agents are a software that runs on the data wowners deployment environment with the role of extracting metadata and sending it to the applications.
+
+As data owners might not want or legally can not provide direct acess to the data, we dicided to split the extration and sending of metadta in two components.
+
+--- extraction & update 2
+
+Agents now only send data to the applications and the extraction process is taken care by the data owners.
+
+However we still have to think on how data will reach the application.
+A possible aproach would be to create a peer-to-peer network of agents, and they would store the applications information to then send data to them.
+
+--- extraction & update 3
+
+However, data owners might not want to spend their resources on maintaining a peer-to-peer network.
+For that we see that a better approach is to have a central component that receives the data from the agents and send it to the applications.
+
+--- extraction
+
+For the extraction process, we decided to use a variation of the ACHILLES software, that was developed within the EHDEN project.
+The main difference is that it only extracts the required summaries for the EHDEN project.
+The data owners will be in charge of setting up this extraction process.
+
+To have communication between the central component and the agents and to avoid requesting the data owner to have open ports on their production system, we made use of an asynchronous message system, named Kafka.
+With this agents will pull information from kafka instead of data being pushed by an open port.
+
+Due to Kafka's entire ecosystem and its capabilities for data stream processing we also used it to transport metadta from the agents to the central componet.
+
+With data we had to insert extracted metadta into kafka.
+This was done using Kafka connect, which allows to easily stream data between Kafka and external systems.
+
+The agent is distributed as a docker image, to simplify deployment by the data owner, which contains two internal components.
+A health check handler that is used by the central component to check if a certain agent is active.
+And then a kafka connector that loads metadata stored in a file, provided by the extraction tool.
+
+--- metadata update
+
+With data in kafka, there are some other connectors that can send kafka messages through http requests.
+However, these do not offer any type of customization to build the http request, which is important since different application expect the data in different formats.
+
+Also as data in kafka is treated as an unbounded data flow, and data is uploaded into kafka in several messages by the agent, there needs to be some system that works on top of kafka to fix these problems.
+
+This system is composes by 5 componetns.
+
+--- filter worker
+
+As the destionation application might not require all the metadta that is extract, is is important to first first the data.
+
+For this we have this component that can have several filters running over the data uploaded from an agent.
+
+It was implemented with ksqlDB, which is a stream processing tool that works on top of kafka, allowing to easily manipulate data in streams with a SQL-like syntax.
+
+A single filter worker components can handle data from one agent at the time.
+To handle multiple, several instances of this components can be deployed.
+
+--- orchestrator
+
+With this, a orchestrator component exists to distrube the data from the agent acrros the exsiting filter worker instances.
+
+--- sender
+
+once data is filtered, the sender component is in charge of sending the data to the applications.
+It allows the system admin to customize the http request by requiring a template with placeholders, where the sender will then fill with data once it recives data from the filter worker component.
+
+--- admin protal
+
+The admin portal component provides a web interface to the system admin to interact with the system, mainly to register new databases and applications and also to get feedback on data that is flowing on the system.
+
+--- stastics recorder
+
+Finally the statistics recorder component, captures messages flowing through the system and stores them in a relational database so they can be consulted on the admin area.
+
+--- Demo
+
+I will now show demo of the system working.
+Here we will have a community, which has a database, lets consider the hospital of aveiro.
+two filters: one that extracts only the patient count and another that does no filter on the data recived.
+then we have two web applications:
+one is an installation of the MONTRA framework,
+and another is the network dashboards tool.
+
+--- web
+
+This last, is a tool that I helps to build from the ground up which is integrated with the EHDEN portal which was developed whit the MONTRA framework.
+It allows to upload csv files generated by the specific variation of the ACHILLES Tool developed by the EHDEN project.
+THen it uses this data to generate charts to allow analyze and comprare CDM databases.
+
+Here I have an intalation of montra with a simple quetsionnaire
+and here is the network dahboards tool page to upload the file
+
+here I have a sample file with the same structure of the one generated by the extraction tool.
+I will uploaded into the agent, which is done by simply moving it into a directory where the agent is watching for new files.
+
+As we can see both the data on the MONTRA installation and on the network dashboards was uploaded
+
+---
+
+In conclusion the end result is a system capable of achieving the objectives of metadata extraction, mediation, and visualization.
+
+Several improvements were done to a fully-fedge metadta visualization, which are in a pull request waiting for review.
+
+It was proposed a tool able to extract metadata from a database conforming to the OMOP CDM, taking into account restrict data privacy concerns of data owners.
+
+Finally it was developed a system capable of both gathering and sending metadata to applications, maintaining them with data up-to-date.
