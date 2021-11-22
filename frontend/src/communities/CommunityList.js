@@ -1,5 +1,5 @@
 import * as React from "react";
-import { List, Datagrid, ReferenceField, TextField } from 'react-admin';
+import { List, Datagrid, TextField } from 'react-admin';
 
 const CommunitiesList = (props) => (
     <List exporter={false} {...props}>

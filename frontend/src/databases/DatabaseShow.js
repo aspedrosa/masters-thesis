@@ -41,7 +41,7 @@ const DatabasesShow = (props) => {
                     <TextField source="database_identifier" />
                 </Tab>
                 <Tab label="Uploads">
-                    <ReferenceManyField reference="databasesuploads" target="database_id" addLabel={false}>
+                    <ReferenceManyField reference="databasesuploads" target="database" addLabel={false}>
                         <Datagrid>
                             <DateField showTime={true} source="time"></DateField>
                             <NumberField source="rows"></NumberField>
@@ -49,7 +49,7 @@ const DatabasesShow = (props) => {
                     </ReferenceManyField>
                 </Tab>
                 <Tab label="Health Checks">
-                    <ReferenceManyField reference="agentshealthchecks" target="database_id" addLabel={false}>
+                    <ReferenceManyField reference="agentshealthchecks" target="database" addLabel={false}>
                         <Datagrid>
                             <DateField showTime={true} source="time"></DateField>
                             <TextField source="reason"></TextField>

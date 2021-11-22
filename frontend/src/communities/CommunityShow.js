@@ -1,29 +1,26 @@
 import * as React from "react";
-import { TopToolbar, EditButton, Datagrid, Show, SimpleShowLayout, TextField, ReferenceManyField, ArrayField } from 'react-admin';
+import { Show, SimpleShowLayout, TextField, ReferenceManyField, SingleFieldList, ChipField } from 'react-admin';
 
-const row_click = (id, basePath, record) => {
-    window.location.href=`#${basePath}/${id}/show`;
-};
 
 const CommunitiesShow = (props) => {
     return (
         <Show {...props}>
             <SimpleShowLayout>
                 <TextField source="name" />
-                <ReferenceManyField reference="databases" target="community_id" label="Databases">
-                    <Datagrid rowClick={row_click}>
-                        <TextField source="name"></TextField>
-                    </Datagrid>
+                <ReferenceManyField reference="databases" target="community" label="Databases">
+                    <SingleFieldList linkType={true}>
+                        <ChipField source="name" />
+                    </SingleFieldList>
                 </ReferenceManyField>
-                <ReferenceManyField reference="filters" target="community_id" label="Filters">
-                    <Datagrid rowClick={row_click}>
-                        <TextField source="name"></TextField>
-                    </Datagrid>
+                <ReferenceManyField reference="filters" target="communities" label="Filters">
+                    <SingleFieldList linkType={true}>
+                        <ChipField source="name" />
+                    </SingleFieldList>
                 </ReferenceManyField>
-                <ReferenceManyField reference="applications" target="community_id" label="Applications">
-                    <Datagrid rowClick={row_click}>
-                        <TextField source="name"></TextField>
-                    </Datagrid>
+                <ReferenceManyField reference="applications" target="community" label="Applications">
+                    <SingleFieldList linkType={true}>
+                        <ChipField source="name" />
+                    </SingleFieldList>
                 </ReferenceManyField>
             </SimpleShowLayout>
         </Show>

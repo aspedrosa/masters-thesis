@@ -73,7 +73,7 @@ const ApplicationsShow = (props) => {
                     <br/>
                     <span>Note: A response code of "0" means that something wrong when building request's arguments or the HTTP request failed.</span>
                     <br/>
-                    <ReferenceManyField reference="applicationdatasent" target="application_id" addLabel={false}>
+                    <ReferenceManyField reference="applicationdatasent" target="application" addLabel={false} >
                         <Datagrid>
                             <DateField showTime={true} source="time"></DateField>
                             <NumberField source="response_code"></NumberField>

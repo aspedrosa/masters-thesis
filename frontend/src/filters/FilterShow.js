@@ -1,6 +1,6 @@
 import * as React from "react";
 import Button from '@material-ui/core/Button';
-import { ReferenceManyField, Datagrid, TopToolbar, EditButton, Show, SimpleShowLayout, TextField, ArrayField, SingleFieldList, ChipField } from 'react-admin';
+import { ReferenceManyField, TopToolbar, EditButton, Show, SimpleShowLayout, TextField, ArrayField, SingleFieldList, ChipField } from 'react-admin';
 
 export const StringToLabelObject = ({ record, children, ...rest }) =>
 React.cloneElement(children, {
@@ -34,18 +34,14 @@ const PostShowActions = ({ basePath, data, resource }) => {
     );
 }
 
-const community_click = (id, basePath, record) => {
-    window.location.href=`#${basePath}/${id}/show`;
-};
-
 const FiltersShow = (props) => {
     return (
         <Show actions={<PostShowActions/>} {...props}>
             <SimpleShowLayout>
-                <ReferenceManyField reference="communities" target="filter_id" label="Communities">
-                    <Datagrid rowClick={community_click}>
-                        <TextField source="name"></TextField>
-                    </Datagrid>
+                <ReferenceManyField reference="communities" target="filters" label="Communities">
+                    <SingleFieldList linkType={true}>
+                        <ChipField source="name" />
+                    </SingleFieldList>
                 </ReferenceManyField>
                 <TextField source="name" />
                 <TextField source="filter" />

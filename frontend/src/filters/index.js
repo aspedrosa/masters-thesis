@@ -3,9 +3,11 @@ import FiltersEdit from './FilterEdit';
 import FiltersList from './FilterList';
 import FiltersShow from './FilterShow';
 
-export default {
+const views = {
     list: FiltersList,
     create: FiltersCreate,
     edit: FiltersEdit,
     show: FiltersShow,
 };
+
+export default views;
