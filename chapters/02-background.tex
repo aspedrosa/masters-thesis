@@ -3,7 +3,7 @@
 \graphicspath{{figs/02-background/}}
 
 This chapter describes the search process to find existing solutions that might already achieve the goals defined previously.
-The chapter is divided into three sections, presenting tools regarding metadata visualizations, metadata extraction and metadata network architectures.
+The chapter is divided into three sections, presenting tools regarding metadata visualization and extraction and metadata network architectures.
 From the study of such solutions, hopefully, some can be reused avoiding implementing new systems, however, if the implementation of new applications is required, these tools can give intel on some aspects that might need to be taken into account while developing.
 
 \section{Metadata Visualization Tools} \label{sec:viz-tools}
@@ -88,7 +88,7 @@ Realizing the need for researchers to be able to secure and easily collect and s
 \gls{redcap}'s data capture tools can either be structured to work as a sequence of forms that investigators fill out as they advance through their projects or as a survey meant to be filled by research subjects.
 \gls{redcap} allows visualizing collected data, providing views with basic statistical measures and chart visualizations, enabling the export of the data to several common formats.
 Several features to help assure data quality are available, where Data Quality reports identify missing or incorrect values and outliers, validation errors and also allows the creation of custom rules to evaluate data correctness.
-Collected Data collected be imported using the Data Import tool, furthermore, the system offers an API to support remote insertion and fetch of data.
+Collected Data can be imported using the Data Import tool, furthermore, the system offers an API to support remote insertion and fetch of data.
 There are also many features that enable support for various types of clinical and basic science research.
 \gls{redcap} also has a collaboration functionality, enabling investigators, after adding team members to a project, to assign permissions to each based on their roles and data needs.
 
@@ -102,7 +102,7 @@ In the late phases of a clinical trial, scientists could retrieve a great amount
 With the decrease of cancer deaths over the years, another research paradigm is needed to find new or improve these therapeutic approaches.
 This lead to promote data-sharing attempts to make clinical trial data accessible to the scientific research community.
 The \gls{pds}~\cite{datasphere} provides a platform that meets these data-sharing needs, giving the possibility to share raw data from late-phase oncology clinical trials.
-To share their data, data owners have to sign a data-sharing agreement that contains some extra data about the data they want to upload.
+To share their data, data owners have to sign a data-sharing agreement that contains some extra information about the data they want to upload.
 If this data application gets accepts, the responsibility of patient privacy is on the data providers.
 Authorized users are then given the possibility to access and download all datasets made available on the platform.
 To become an authorized user, the platform requires that users send an application with their background and an agreement to the terms of use.
@@ -117,7 +117,7 @@ Biological details of each biological system can be modeled using a domain-speci
 MOLGENIS can also be used to create web applications to be used by biologists, tailored to their experiments, using reusable components.
 The creators of MOLGENIS saw an improvement of up to 30 times in terms of efficiency when comparing to hand-writing software, besides providing several features hard to achieve by hand that were not made available by similar projects.
 
-With the goal of developing new biomarkers and drugs, the \gls{bbmri-eric} project~\cite{bbmrieric} enables the research of basic mechanisms underlying diseases, by providing fair access to human biological samples and their associated biomedical and biomolecular data.
+With the goal of developing new biomarkers and drugs, the \gls{bbmri-eric} project~\cite{bbmrieric} enables the research of basic mechanisms underlying diseases, by providing \gls{fair} access to human biological samples and their associated biomedical and biomolecular data.
 Here MOLGENIS is used to develop their Directory 1.0 which presents an overview of the \gls{bbmri-eric} ecosystem with its distributed structure and helps users find biobanks of their interest.
 
 To create a centralized research resource for \gls{rd}, the RD-Connect~\cite{rdconnect} project associates genomic data to subject registries, biobanks, and bioinformatics software.
@@ -126,14 +126,15 @@ To help \gls{rd} researchers to search for \gls{rd} biobanks and registries and 
 \subsection*{Cafe Variome}
 Data discovery applications connect data owners with data seekers and therefore promote data sharing, however, this last process can bring some complications.
 Cafe Variome~\cite{cafevariome} is a general-purpose data discovery platform, with the goal not to be a place to store, curate or integrate information but to provide a platform to browse through the existing data.
-It was developed following design principles that take into account important and emerging standards, easy to use by system administrators since is composed of a single simple software package, and also by data seekers, with flexible options allowing to customize each installation to the area of use, with a special interest on the  ''genotype-to-phenotype`` application.
+It was developed following design principles that take into account important and emerging standards.
+It is easy to use by system administrators since is composed of a single simple software package, and also by data seekers, with flexible options allowing to customize each installation to the area of use, with a special interest on the  ''genotype-to-phenotype`` application.
 To the administrator, it is given the ability to determine which data fields can be used for discovery and/or be displayed as results, and also which records are allowed to be used for discovery.
 
 For a data seeker, the number of records that match the search term(s) are split by data source and also split into three categories:
 \begin{itemize}
     \item open access: the user is allowed to see the data present on the system;
     \item linked access: the user can not see directly the data stored in the system.
-        An external data source data link or data source contact information is provided;
+        An external data source link or data source contact information is provided;
     \item restricted access: the user has to make a data request to access the data.
 \end{itemize}
 
@@ -168,7 +169,7 @@ One of the tools that were not present on the previous systematic review, and we
 Before the Dataverse Project, researchers had to choose between receiving credit for their data, by handling distribution themselves, however, it is difficult to have long-term preservation guarantees.
 The latter could be solved by sending the data to a third-party archive system but without receiving much credit.
 The Dataverse Project solves these problems: facilitates the processes of sharing data with others, also allowing to replicate others' work easily, giving the deserved credit and web visibility to all entities involved with the data being shared.
-It does this by presenting a Dataverse collection (a virtual archive that contains datasets, and each dataset contains detailed metadata and data files) on the data authors' website with its original look, feel and branding along with a citation for the data.
+It does this by presenting a Dataverse collection (a virtual archive that contains datasets, and each dataset contains detailed metadata and data files) on the data authors' website with its original look, feel and branding, along with a citation for the data.
 Yet, that page is served by a Dataverse repository (an installation of Dataverse, which hosts multiple Dataverse collections), with institutional support, and long-term preservation guarantees.
 
 \subsection*{NADA}
@@ -232,7 +233,7 @@ Such a tool was developed associated with the \gls{ehden} project~\cite{peters-t
 Facilitating the process to find appropriate datasets is a key aspect to improve data reuse in the biomedical domain, however, it is hard to achieve due to the biomedical data complexity and volume.
 DataMed's~\cite{datamed} mission is to build a data discovery index enabling users to efficiently search and access existing datasets that are spread across several repositories.
 
-It developed a metadata ingestion pipeline that extracts, maps, and indexes by following the \gls{dats} based on community input and an analysis of existing metadata from popular repositories.
+It developed a metadata ingestion pipeline that extracts, maps and indexes by following the \gls{dats} based on community input and an analysis of existing metadata from popular repositories.
 The \gls{dats} model mentioned is used to describe the metadata elements and the structure for datasets~\cite{dats}.
 DataMed's pipeline was built as a horizontally scalable, message-oriented, extract-transform-load, loosely coupled distributed system, composed of a message dispatcher and one or more data processing segments.
 The dispatcher functions as an orchestrator by managing the data ingestion and processing pipeline through message queues.
@@ -270,7 +271,7 @@ Such endpoints can be deployed across a high number of heterogeneous types of sy
 To alleviate the consequences of fast data expansion and automate the arrangement of data repositories and filesystems, Skluma~\cite{skluma} is a scalable system able to extract and gather metadata from scientific sources in a way that can be used for discovery over several file systems and repositories.
 
 It is designed as a web service, exposing a \gls{rest} \gls{api} allowing users to request metadata extraction from a single file or a whole repository.
-It is composed of three components: a crawler that processes the target data collection, a set of extractors to get metadata from files, and an orchestrator, which exposes the \gls{api}, launches crawlers, handles the metadata extraction process for each file found, and manages the computational resources used by the other two components:
+It is composed of three components: a crawler that processes the target data collection, a set of extractors to get metadata from files, and an orchestrator, which exposes the \gls{api}, launches crawlers, handles the metadata extraction process for each file found, and manages the computational resources used by the other two components.
 
 Skluma allows performing data extraction from a broad range of repository types.
 To achieve this, a crawler component was developed following a modular data access interface, providing functions to get file metadata, file contents, and list directory contents.
@@ -298,11 +299,11 @@ retrieve data from the data owners site:
 
 \subsection*{CafeVariome}
 Coming back again to Cafe Variome~\cite{cafevariome}, it was designed to be used safely, with sensitive datasets.
-With this, it is often important to limit which persons can access the system and perform their data discovery browsing/queries.
+With this, it is often important to limit which users can access the system and perform their data discovery browsing/queries.
 This leads to laboratories connecting in closed or semiclosed discovery networks with limited access.
 Cafe Variome offers the following network architectures:
 \begin{enumerate}
-    \item hub and spokes arrangement: it has a single discovery portal where searches can be performed across all partner in the network;
+    \item hub and spokes arrangement: it has a single discovery portal where searches can be performed across all partners in the network;
     \item all-to-all networks: each laboratory has an individual interface over their data, that can be used by other network members;
     \item combination of the previous architectures.
 \end{enumerate}
@@ -458,7 +459,7 @@ Table \ref{tab:background-resumo} enumerates all the tools analyzed, as well as,
 It is possible to see that no tool contains all the desired features.
 It is then required to either build a system that supports all these features or make integration of a set of these tools.
 
-Either way, this study will help on further development processes, due to the aspects that certain tools might alert to, such as, on \cite{popmednet}, software running on the local environment of the data owners followed a push approach for communication instead of pull, to avoid requiring open ports on their systems, which could lead to having to change critical firewall rules.
+Either way, this study will help on further development processes, due to the aspects that certain tools might alert to, such as, on \cite{popmednet}, software running on the local environment of the data owners followed a pull approach for communication instead of push, to avoid requiring open ports on their systems, which could lead to having to change critical firewall rules.
 Also, on \cite{gaain}, it was given the possibility to data owners to deactivate software related to the \gls{gaain} project running on their local system.
 Furthermore, one interesting fact that extraction tools had in common, was that either the data was assumed to be or was first transformed into a common format before performing any extraction processes.
 
