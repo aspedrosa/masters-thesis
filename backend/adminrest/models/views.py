@@ -1,5 +1,3 @@
-import json
-
 import rest_framework.filters
 from django.conf import settings
 from kafka import KafkaProducer
@@ -16,45 +14,49 @@ class CommunityViewSet(viewsets.ModelViewSet):
     queryset = models.Community.objects.all()
     serializer_class = serializers.CommunitySerializer
     filter_backends = (DjangoFilterBackend, rest_framework.filters.OrderingFilter,)
+    filter_fields = ("filters",)
 
 
 class DatabaseViewSet(viewsets.ModelViewSet):
     queryset = models.Database.objects.all()
     serializer_class = serializers.DatabaseSerializer
     filter_backends = (DjangoFilterBackend, rest_framework.filters.OrderingFilter,)
-    filter_fields = ("database_identifier",)
+    filter_fields = ("database_identifier", "community")
 
 
 class FilterViewSet(viewsets.ModelViewSet):
     queryset = models.Filter.objects.all()
     serializer_class = serializers.FilterSerializer
     filter_backends = (DjangoFilterBackend, rest_framework.filters.OrderingFilter,)
-    filter_fields = ("status",)
+    filter_fields = ("status", "communities")
 
 
 class ApplicationViewSet(viewsets.ModelViewSet):
     queryset = models.Application.objects.all()
     serializer_class = serializers.ApplicationSerializer
     filter_backends = (DjangoFilterBackend, rest_framework.filters.OrderingFilter,)
-    filter_fields = ("status",)
+    filter_fields = ("status", "community")
 
 
 class ApplicationDataSentViewSet(viewsets.ModelViewSet):
     queryset = models.ApplicationSentData.objects.all()
     serializer_class = serializers.ApplicationDataSentSerializer
-    filter_backends = (rest_framework.filters.OrderingFilter,)
+    filter_backends = (DjangoFilterBackend, rest_framework.filters.OrderingFilter,)
+    filter_fields = ("application",)
 
 
 class AgentHealthCheckViewSet(viewsets.ModelViewSet):
     queryset = models.DatabaseHealthCheck.objects.all()
     serializer_class = serializers.AgentHealthCheckSerializer
-    filter_backends = (rest_framework.filters.OrderingFilter,)
+    filter_backends = (DjangoFilterBackend, rest_framework.filters.OrderingFilter,)
+    filter_fields = ("database",)
 
 
 class DatabaseUploadViewSet(viewsets.ModelViewSet):
     queryset = models.DatabaseUpload.objects.all()
     serializer_class = serializers.DatabaseUploadSerializer
-    filter_backends = (rest_framework.filters.OrderingFilter,)
+    filter_backends = (DjangoFilterBackend, rest_framework.filters.OrderingFilter,)
+    filter_fields = ("database",)
 
 
 @api_view(["PUT"])
