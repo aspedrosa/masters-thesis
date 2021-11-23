@@ -16,7 +16,7 @@ Originally, the MONTRA framework was developed by the Bioinformatics team of the
 The code is publicly available on github\footnote{https://github.com/bioinformatics-ua/montra}, whereby Django 1.4, a high-level Python Web framework\cite{django}, was used as a framework to develop the entire system.
 This framework allows to develop complete web applications, in a faster and easier way.
 It contains a model layer that allows specifying database tables through python classes called models, following a \gls{orm} approach, allowing to perform database queries through python code instead of \gls{sql} queries.
-Django can then check if there are new models or if existing ones have changed. Such changes are then expressed through database migration files which will apply them to the database tables.
+Django can then check if there are new models or if existing ones have changed. Such changes are expressed through database migration files which will apply them to the database tables.
 Next, the developer can set custom URL patterns so specific requests are handled by a specific function of the view layer, where the business logic will be implemented.
 Finally, Django contains a template layer that allows building dynamic \gls{html} pages without requiring to have a separate javascript framework to do such.
 The developer builds the main static structure of the page and then uses a special syntax that describes how Django should display the data received from the view layer.
@@ -111,7 +111,7 @@ In other words, it is the metadata that betters describes the original data sour
 Data owners can start to answer the questions to build the profile of their data sources once there are communities on the platform and, these have at least a questionnaire associated.
 
 On the list presented in figure \ref{fig:listings}, we can notice that the only fingerprint present is marked as draft.
-This is a state of the fingerprint which prevents from non-ready or non-approved fingerprints will not show to the regular community users.
+This is a state of the fingerprint which prevents from non-ready or non-approved fingerprints not showing to the regular community users.
 With this, for such users the list showed above would be empty.
 Fingerprints can be published depending on the chosen settings for the community.
 After the data source owners request to publish a fingerprint the framework allows to either automatically accept or require a community manger to accept it.
@@ -126,7 +126,7 @@ After the data source owners request to publish a fingerprint the framework allo
 \subsection*{Views}
 
 In figure \ref{fig:fingerprint-new} it is presented the user interface where a data owner can answer the questions of a questionnaire.
-Each question of the questionnaire is placed under a container that can be collapsed, as is shown for question \textit{Instituition name}.
+Each question of the questionnaire is placed under a container that can be collapsed, as is shown for the question \textit{Instituition name}.
 However, if multiple questions are grouped, the collapsable container will affect all questions of the group.
 
 \begin{figure}[H]
@@ -281,18 +281,18 @@ If I try to submit the form with invalid values, error messages are presented as
     \label{fig:html-form-validation}
 \end{figure}
 
-Additionally, if the data is sent directly through an \gls{api} call to the backend, Django forms framework ensures invalid data is rejected.
-With this, when building a form in Django the developer only needs to specify what fields are present and their type and restrictions and Django will validate all this before data is stored on the database.
+Additionally, if the data is sent directly through an \gls{api} call to the backend, Django forms framework ensures that invalid data is rejected.
+With this, when building a form in Django the developer only needs to specify what fields are present, their type and restrictions, and Django will validate all this before data is stored on the database.
 
 Finally, \gls{xss} attacks are prevented because Django escapes the values that were previously provided by users when filling the input tags, e.g. the character ``<'' is transformed in ``\&lt;'', avoiding the browser to interpret user's input as \gls{html} code.
 
 Another problem associated with the views of the MONTRA framework is how the management of javascript dependencies is done.
 There is no consistency on how such dependencies are imported.
 Some are imported directly on the template through \textit{script} tags making use of a \gls{cdn}, as others their entire source were added to the repository and are then referenced based on their location.
-The first approach has the advantage that an upgrade is simply changing the URL attribute of the \textit{script} tag and also reduces bandwidth from the Django server handling the user requests.
+The first approach has the advantage that an upgrade is done by simply changing the URL attribute of the \textit{script} tag and also reduces bandwidth from the Django server handling the user requests.
 The second approach increases the overall size of the repository, and the upgrade process will lead to more changes on the repository.
 These processes, however, have the problem that easily unnecessary dependencies will still be present on the Django templates after being used on the application.
-Currently, there are tools such as \gls{npm}\footnote{https://www.npmjs.com/} that help to manage these dependencies by defining, on a single file, the dependency and its version.
+Currently, there are tools such as \gls{npm}\footnote{https://www.npmjs.com/} that help manage these dependencies by defining, on a single file, the dependency and its version.
 This software will then download the dependency and subsequent dependencies.
 
 \subsection*{Programming Interface}
@@ -303,7 +303,7 @@ It will be detailed now what calls are performed by MONTRA's fingerprint views.
 
 Note that there are two different \gls{api}s available here.
 Fingerprint views use one specific set of \gls{api} requests that return answers in \gls{html} format, ready to present to the user, and others to send the user's data.
-For a regular user to use, there are other set o \gls{api} endpoints that are more human friendly, which is documented and has a How to Use page, however, an advanced user can see what requests are made on the fingerprint views through browser's console and perform the requests themselves.
+For a regular user to use, there are other set o \gls{api} endpoints that are more human friendly, which are documented, and has a How to Use page, however, an advanced user can see what requests are made on the fingerprint views through browser's console and perform the requests themselves.
 
 First, we will go over the \gls{api} used by the fingerprint views.
 But before showing the available endpoints, let's go over how the fingerprint views are organized and how they show only the questions of a certain question set at a time.
@@ -313,17 +313,17 @@ According to the right side menu, there are six question sets and currently the 
 In the middle of the page, we then see the content of the question set: questions, title, control buttons, and permissions.
 Note that there is a scroll bar so the question set contains more questions.
 Also the previous, next, cancel and save buttons are not tied to the question set.
-The other question sets are also present on the page, however, are hidden.
+The other question sets are also present on the page, however, they are hidden.
 Every question set has its container, so whenever the user clicks on the previous or next buttons or selects another question set on the question set side menu bar, the current question set container is hidden and the new is shown.
 For questionnaires with a high number of question sets, rendering all available question sets could not be necessary.
-For that, a question set is loaded only when accessed the first time and following accesses will not require a load.
+For that, a question set is only loaded when accessed the first time and following accesses will not require a load.
 
 \begin{figure}[H]
     \center
     \includegraphics[width=\textwidth]{fingerprint-hidden-question-sets}
     \caption{Each question set has its container.
     Here the current container is presented within the red rectangle.
-    The other existing question sets are represented through the blue lines, which currently are hidden.}
+    The other existing question sets are represented through the blue lines, which are currently hidden.}
     \label{fig:fingerprint-hidden-question-sets}
 \end{figure}
 
@@ -359,9 +359,9 @@ GET [base url]/c/[community slug]/searchqs/[questionnaire id]/[question set id]/
 \end{itemize}
 
 For both cases where new data is stored, besides the usual GET that is used to load the question set, there is also a POST request that saves the progress done to a specific question set.
-The data for these requests are gathered natively by javascript once each question set container contains a \textit{form} tag englobing all the questions inputs.
+The data for these requests are gathered natively by javascript since each question set container contains a \textit{form} tag englobing all the questions inputs.
 This way there is no need to iterate over the questions of a question set and append each response to the request's data.
-The \textit{save id} field of the endpoints tells to which question set the data is related to
+The \textit{save id} field of the endpoints tells to which question set the data is related to.
 However, there is already a \textit{question set} field which always has the value of 1, so one of these fields could be removed from the endpoint.
 
 The GET request is then used to load the \gls{html} to present the questions of a question set.
@@ -394,7 +394,7 @@ With the PUT request, a fingerprint owner can update data of specific answers wh
 
 Existing two different types of endpoints to retrieve answers data makes sense since the returned format is returned in a way that is easier to handle data by the target entity that will consume that endpoint.
 If the fingerprint pages receive the data in \gls{html} format they can just put the \gls{html} in the determined container instead of having to build the entire container and insert the data on each input.
-Accordingly, if data is returned in a \gls{json} format it can easily access the data and perform some data processing avoiding going transverse the \gls{html} and retrieve the data from each input.
+Accordingly, if data is returned in a \gls{json} format, data can be easily accessed, avoiding having to transverse the \gls{html} and retrieve the data from each input.
 However, having two different endpoints to update data does not make that much sense since current \gls{http} requests libraries offer an easy way to build a request in the required format as the one's browsers automatically build whenever a form is submitted.
 
 \subsection*{Draft Status Changes}
@@ -425,9 +425,9 @@ If the auto-accept setting is off and the second endpoint is used, a user can pu
 As mentioned before, to define a skeleton of the metadata that describes a data source for a given community, a spreadsheet file has to be submitted.
 There is already a template with some instructions and columns where a community manager only has to fill the necessary rows to then get the wanted result.
 
-The column defined in the template are the following:
+The columns defined in the template are the following:
 \begin{itemize}
-    \item Type: the type of the specific row. Here are allows 3 different values:
+    \item Type: the type of the specific row. Here are allowed 3 different values:
         \begin{itemize}
             \item QuestionSet: allows dividing the questionnaire into several sections;
             \item Question: a question specification;
@@ -661,13 +661,13 @@ Once a request is rejected or accepted, the value of the pending value is change
 
 On the Fingerprint model, there is also a \textit{draft} value that indicates if the fingerprint is published or not.
 Once a fingerprint is published, the value of the \textit{draft} will be true, and on the FingerprintPending table, the associated record will have the pending value at \textit{false}.
-However, this value is not required to be stored on the database since after a fingerprint is published, the fingerprint will not be pending therefore, the associated FingerprintPending record could be deleted.
+However, this value is not required to be stored on the database since after a fingerprint is published, the fingerprint will not be pending, therefore, the associated FingerprintPending record could be deleted.
 
 % ---
 
 Whenever a questionnaire is imported, a QuestionnaireImportFile record is created containing the information of the uploaded file and the user that uploaded it.
 Also contains a status field to give some feedback to the user.
-Associated with every import will also be created a Questionnaire record.
+Associated with every import, it will also be created a Questionnaire record.
 It contains an in\_preview variable that is set to \textit{true} whenever a questionnaire is in the import process.
 If it fails to import, only the QuestionnaireImportFile record will be kept, which the status will change to \textit{Failed} and an error message will also be attached to the import record.
 
@@ -689,7 +689,7 @@ If there are some user input errors, it could lead to unexpected behavior or int
 Associated with how the structure of a questionnaire is stored, there are only four models to do so: Questionnaire, QuestionSet, Question, and Choice.
 All are associated with a specific concept of the questionnaire, although other concepts are not represented.
 First, there's the category, used to create question groups within a question set.
-It is represented as with a question record, where the ``category'' field of the question models has the value ``true''.
+It is represented as a question record, where the ``category'' field of the question models has the value ``true''.
 For more complex question types, that require extra configuration, such as choice tabular (name of the rows and column) and open multiple (name of the columns), such data is stored in a metadata field of the associated question model.
 Question types that do not make use of these fields, will have an empty value, leading to some database space being wasted.
 
@@ -702,7 +702,7 @@ Question types that do not make use of these fields, will have an empty value, l
 
 When the questionnaire's spreadsheet was explained, some fields were related to some old deprecated features.
 The question model contains the same fields that map to the questionnaire's spreadsheet deprecated fields: stats, visible\_default, and disposition.
-There is also a slug\_fk field that points to a Slugs model that replicates the question's slug and text, which is was used to yet another deprecated feature.
+There is also a slug\_fk field that points to a Slugs model that replicates the question's slug and text, which was used to yet another deprecated feature.
 
 Finally, a question supports for the user to define additional checks which are defined on the ``checks'' field however, this feature is not exposed through the questionnaire's spreadsheet.
 
@@ -726,13 +726,13 @@ Finally, several clutter problems were mentioned when describing the spreadsheet
 % trade offs tidos em conta
 % diagrama de classes com diferenças
 
-Since the MONTRA framework uses some outdated software and there are active installations, the refactoring process can not be simply designing new models and views, implementing them, and replacing old ones is not a viable option.
+Since the MONTRA framework uses some outdated software and there are active installations, the refactoring process can not be done by simply designing new models and views, implementing them, and replacing old ones is not a viable option.
 The approach taken was to first decide what components would go through a refactoring process and within each, until what level we would apply it.
 
 Taking into account figure \ref{fig:old-models}, since both the Community and Developer (Plugins) Django applications target functionalities not so fingerprint-centric and are more related to features of the framework as a whole, we decided not to perform any changes on the models of these applications.
 This leaves us with both the Fingerprint and Questionnaire applications.
 Regarding the Fingerprint application, the fingerprint model is one of the main models of the framework, affecting several features of the framework, so we intend to perform minimal changes on it.
-However, the remaining models associated with the answers of a fingerprint and submissions will have a new models design.
+However, the remaining models associated with the answers of a fingerprint and submissions will have a new model design.
 Respecting the Questionnaire application both the Questionnaire and QuestionSet models represent well-defined concepts and do not require any changes.
 Yet, the remaining models, mainly the models storing the structure of the questions, their dependencies, choices, etc.\, will also have a new design.
 
@@ -765,7 +765,7 @@ This field was replaced by the addition of new models (Label) which will be expl
 Another example was the category field, which indicated if a specific question record described a category in the questionnaire which was being used to create subgroups of questions.
 With the new models, a new Group model was created which has a set of questions associated.
 Previously this relationship did not exist, so MONTRA would create a group based only on the question's order and level.
-Additionally, with the addition of this Group model, there is no need to have a level field on the question type, since nested levels are represented through Groups, which can have a parent group.
+Additionally, with the addition of this Group model, there is no need to have a level field on the question model, since nested levels are represented through Groups, which can have a parent group.
 A group with no parent is represented in the root level of the questionnaire.
 The remaining models (Label, Choice, and their descendants) will be explained in more depth in the next Excel subsection since they were created mainly because of how questions are represented in the new spreadsheet format.
 
@@ -801,7 +801,7 @@ The new fingerprint template will only contain components to display within the 
 
 In Figure \ref{fig:fingerprint-other-after-diagram} is presented a two-column layout for the create, edit, search and preview variations of the fingerprint view.
 Although, some components are not displayed in certain variations, such as the Cancel and Save buttons.
-The Cancel button is not displayed on the preview variation, and both Cancel and Save buttons are replaced by a Search button on the search button.
+The Cancel button is not displayed on the preview variation, and both Cancel and Save buttons are replaced by a Search button.
 Additionally, different buttons appear on the question set buttons component according to the fingerprint view variation.
 
 \begin{figure}[H]
@@ -849,7 +849,7 @@ POST on the other side is used to send information to a server.
 On the backend side, Django has three main classes that handle the data around forms.
 The main one is the \textit{Form} class that defines how it works and how it will be presented to the user.
 Then there is the \textit{Field} class that describes a field of a form, which is in charge of performing field-specific validations.
-Django already has some implementations of this class for the most common field types such as number, text, choice, \dots
+Django already has some implementations of this class for the most common field types such as number, text, choice, etc.
 Finally, the \textit{Widget} class is in charge of processing and transforming the raw data received and also preparing and restructure data to be presented to the user, and again Django already has some implementations of this class.
 Each \textit{Field} class has a widget class associated.
 The common development flow is to create a child class of Django's \textit{Form} class and then define its fields with \textit{Field} classes.
@@ -859,7 +859,7 @@ A Submission form was created, child of Django's \textit{Form} class, where its 
 Additionally, several question types lead to the need of having to create and associate new \textit{Field} and \textit{Widget} child classes since they were too complex to be represented or validated with the ones that Django already has implemented.
 To build the widgets of such question types, existing implementations were ported to an associated Django template to then be used in its new widget class.
 
-By removing all validations from the front end, client-side code is now only used to make \gls{api} calls to the backend, to validate the data inserted by the user, and to add functionality to the page itself, such as hide and/or show elements on the page after a button is clicked.
+By removing all validations from the front end, client-side code is now only used to make \gls{api} calls to the backend to validate the data inserted by the user, and to add functionality to the page itself, such as hide and/or show elements on the page after a button is clicked.
 All client-side code related to the fingerprint was either migrated or newly implemented using, as much as possible, plain javascript, avoiding any external library.
 It avoids adding yet another dependency to the project, and if in the future, upgrades are done to libraries such as JQuery\footnote{https://jquery.com/}, the code implemented here is not affected and does not require any refactoring.
 
@@ -872,7 +872,7 @@ It avoids adding yet another dependency to the project, and if in the future, up
 As all the validations were moved to the backend, it was necessary to create several \gls{api} endpoints that perform them.
 Such validations take advantage of Django's form system, so in the implementation of each endpoint, it is only necessary to build a SubmissionForm then add the data provided by the user and then call its validation method, which will validate all the fields that were defined in the form.
 
-Besides the user input validation, there need to be new endpoints that render the \gls{html} of a question set of a questionnaire using the new questions models and Django's forms system.
+Besides the user input validation, there needs to be new endpoints that render the \gls{html} of a question set of a questionnaire using the new questions models and Django's forms system.
 As different fingerprint view variations might present the questions and answers differently, there are different endpoints for each fingerprint variant:
 
 \begin{lstlisting}[basicstyle=\tiny]
@@ -898,10 +898,6 @@ Submissions Management:
 POST [base url]/api/submission/save/[community slug]/[questionnaire id]/[section index]/
 POST [base url]/api/submission/save/[questionnaire id]/[section index]/
 PUT [base url]/api/submission/save/[fingerprint hash]/[section index]/
-
-Questionnaire Information:
-GET  [base url]/api/questionnaire/info/[community slug]/[questionnaire id]/[section index]/
-GET  [base url]/api/questionnaire/info/[questionnaire id]/[section index]/
 \end{lstlisting}
 
 Related to the Submissions Management endpoints, which are used to save answers data, the first two endpoints follow the same idea as the ones presented before, which on single community installations there is no need to provide the community slug.
@@ -946,6 +942,12 @@ This implies that the answer's data sent on the Submissions Management endpoints
 However, one does not know the keys for each choice and also the available choice if the web view is not used.
 For that, the Questionnaire Information endpoints are used to get information of choice-based questions, so that the correct data is sent along with the Submissions Management endpoints.
 
+\begin{lstlisting}[basicstyle=\scriptsize]
+Questionnaire Information:
+GET  [base url]/api/questionnaire/info/[community slug]/[questionnaire id]/[section index]/
+GET  [base url]/api/questionnaire/info/[questionnaire id]/[section index]/
+\end{lstlisting}
+
 \subsection*{Draft Status API}
 
 There were also some modifications to the endpoints to change the publish status of a fingerprint.
@@ -968,13 +970,14 @@ This avoids notifications being sent to the community manager telling that a use
 The previously presented version of the spreadsheet used to define a questionnaire, had some problems in terms of clutter due to the overuse of the ``Value list'' column to define the extra configuration of specific questions types.
 The column was used to define all choices and their extra information of choice-based questions, to define columns and their settings of open multiple question and columns, rows, and type of choice tabular questions.
 
-To fix those clutter problems, improvements were done to the spreadsheet by deleting some useless columns that were related to deprecated features and adding new types of rows that define the extra configurations for those questions types that require.
+To fix those clutter problems, improvements were done to the spreadsheet by deleting some useless columns that were related to deprecated features and adding new types of rows that define the extra configurations for those questions types that require it.
 
-Starting by the columns of the actual spreadsheet now are the following:
+Starting by the columns of the actual spreadsheet, now are the following:
 
 \begin{itemize}
     \item Type;
     \item Text/Question;
+    \item Level;
     \item Data Type;
     \item Help Text/Description;
     \item Slug;
@@ -1060,7 +1063,7 @@ Figure \ref{fig:excel-end-group} shows how the change would affect the spreadshe
 
 Even with colors, the user editing has to look several rows above to know at each level it is so he can match the ``EndGroud'' rows with the respective ``Group'' rows.
 This is the same problem as matching if open and closing brackets on C-like programming languages.
-Such a problem is alleviated since indentation is allowed, which can not be achieved on a spreadsheet.
+Such a problem is alleviated on them since indentation is allowed, which can not be achieved on a spreadsheet.
 For those reasons, the Level column was kept, however, when a questionnaire is imported, whenever there are nested levels the framework will create groups with empty text.
 
 \subsection*{Data Type}
@@ -1101,7 +1104,7 @@ The old Question model allowed to add custom checks, however, this feature was n
 This ``Constraints'' column intends to enable configuring such additional checks.
 Checks were previously stored in a custom format, where each check was separated by a space, defined as $name="value"$.
 To avoid having to parse a string every time we want to load the constraints, they are now stored in a \gls{json} field.
-Regarding the spreadsheet, the format chosen was a modified version of the original checks, supporting several types instead of interpreting every value as a string, allowing flexibility on the whitespace between each and within a check.
+Regarding the spreadsheet, the format chosen was a modified version of the original checks format, supporting several types instead of interpreting every value as a string, allowing flexibility on the whitespace between each and within a check.
 Next is presented some examples:
 
 \begin{verbatim}

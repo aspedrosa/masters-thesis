@@ -57,7 +57,7 @@ However, it is also crucial that feedback is provided on the system's state, suc
 % aqui digo que percisamos de um componente intermedio. mais á frente vou dizer que percisamos um componente intermedio entre o kafka e as aplicações. coisas diferentes
 
 On the applications side, there are other important factors to consider before going forward on implementing the intermediary component mentioned before.
-First, then we talk of application we are considering only web application that expect to receive metadata through a \gls{rest} \gls{api}.
+First, when we talk of applications we are considering only web application that expect to receive metadata through a \gls{rest} \gls{api}.
 Second, the \gls{api}s of different applications expect the metadata in distinct arrangements.
 A way out of this would be to specify a set of endpoints that each application had to implement, yet that would lead the applications to have two sets of endpoints that do the same thing.
 On the other side, making a flexible option, where the requests where the data is sent are customizable, would be more appealing for the target applications, which would not have to make any changes.
@@ -80,7 +80,7 @@ Some use all the data, others only need a value of such data.
     \item The system should allow managing the destination applications:
         \begin{list}{}{}
             \item The applications to where the data of the databases are sent, should not be hard-coded, for that, the network admin should be able to perform \gls{crud} operations on such.
-                The term application should be interpreted as web applications that have \gls{rest} \gls{api} endpoints available to receive data.
+                The term application should be interpreted as web applications that has \gls{rest} \gls{api} endpoints available to receive data.
         \end{list}
 
     \item The system should provide statistics on the data that has circulated:
@@ -90,7 +90,7 @@ Some use all the data, others only need a value of such data.
 
     \item The format of the request sent with the metadata to each application must be customizable:
         \begin{list}{}{}
-            \item This is important since different applications expect to receive metadata in distinct formats since each application has a different \gls{api}.
+            \item This is important since different applications expect to receive metadata in distinct formats since each application has a different \gls{api}s.
         \end{list}
 
     % eu não falo aqui das pipelines, que permitem filtrar os dados, pk isso foi algo que adicionei como consequencia consequencia em termos usado kafka
@@ -100,7 +100,7 @@ Some use all the data, others only need a value of such data.
             \item In a scenario where both all the destination applications and all databases belong to the same project, the metadata of the databases makes sense in all applications;
             \item Now consider a scenario where half of the databases are associated with one project and the rest with another.
           Each project has a destination application that receives the data.
-          Considering that there is no concept of project or groups, both applications will receive data of both projects.
+          Considering that, there is no concept of project or groups, both applications will receive data of both projects.
           To solve this, it required to have two installations of this system, one for each project.
           By grouping databases, data of a database can be guided to applications that are also attached to the same group.
         \end{list}
@@ -251,7 +251,8 @@ The schemas to provide are:
 \begin{itemize}
     \item \gls{cdm} Data: where the original \gls{cdm} data is stored;
     \item Results: that contains the tables that store the results obtained from the execution of analyses queries;
-    \item Vocabularies: as each clinical database certainly will contain their distinct internal representation of clinical concepts, such as a database might encode sex with just a character (f, m, o), others might encode with the whole word (female, male, other), the \gls{omop} \gls{cdm} makes use of standardized vocabularies that allow creating a homogeneous representation for different databases.
+    \item Vocabularies: as each clinical database certainly will contain their distinct internal representation of clinical concepts, such as a database might encode sex with just a character (f, m, o), others might encode with the whole word (female, male, other).
+        The \gls{omop} \gls{cdm} makes use of standardized vocabularies that allow creating a homogeneous representation for different databases.
         Such vocabularies can be acquired on the \gls{ohdsi}'s ATHENA website\footnote{\url{https://athena.ohdsi.org/}}.
 \end{itemize}
 
@@ -278,13 +279,13 @@ One solution would be to have a persistent connection between both ends, however
 
 An alternative is to follow a pull philosophy.
 The central component can put requests on a message queue, the agent checks periodically this queue and if it finds any request, responds to it.
-This can be interpreted as following the publish-subscriber pattern.
+This can be interpreted as following the publish-subscribe pattern.
 This solution allows answering the ``Microservice architecture'' non-function requirement as it helps decoupling services since they do not require to be aware of each other.
 Additionally, the publisher service will not necessarily block waiting for the subscriber service to receive the message, also known as an asynchronous message system.
 
-A well know and widely used implementation of such systems is Kafka
-Originally, the intent was to use a publish-subscriber system just for the communication between the agents and the central component.
-However, Kafka has some functionalities that appeal to use also to manage metadata, working as a central component.
+A well know and widely used implementation of such systems is Kafka.
+Originally, the intent was to use a publish-subscribe system just for the communication between the agents and the central component.
+However, Kafka has some functionalities that appeal to also use it to manage metadata, working as a central component.
 
 Kafka was built at LinkedIn after they tested other messaging alternatives and concluded that they were designed to target low-latency use cases instead of their needed high-volume scale-out deployment.
 As a result, the produced system is a scalable publish-subscribe messaging system designed around a distributed commit log.
@@ -304,9 +305,9 @@ Due to its simple storage layout, every time a producer publishes a message to a
     \label{fig:kafka}
 \end{figure}
 
-In contrary to the regular publish-subscriber system, the concept of a consumer in Kafka is generalized to be a group of co-operating processes running as a cluster.
+In contrary to the regular publish-subscribe system, the concept of a consumer in Kafka is generalized to be a group of co-operating processes running as a cluster.
 Because of that, a message in a partition of a topic is delivered to only one consumer of a group.
-Then, partitions allow to control the level of parallelism of consumers, as different partitions of a topic are assigned to different consumers of a consumer group.
+With this, partitions allow to control the level of parallelism of consumers, as different partitions of a topic are assigned to different consumers of a consumer group.
 
 In the end, to achieve the high-throughput requirements, Kafka went on a different road compared to the classic principles of messaging systems in several ways.
 
@@ -347,7 +348,7 @@ After researching on the Confluent Hub, three connectors were found to suit the 
 
         \begin{list}{}{}
             \item It has four different modes of capturing data from tables.
-                Three of them provide incremental information, sending a message to Kafka after a row of a table or a custom query is created or updated.
+                Three of them provide incremental information, sending a message to Kafka after a row of a table, or a custom query, is created or updated.
                 The difference between these three modes is from what columns the connector tries to infer that a row has changed.
                 These are not suitable for our use case, since it treats a table as an unbounded source of data;
 
@@ -404,7 +405,7 @@ The agent will have two internal components:
         As this periodic send of ``I'm active'' messages will not be that regular, one to two times a month, the admin can request an agent to answer if it is active, and it will be this component in charge of sending a response.
         Regarding this last component, as it needs to be developed from scratch, it is a great opportunity to test new technologies that are not so commonly taught on a regular Informatics Engineering course.
         By technologies, we intend to refer to the programming languages used.
-        The most popular and used ones are Python and Java, however, other programming languages appeared and are starting to gain terrain on the wap app development.
+        The most popular and used ones are Python and Java, however, other programming languages appeared and are starting to gain terrain on web app development.
         Examples of such programming languages are Rust\footnote{\url{https://www.rust-lang.org/}} and Go\footnote{\url{https://golang.org/}}.
         According to the 2020 Stack Overflow Developer Servey~\cite{so-survey}, Rust is the most loved language among developers, and Go, in terms of most popular languages, just stands behind equivalent languages such as Python, Java and C Sharp.
         Besides behind the most loved language, Rust's ownership model, which increases memory safety with compile-time checks, is something that is not present in other languages, and newcomers will have a not-so-appealing learning curve.
@@ -508,7 +509,7 @@ Furthermore, by default, this \gls{http} connector will send a request for each 
 The connector being used on the agent sends a message for each row of the catalogue export \gls{csv} file, which would mean that this \gls{http} connector would send several \gls{http} to an application related to the same upload.
 The \gls{http} connector supports batching messages together, on the same request, however, messages are stored in memory until the batch size is not reached, which could cause memory problems if the upload contains a high number of metadata metrics and also if several databases upload at the same time.
 Additionally, the number of messages sent by a database is dynamic, which the \gls{http} connector does not support, since it gathers a finite number of messages.
-This problem will always exist due to the nature of Kafka, where topics can be treated as streams of data, which do not have determined start and end, and there is always data flowing.
+This problem will always exist due to the nature of Kafka, where topics are treated as streams of data, which do not have determined start and end, and there is always data flowing.
 
 \section{Metadata Manager}
 % centralized entity working on top of kafka, dealing with the unbounded format of data in Kafka
@@ -538,14 +539,14 @@ As these components will be implemented from scratch, the programming language t
 % ksql introduced. easily filter data with select \_ where \_
 % select and filter the data comming from the databses
 % only process data of a single database at a time. handling multiple is the same is hard to handle and hard to scale
-% scalable: several pipeline worker applications
+% scalable: several filter worker applications
 
 Data comes from the agents in several Kafka messages, which need to be gathered together to then be used to build the custom request for each application.
 As gathering all the uploaded data in memory is not a scalable option, and implementing a system with memory usage management is a complex task, the system must first filter out unnecessary data and only allow the Admin to build and send the request to the applications.
 A Filter operation will remove entire rows, however, only a subset of columns might be required.
 For that, the system should also allow choosing which columns of the metadata are required.
 
-That's what the Pipeline Worker component is supposed to do.
+That's what the Filter Worker component is supposed to do.
 Extract only the essential data from all the data uploaded by an agent and then send it to the Sender component, who will be in charge of building and sending the request to the applications.
 
 Since data is already in Kafka, we can take advantage of its stream processing features to filter data received from the agents.
@@ -567,7 +568,7 @@ To develop these filtering streams, there are two options:
 \begin{itemize}
     \item Kafka Streams: A Java library to process and analyze data that is already present on Kafka.
         Using it would imply implementing this Filter Worker component in Java, however, from the explanation of how a filter will be implemented, there will be several threads involved, requiring communication between them.
-        Developing such an environment in Go is much easier as concurrency mechanisms are built in the language itself, and also if the number of filters gets high, threads might start to slow and use a lot of memory, as each has its own address space.
+        Developing such an environment in Go is much easier as concurrency mechanisms are built in the language itself, and also if the number of filters gets high, threads might start to be slow and use a lot of memory, as each has its own address space.
         Go, on the other hand, has goroutines, lightweight threads managed by the Go runtime, which run in the same address space.
         Using Kafka Streams would also imply that the conditions defined by the Admin, would require to be written in Java code;
     \item KsqlDB~\cite{ksql}: is a database that allows assembling stream processing applications on top of Kafka.
@@ -584,7 +585,7 @@ For that, the relationship between filters on data for an application is a one-t
 
 In terms of internal organization, displayed in figure \ref{fig:filter-workers}, the main goroutine is in charge of managing the several active Filters, stopping existing ones and starting new ones, according to the orders received from the Admin Portal component.
 Each filter runs in a separate goroutine, which by itself launches other two goroutines.
-One is in charge of counting the data that comply with the filtering condition and the other is counting the number of messages that do not fit the filter condition.
+One is in charge of counting the data that comply with the filtering condition and the other counting the number of messages that do not fit the filter condition.
 The count of messages filtered is monitored by the main goroutine of each filter.
 When it reaches the number of messages that the agent sent, it tells the other child goroutines that they can stop reading from the streams, and sends a notification to the Sender component telling that data is ready to be sent.
 
@@ -610,9 +611,9 @@ The system then allows scaling, by running several Filter Worker applications at
 As multiple Filter Worker components might be running at the same time, there needs to be a way to redistribute the load among the running instances.
 Since agents publish a topic when the upload process is done, a goroutine on each Filter Worker could dynamically create the required processing streams on the data topics of the databases that performed the upload.
 However, as all data on the data topic of a database might not be related to the same upload, due to the retention policy chosen, we require to start the transmission of messages at a given offset of the data topic.
-Such a thing is now achievable with KsqlDB since it only allows to read either from the latest or earliest record.
+Such a thing is not achievable with KsqlDB since it only allows to read either from the latest or earliest record.
 As an alternative, Kafka Streams allows achieving this.
-This will require that this redistribution of work has to be written in Java, but as an advantage removes, this responsibility of reading data from databases' topics from the Filter Workers components, allowing for more concrete and small components.
+This will require that this redistribution of work has to be written in Java, but as an advantage removes this responsibility of reading data from databases' topics from the Filter Workers components, allowing for it to be a more concrete and small component.
 
 Previously, it was mentioned that the concept of a consumer in Kafka is a group of co-operating processes running as a cluster, so messages of a topic are distributed in a balancing manner, sending a message to only one process of a given group.
 For that, there is no need to implement a balancing algorithm to balance the data uploaded from the agents, as Kafka can achieve that already.
@@ -716,7 +717,7 @@ To avoid having to create a parser to read a custom structure of key-value pairs
 This can be achieved by running code dynamically.
 When the template provided is rendered, replacing the placeholders by their values, a string value is generated.
 We can then treat that string as Python code and execute it.
-The system will require that this code returns Python's key-value data structure called dictionary, which can then be used to pass arguments to the requests function that performs the \gls{http} request since Python allows to provide arguments to a function with a dictionary.
+The system will require that this code returns Python's key-value data structure called dictionary, which can then be used to pass arguments to the requests function that performs the \gls{http} request, since Python allows to provide arguments to a function with a dictionary.
 
 Let's sum up the process of building and sending the requests to the applications (Figure \ref{fig:sender-request}):
 \begin{enumerate}
@@ -744,7 +745,7 @@ Regarding how data is transferred from the Filter Worker component to the Sender
     \label{fig:sender-interaction}
 \end{figure}
 
-Once all data was filtered, the main goroutine of each Filter will send a message to the Data Ready to Send topic with the following metadata:
+Once all data was filtered, the main goroutine of each Filter will send a message to the Data Ready To Send topic with the following metadata:
 \begin{itemize}
     \item Filter Worker application id: since several could be running at the same time;
     \item Filter id: through what filter did the data go;
@@ -787,16 +788,16 @@ With React-admin, customizations are easily implemented by just creating new com
 Also, such new components are implemented in a combination of \gls{html}, \gls{css} and Javascript, languages that are mainly used to build web interfaces.
 
 Regarding the backend, the React-admin framework already takes care of the communication between the frontend app and the backend app, however, only a set of technologies are supported to use in the backend.
-One of the available technologies to use is Django, which must be used alongside the framework called Django REST framework\footnote{\url{https://www.django-rest-framework.org/}}, which allows exposing Django's models through an interface.
+One of the available technologies to use is Django, which must be used alongside the framework called Django REST framework\footnote{\url{https://www.django-rest-framework.org/}}, which allows exposing Django's models through an \gls{api}.
 Django was chosen over other technologies such as Springboot\footnote{\url{https://spring.io/projects/spring-boot}} or GraphQL\footnote{\url{https://graphql.org/}} due to it managing the models by itself, creating migration files every time data models definition are changed on the Django app, allowing to keep both the business logic and the stored data models in a relational database in sync automatically.
 The database used here in conjuntion with Django will be PostgreSQL\footnote{\url{https://www.postgresql.org/}} since it is one of the most popular open-source and free \gls{rdbms}.
 
 With this integration between the frontend app and the backend app set up by React-admin, when defining a page on the front end app, it is only necessary to define to which model is referred to, and then enumerate the wanted fields that must be displayed on the page.
-There is no need to implement calls to the \gls{api} exposed by the backend app, as the React-admin framework will take of this automatically.
+There is no need to implement calls to the \gls{api} exposed by the backend app, as the React-admin framework will take care of this automatically.
 Additionally, this framework supports relationships, which allows displaying extra data associated with a model, for example, if a database belongs to a community we can also display the Community information on the database page.
 
 Concerning the models' organization, figure \ref{fig:data-models} shows the relationship between models of the Metadata Manager system.
-Models marks with green the admin can perform all \gls{crud} operations, models in yellow are only for reading as they are created by the Statistics Recorder component, and models in blue are dependent models, which are defined when the main model is created, in this case, FilterSelection entries are created when the Admin is creating a Filter.
+For models in green the admin can perform all \gls{crud} operations, models in yellow are only for reading as they are created by the Statistics Recorder component, and models in blue are dependent models, which are defined when the main model is created, in this case, FilterSelection entries are created when the Admin is creating a Filter.
 
 \begin{figure}[H]
     \center
@@ -850,6 +851,6 @@ Finally, the admin can view statistics of the data that flowed on the system by 
 % sistema capaz de automatizar o processo de atualizar metadtados nas apps
 
 This chapter explained the entire development process around a system capable of automating the procedure of updating metadata stored on web applications about clinical databases.
-A solution was provided to the data owners to automatize the process of extracting metadata from their databases and then the system will make sure that that data will reach the desired web applications.
+A solution was provided to the data owners to automatize the process of extracting metadata from their databases and then the system will make sure that data will reach the desired web applications.
 
 %The next chapter will present the system developed in this chapter in action, using an installation of the Montra framework improved in chapter \ref{chapter:metadata-visualization} as a target web application of the metadata.
