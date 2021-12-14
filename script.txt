@@ -1,193 +1,198 @@
-Good morning/afternoon, I will present my master's dissertation with title "Development of scalable architecture to extract metadata from distributed medical databases", which was done with the supervision of the professor José Luís Oliveira.
+ vim: fdm=marker
 
---- intro
+{{{
 
-Some medical researchers do studies associated with diseases, such as determining the impact of a certain drug.
-To perform such studies and have reliable results, a great amount of data is required.
-To obtain that data, these researchers have to contact medical data owners.
+Boa tarde, vou apresentar a minha dissertação de mestrado com o título "Desenvolvimento de uma arquitectura escalável para extrair metadados de bases de dados médicas distribuídas", que foi feita com a supervisão do professor José Luís Oliveira.
 
-However it is hard to find institutions willing to share data and also the process of contacting data providers can be tedious.
-Several platforms have been developed with the purpose of making this process of data discovery easier.
-One important aspect of such platforms is that they present to the researcher metadata, which can be summaries of the original data.
-With this dependency on the original data, emerges an important problem which is metadata can easily be outdated after a small time window.
-This could not raise a big problem, if the records were updated regularly, however this rarely happens, mainly because either the update process is complex or because metadata has to be manually extracted and uploaded to these platforms.
-Another problem that still might arise from such platforms, is that different datasets have different representations of data.
-The research is then hampered since different methods have to be taken to analyze each dataset.
+}}}
+{{{ context 1
 
---- intro 2
+É muito comum investigadores quererem fazer investigação sobre registos eletronicos de pacientes, os chamados EHR, para, por exemplo, saberem qual o impacto de um determinado farmaco em diferentes faixas etarias, que tipos de medicamentos são percritos em determinadas situações, etc.
 
-EHDEN is a project with affiliations with several institutions, data sources and data custodians across the european union, where their main goal is to, within a network, harmonize data to the OMOP common data model.
-With a commom data model, the problem of existing different representations for the same data across distinct data sources is not a concern.
-Researchers can now develop a single analysis method and then apply it to all datasets.
+No entando devido ao elevado número de registos numa base de dados EHR, é necessario primeiro saber se a bases de dados tem pacientes que pertencem à determinada populção que se pertende ser estudada, como por exemplo, saber se tem registos de pacientes com COVID, ou pacientes com Diabetes, se tem prescições, etc.
 
---- objectives
+No entanto, esta analise muitas vezes não pode ser feito pelos investigadores porque os donos das bases de dados não querem, ou mesmo legalmente não podem dar acesso direto à base de dados.
 
-The purpose of this dissertation is to create a system that can automate the update process of metadata stored in metadta visualization platforms.
-With that, the following goals were established:
-• have a platform capable of holding and displaying metadata in an intuitive way;
-• develop or find a tool that extracts metadata from a database;
-• design a system capable of sending data to an application, to keep their data up-to-date;
-• as new software components might be developed, it is a great opportunity to try new technologies with growing popularity.
+}}}
+{{{ context 2
 
---- background
+Portanto, com isto como pode ser transmitida informação confidencial das bases de dados para os investigadores?
 
-A research was performed to find existing solutions that might already achieve the goals mentioned previously.
-This research was divided into three sections, presenting tools regarding metadata visualization extraction and metadta network architectures.
+Uma solução é Database profiling, em que o objetivo é transmitir o máximo de informação transmitindo o minimo de informação.
+Com este metodo, associado a cada base de dados, são expostos metadados, que é informação resumida da base de dados sem ser com uma granilidade muito fina.
+Os investigadores podem depois usar estes metadados para saber se uma determinada base de dados contem registos que podem ser uteis para a sua investigação.
 
-Its not mandatory but considered tools should contain:
-- data privacy mechanisms, since we could be dealing with sensitive data;
-- follow the FAIR Guiding Principles, which contain a series of considerations for data publishing to support both human and machine operations.
-- be open source
+}}}
+{{{ context 3
 
---- montra
+No departamento existe já um historial de soluçoes que permitem isto, nomeadamente a plataforma chamada MONTRA, que já servio como base para desenvolver catalogos de bases de dados para projetos a nivel europeu.
+
+Até agora, já está resolvido o problema de dar informação sobre as bases de dados para que os investigadores possam saber se a base de dados tem informção relevante para responder a uma determinada pergunta cientifica.
+Agora, como é que estes metadados são atualizados?
+Atualemente isto é feito manualmente, o que lava a que este metadados facilmente fiquem desatualizados.
+
+}}}
+{{{ objectives
+
+Com isto, o objetivo desta dissertação é por um lado melhorar e otimizar a framework MONTRA de forma a apresentar e a gerir os metadados de forma correta e por outro lado automatizar o processo de atualização dos metadados presentes no MONTRA.
+
+Para isso é necessário existir uma ferramenta capaz de extrair os metadata de bases de dados clinicas e tembém ter um sistema que faça chegar estes metadados extraidos a aplicações, como o MONTRA, para que se mantanham atualizadas.
+
+}}}
+{{{ background
+
+Para além do MONTRA fizemos um levantamento do que soluções semelhantes têm.
+Fizemos uma avaliação comparativa com vários fatores como:
+- se seguem uma filosofia de codigo aberto, permitindo possiveis alterações;
+- se contêm mecanismos de proteção de dados já que estas lidam com dados pessoais;
+- e se permitem a interação facil com os dados tanto para os humanos como para as maquinas;
+
+O objetivo era perceber se podiamos tirar partido de funcionalidades presente em outras soluções ou eventualmente até mesmo mudar para uma plataforma diferente se chegassemos à conclusão que tinhamos ferramentas open source melhores da que a usada atualmente.
+
+Foram também consideradas outras ferramentas tendo em conta as suas funcionalidades de extração de metadados e também da sua possiblidadde de criação de redes metadados de bases de dados.
+
+No fim não encontramos uma plataform que atingise todos os requisitos portanto teriamos de ou desenvolver uma solução ou fazer a intergração de soluções existentes.
+
+}}}
+{{{ montra
 
 MONTRA was proposed as a flexible base architecture for building biomedical data integration platforms, allowing to centralize and share data from heterogeneous sources.
 This last point is achievable, by requiring the definition of a metadata skeleton, which describes the original data.
 Whi this, different data sources following the same skeleton will have a common representation.
 Then, the framework allows users to view, search, modify and delete information, where access is controlled via a Role-Based Access Control system.
 
---- achilles
+}}}
+{{{ metadata visualization
 
-ACHILLES, can produce summaries and metadata of databases conforming to the OMOP CDM.
+Agora passamos à descrição da plataforma usada capaz de armazenar e expor metadados.
+Decidimos continuar com o MONTRA, principalmente devido ao seu design centrado em volta de bases de dados.
+Para alem disso, como permite expor os dados atraves de um API, tanto humanos como máquinas podem facilmente interagir com a plataforma, por outras palavras, segue as directrizes FAIR, que mencionamos no background e que procuravamos numa plataforma deste tipo.
+O MONTRA foi desenvolvida em Django, uma web framework de alto nivel contruida em Python, que permite o facil desenvolvimento de aplicações web criando abstrações em cima de conceitos mais dificis de manter e/ou desenhar.
+
+Antes de entrar em mais detalhes sobre o que foi feito nesta ferramenta, primeiro é importante falar em alguns conceitos chave da plataforma:
+- esta pode ser dividida em várias comunidades, sendo uma forma de criar redes ou groupos dde bases de dados no mesmo portal.
+- Depois, associado a cada comunidade, ao esqueleto que descreve o conteúdo original de uma base de dados, chama-se questionário, que permite definir uma série de perguntas que os donos das bases de dados devem responder para descrever os dados da sua base de dados.
+- Uma fingerprint é o nome dado ao conjunto de respostas a um questionário.
+  Por outras palavras, são os metadados que descrevem a fonte original dos dados.
+
+}}}
+{{{ fingerprint views
+
+O MONTRA apresenta um conjunto de interfaces semelhantes para manipular os dados de uma fingerprint.
+As interfaces são as seguintes:
+- de criação
+- edição
+- procura
+- e de consulta
+
+Estas diferentes interfaces foram desenvolvidos de uma forma que não tirampartido do sistema de formulários integrado do Django, com isso, toda a validação de dados é feita do lado do cliente através de código javascript, sendo esta facilmente contornada fazendo chamadas diretamente à API do MONTRA.
+
+}}}
+{{{ fingerprint views retangulos
+
+Além disso, para além das diferentes variantes da interface de manipulação da fingerprint terem um aspecto semelhante, todas utilizam um modelo diferente, assim, se for feita uma alteração a um componente comum, essa alteração tem que ser aplicada ao mesmo componente nas outras variantes.
+
+}}}
+{{{ fingerprint schema
+
+Os questionários são definidos através de um ficheiro Excel, onde o gestor gestor de uma comunidade deve detalhar cada pergunta e secções do questionário.
+Aqui podemos ver um exemplo simples de um grupo de perguntas que aceitam texto aberto.
+
+}}}
+{{{ fingerprint schema multiple choice
+
+Mas a estrutura deste excel sofre de clutter, sendo dificil lerinformação presente em algumas celulas.
+Por exemplo, para definir uma questão de escolha múltipla, todas as escolhas são definidas numa coluna de "Value list" separada por uma barra vertical.
+Depois, se uma escolha específica suporta um texto adicional, temos de acrescentar esta três pontos.
+Como é evidente, de imediato é difícil de ver quais são as escolhas e qual será o resultado final a partir desta configuração específica.
+
+}}}
+{{{ fingerprint schema choice tabular
+
+Mas isto torna-se pior para tipos de pergunta mais complexos, como este que permite ter uma tabela, onde o utilizador tem de definir as colunas, linhas e o tipo de input fornecido pelo utilizador.
+Assim, aqui na coluna "Value list" temos colunas separadas por barras laterais, depois este separador de dois backslashes, depois linhas, depois novamente este seprador e o tipo de input.
+
+}}}
+{{{ data models
+
+Relativamente aos modelos de dados que armazenaram tanto a estrutura do questionário como os dados das respostas das fingerprints.
+Todos os dados das respostas são armazenados em texto, portanto, se houver uma pergunta do tipo numérica no questionário, em vez de ser armazenada como um número é armazenada em texto, ou seja o espaço da base de dados não é otimizado.
+
+A estrutura do questionário, é armazenada utilizando apenas 4 modelos de dados, o que leva a que o modelo que guarda informação sobre perguntas tenha um elevado número de campos, principalmente para especificar as configurações para tipos de perguntas mais complexas.
+
+}}}
+{{{ data models 2
+
+Em outros modelos podemos ver duplicação de dados, tais como os dados de respostas são armazenados tanto num modelo de resposta como num modelo de mudança de resposta, uma vez que MONTRA contém o histório de respostas para uma dada fingerprint.
+
+Em vários modelos podem também ser encontrados alguns tipos incorrectos a serem utilizados.
+Tal como no modelo de dados do questionário, o campo "disable" utiliza um campo tipo caractere em vez de um campo booleano.
+
+}}}
+{{{ Refactoring models
+
+Com todas estas falhas detectadas, decidimos realizar um processo de refactoring na plataforma, com o objectivo de não alterar a forma como os casos de uso são executados, mas sim melhorar o desempenho e a capacidade de manutenção do sistema.
+
+Relativamente aos modelos de dados, criámos novos modelos para armazenar dados de respostas específicas do tipo.
+Portanto temos o modelo principal, Answer, e depois os próprios dados são armazenados em resposta de texto ou resposta de datas e assim por diante.
+
+Houve algumas outras correcções, sendo uma delas a remoção de vários campos do modelo de dados Question que definiam configurações extras relacionadas com especificos tipos de perguntas e criamos mais modelos para armazenar essas configurações extra, tais como o Label, a Choice-tabular Question e entre outros.
+
+}}}
+{{{ Refactoring views
+
+As interfaces de manipulação das fingerprints, marcados com retangulos amarelos, foram divididas em componentes reutilizáveis, marcados a azul, que foram depois utilizados para construir um único modelo da interface de uma fingerprint.
+Com isto, uma alteração feita a um componente partilhado, terá efeito nas várias variações da interface da fingerprint.
+Isto foi concretizado devido à funcionalidade de renderização condicional do Django, podendo um determinado componente ser renderizado apenas numa determinada variante.
+
+}}}
+{{{ Refactoring data manipulation
+
+Quanto à api que enviava os dados das respostas para o back end, foi refeita, fazendo uso do sistema de formulários integrado do Django, com isso, toda a validação de dados é agora efectuada no back end.
+
+}}}
+{{{ refactoring excel
+
+Finalmente, a estrutura do excel que é utilizada para definir um questionário foi melhorada para resolver o problema de clutter.
+Aqui está um exemplo de como um tipo de pergunta era, e como é agora definido.
+Principalmente os dados estão agora espalhados por mais linhas, e para isso criámos mais tipos de linhas, em vez de termos apenas 3 tipos básicos, evitando assim ter celulas com demasiada informação.
+
+}}}
+{{{ Metadata extraction update 1
+
+Agora passamos à parte do sistema que extrai metadados das bases de dados e envia-os para aplicações, para que estas se mantenham actualizadas.
+Por aplicação estamos apenas a considerar uma aplicação web que espera dados através de pedidos HTTP.
+
+Aqui temos uma arhitectura de alto nível do sistema desejado.
+Agentes são um software que corre no ambiente de produção dos donos dos dados, com o papel de extrair metadados e enviá-los para as aplicações.
+
+Como os proprietários dos dados podem não querer ou legalmente não poder fornecer acesso directo aos dados, decidimos dividir a extracção e envio de metadados em dois componentes.
+
+}}}
+{{{ extraction & update 2
+
+Os agentes agora só enviam dados para as aplicações e o processo de extracção é tratado pelos dono dos dados.
+
+No entanto, ainda temos de pensar em como os dados chegarão às aplicações.
+Uma possível abordagem seria criar uma rede peer-to-peer de agentes, e estes armazenariam a informação sobre aplicações para depois lhes enviarem dados.
+
+}}}
+{{{ extraction & update 3
+
+Contudo, os donos dos dados podem não querer gastar os seus recursos na manutenção de uma rede peer-to-peer.
+Para isso, decidimos que uma melhor abordagem é ter uma componente central que receba os dados dos agentes e os envie para as aplicações.
+
+}}}
+{{{ extraction
+
+# NO LER a variante do EHDEN do achilles apresenta ainda mais sumarios, arredondando os valores para multiplos de 100 por exemplo, para anonimizar ainda mais os dados
+
+
+For the extraction process, we decided to use a software called ACHILLES, which can produce summaries and metadata of databases conforming to the OMOP CDM.
 These allow for characterization and quality assessment of observational health databases.
 It is implemented as a package written in R, which executes a series of SQL queries over the original CDM database to calculate all the specific summaries.
 The resulting summaries can be used by researchers to evaluate if the contents of databases can be used on studies that they intend to perform.
-
---- gaain
-
-GAAINs objective is to organize a community for sharing Alzheimer's-related data from repositories around the world.
-
-GAAIN is composed by a central server that interacts with multiple client nodes, which are installed in the data partners deployment environment.
-These GAAIN clients do not gather data directly from data partner production environment, instead, data is locally exported and then loaded into the client.
-With this a client will have a low footprint and also it is given the freedom to the data owners to update their data when they find it convenient.
-To have this client running on the data partner's site, it is required to adapt current firewall configurations to allow incoming traffic from the central server.
-Data owners still have full control over their data, and to do so every GAAIN client can be deactivated.
-
---- popmednet
-
-Popmednet appears to facilitate the creation and management of distributed health networks.
-Researchers have available a set of features that aid in the processes of finding possible data owner collaborators, finding previously carried out research and learn more about the data in the network.
-
-The platform is made of two components:
-a web-based portal for issuing research requests and managing the network,
-the clients' DataMart.
-
-They communicate with each other following a publish-subscribe philosophy, which removes the need for data owners to have open ports on their systems, solving an important security concern of existing direct external access to local data.
-
---- background summary
-
-As a summary several tools were analyzed regarding metadata visualization, extraction, and tools implementing networks of metadata.
-
-On this table we can see all the tools that were analysed.
-They are dividived into the tree groups of features that we looked for in tools.
-A green check means that the tool contains the certain feature and a red cross means that it does not.
-
-As we can see, no tool supports all desidered features.
-It is then required to either build a system that supports all these features or make integration of a set of these tools.
-
---- metadata visualization
-
-Now we move to the development slash usage of a platform that is capable of storing and displaying metadata.
-MONTRA was our go-to mainly because of its datasource-centric approach.
-As it contains several API endpoints, it exposes data in a way that both humans and machines can interact with the platform, in another words, follows the FAIR guidelines.
-The framework was developed in Django, a high-level Python Web framework.
-
-Before going into more detail about what was done on this tool, first lets go over some key concepts of the platforms.
-- a community is a way to create networks or groups databases on the same portal.
-- then associated with each community, to the skeleton that describes the original content of a database, we call it the questionnaire, which allows to define a series of questions that data owners should answer to describe its database data.
-- A fingerprint is a name given to the set of answers to a questionnaire.
-  In other words, it is the metadata that describes the original data source.
-
---- fingerprint views figura
-
-MONTRA offers a set of views to create, edit, search and consult fingerprint answers as the one presented here.
-This one in specificaly used to create, however, the other variations a very similiar in terms of looks and organization.
-
---- fingerprint views
-
-These views were developed in a way that do not that advantage of Django's built-in form system, with that, all data validation is done on the client side through javascript code.
-Additionnaly, besides the different variations of the fingerprint view having a similar look, all use a different template, for that, if a change is done to a common component, that change as to be applied to all variations.
-
---- fingerprint schema
-
-Questionnaires are defined through an excel file, where the community manager must detail each question and sections of the questionnaire.
-Here is a simple example of a group of question that accept open text.
-
---- fingerprint schema multiple choice
-
-But the structure of this excel, suffers from clutter.
-For example, to define a multiple choice question, all choices are defined in a value list column separated by a pipe.
-Then if a specific choice supports an additional text we must add this three dot thing.
-As it clear, its hard to see what are the choices and what will be output from this specific configuration.
-
---- fingerprint schema choice tabular
-
-But this gets worse for more complex data types, such as this one that allows to have a table, where the user has to define the columns, rows and the type of input.
-So here on the value list we have columns separated by pipes, then this double back slash separator, then rows, then this seprator again and the input type.
-
---- data models
-
-Regarding the data models that stored both the questionnaire strucutre and the fingerprint answers data.
-All answers data are stored in text, so if there is a numeric question on the questionnaire, instead of being stored on a integer or a float field type is being stored in text, taking some additional space on the database.
-
-The questionnaire strucutre, is stored using only 4 data models, which lead to the question data model to have a high number of fields, mainly to specify the configurations for more complex question types.
-
---- data models 2
-
-On other models we can see data duplication, such as an answer data is stored both on a answer model an on a answer change model, since MONTRA contains the hsitory of asnwers to a given fingerprint.
-
-On several models it can also be found some incorrect types being used.
-Such as on questionnaire data model, the disabled field uses a character type field instead of a boolean field.
-
---- Refactoring models
-
-With all this flaws detect we decided to perform a refactoring process on the platform, with the goal of not changing how the use cases are performed, but instead improving the system performance and maintainability.
-
-Regarding the datamodels, we created new ones to store type specific answers data.
-SO we have the main model, Answer, and then the data itself is stored on textanswer or dateanswer and so on.
-
-There were some other corrections, one being removing several fields from the question data model that defined question related configurations and created more data models to store those extra configurations, such as the label and choice tabular question.
-
---- Refactoring views
-
-The fingerprint views were divided into reusable components which were then used to build a single fingerprint template.
-With this a change made to a shared component, will take effect on the several fingerprint views variations.
-
-Regarding the api that was sending the answers data to the backend, it was refactored to make use of Django's built-in form system, with that, all data validation is now performed on the backend.
-
---- refactoring excel
-
-Finally, the structure of the excel that is used to defined a questionnaire was improved to solve the clutter problem,
-Here is an example of how a type of question was and how is now defined.
-Mainly the data is now spread across more rows, and for that we created more types of rows, instead of having just 3 basic types.
-
---- Metadata extraction update 1
-
-Now we move to the part of the system that extracts data from CDM databases and sends it to applications, so their data is up-to-date.
-By application we are only considering web application that expect data though HTTP requests.
-
-Here we have a high level arhitecture of the desired system.
-Agents are a software that runs on the data wowners deployment environment with the role of extracting metadata and sending it to the applications.
-
-As data owners might not want or legally can not provide direct acess to the data, we dicided to split the extration and sending of metadta in two components.
-
---- extraction & update 2
-
-Agents now only send data to the applications and the extraction process is taken care by the data owners.
-
-However we still have to think on how data will reach the application.
-A possible aproach would be to create a peer-to-peer network of agents, and they would store the applications information to then send data to them.
-
---- extraction & update 3
-
-However, data owners might not want to spend their resources on maintaining a peer-to-peer network.
-For that we see that a better approach is to have a central component that receives the data from the agents and send it to the applications.
-
---- extraction
-
-For the extraction process, we decided to use a variation of the ACHILLES software, that was developed within the EHDEN project.
-The main difference is that it only extracts the required summaries for the EHDEN project.
-The data owners will be in charge of setting up this extraction process.
+As this part of the sytem has direct acess to data we left the setup of it to the data owners.
 
 To have communication between the central component and the agents and to avoid requesting the data owner to have open ports on their production system, we made use of an asynchronous message system, named Kafka.
 With this agents will pull information from kafka instead of data being pushed by an open port.
@@ -201,7 +206,8 @@ The agent is distributed as a docker image, to simplify deployment by the data o
 A health check handler that is used by the central component to check if a certain agent is active.
 And then a kafka connector that loads metadata stored in a file, provided by the extraction tool.
 
---- metadata update
+}}}
+{{{ metadata update
 
 With data in kafka, there are some other connectors that can send kafka messages through http requests.
 However, these do not offer any type of customization to build the http request, which is important since different application expect the data in different formats.
@@ -210,35 +216,39 @@ Also as data in kafka is treated as an unbounded data flow, and data is uploaded
 
 This system is composes by 5 componetns.
 
---- filter worker
+}}}
+{{{ filter worker
 
 As the destionation application might not require all the metadta that is extract, is is important to first first the data.
 
 For this we have this component that can have several filters running over the data uploaded from an agent.
 
-It was implemented with ksqlDB, which is a stream processing tool that works on top of kafka, allowing to easily manipulate data in streams with a SQL-like syntax.
-
 A single filter worker components can handle data from one agent at the time.
 To handle multiple, several instances of this components can be deployed.
 
---- orchestrator
+}}}
+{{{ orchestrator
 
 With this, a orchestrator component exists to distrube the data from the agent acrros the exsiting filter worker instances.
 
---- sender
+}}}
+{{{ sender
 
 once data is filtered, the sender component is in charge of sending the data to the applications.
 It allows the system admin to customize the http request by requiring a template with placeholders, where the sender will then fill with data once it recives data from the filter worker component.
 
---- admin protal
+}}}
+{{{ admin protal
 
 The admin portal component provides a web interface to the system admin to interact with the system, mainly to register new databases and applications and also to get feedback on data that is flowing on the system.
 
---- stastics recorder
+}}}
+{{{ stastics recorder
 
 Finally the statistics recorder component, captures messages flowing through the system and stores them in a relational database so they can be consulted on the admin area.
 
---- Demo
+}}}
+{{{ Demo
 
 I will now show demo of the system working.
 Here we will have a community, which has a database, lets consider the hospital of aveiro.
@@ -247,7 +257,8 @@ then we have two web applications:
 one is an installation of the MONTRA framework,
 and another is the network dashboards tool.
 
---- web
+}}}
+{{{ web
 
 This last, is a tool that I helps to build from the ground up which is integrated with the EHDEN portal which was developed whit the MONTRA framework.
 It allows to upload csv files generated by the specific variation of the ACHILLES Tool developed by the EHDEN project.
@@ -261,12 +272,20 @@ I will uploaded into the agent, which is done by simply moving it into a directo
 
 As we can see both the data on the MONTRA installation and on the network dashboards was uploaded
 
----
+}}}
+{{{ results
 
-In conclusion the end result is a system capable of achieving the objectives of metadata extraction, mediation, and visualization.
+As results with built  a system capable of achieving the objectives of metadata extraction, mediation, and visualization.
 
 Several improvements were done to a fully-fedge metadta visualization, which are in a pull request waiting for review.
 
 It was proposed a tool able to extract metadata from a database conforming to the OMOP CDM, taking into account restrict data privacy concerns of data owners.
 
 Finally it was developed a system capable of both gathering and sending metadata to applications, maintaining them with data up-to-date.
+
+}}}
+{{{ conclusion
+
+
+
+}}}
