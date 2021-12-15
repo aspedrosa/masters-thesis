@@ -30,7 +30,7 @@ No departamento existe já um historial de soluçoes que permitem isto, nomeadam
 Em que o objetivo deste projeto é harmonizar os dados de uma rede de bases de dados para um modelo de dados commum chamado OMOP CDM, inicialmente devenvolvido pela OMOP e atualmente mantido e desenvolvido pela organização OHDSI.
 Voltando ao exemplo do investigador, suponto que este quer fazer investigação sobre estas três bases de dados, no entanto cada uma pode ter representações diferentes para o mesmo conceito.
 Por exemplo uma pode representar o sexo com uma letra, outra representar com números, etc.
-Assim, um metodo de analise constriudo para uma bases de dados não pode ser reutilizado para outra.
+Assim, um metodo de analise constriudo para uma bases de dados dificilmente pode ser reutilizado para outra.
 Portanto, um dos objetivos do projeto EHDEN é migar uma rede de bases de dados europeia para um modelo comum para que metodos de investigação possam ser facilmente aplicados a diferentes bases de dados.
 
 Até agora, já está resolvido o problema de dar informação sobre as bases de dados os investigadores.
@@ -57,7 +57,7 @@ O objetivo era perceber se podiamos tirar partido de funcionalidades presente em
 
 Foram também consideradas outras ferramentas tendo em conta as suas funcionalidades de extração de metadados e também da sua possiblidadde de criação de redes de metadados de bases de dados.
 
-No fim não encontramos uma plataform que atingise todos os requisitos portanto teriamos de ou desenvolver uma solução ou fazer a intergração de soluções existentes.
+No fim não encontramos uma plataform que atingise todos os requisitos portanto teriamos de ou desenvolver uma solução nova ou fazer a intergração de soluções existentes.
 
 }}}
 {{{ metadata visualization
@@ -140,7 +140,7 @@ Houve algumas outras correcções, sendo uma delas a remoção de vários campos
 {{{ Refactoring views
 
 As interfaces de manipulação das fingerprints, principalmente o que está marcado com retangulos amarelos, foram divididas em componentes reutilizáveis, marcados a azul, que foram depois utilizados para construir um único modelo da interface de uma fingerprint.
-Com isto, uma alteração feita a um componente partilhado, terá efeito nas várias variações da interface da fingerprint.
+Com isto, uma alteração feita a um componente partilhado, terá efeito nas várias variantes da interface da fingerprint.
 
 }}}
 {{{ Refactoring data manipulation
