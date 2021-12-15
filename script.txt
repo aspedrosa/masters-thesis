@@ -9,7 +9,7 @@ Boa tarde, vou apresentar a minha dissertação de mestrado com o título "Desen
 
 É muito comum investigadores quererem fazer investigação sobre registos eletronicos de pacientes, os chamados EHR, para, por exemplo, saberem qual o impacto de um determinado farmaco em diferentes faixas etarias, que tipos de medicamentos são percritos em determinadas situações, etc.
 
-No entando devido ao elevado número de registos numa base de dados EHR, é necessario primeiro saber se a bases de dados tem pacientes que pertencem à determinada populção que se pertende ser estudada, como por exemplo, saber se tem registos de pacientes com COVID, ou pacientes com Diabetes, se tem prescições, etc.
+No entando devido ao elevado número de registos numa base de dados EHR, é necessario primeiro saber se a bases de dados tem pacientes que pertencem à determinada populção que se quer estudar, como por exemplo, saber se tem registos de pacientes com COVID, ou pacientes com Diabetes, se tem prescições, etc.
 
 No entanto, esta analise muitas vezes não pode ser feito pelos investigadores porque os donos das bases de dados não querem, ou mesmo legalmente não podem dar acesso direto à base de dados.
 
@@ -25,11 +25,17 @@ Os investigadores podem depois usar estes metadados para saber se uma determinad
 }}}
 {{{ context 3
 
-No departamento existe já um historial de soluçoes que permitem isto, nomeadamente a plataforma chamada MONTRA, que já servio como base para desenvolver catalogos de bases de dados para projetos a nivel europeu.
+No departamento existe já um historial de soluçoes que permitem isto, nomeadamente a plataforma chamada MONTRA, que já servio como base para desenvolver catalogos de bases de dados para projetos de nivel europeu como o EHDEN.
 
-Até agora, já está resolvido o problema de dar informação sobre as bases de dados para que os investigadores possam saber se a base de dados tem informção relevante para responder a uma determinada pergunta cientifica.
+Em que o objetivo deste projeto é harmonizar os dados de uma rede de bases de dados para um modelo de dados commum chamado OMOP CDM, inicialmente devenvolvido pela OMOP e atualmente mantido e desenvolvido pela organização OHDSI.
+Voltando ao exemplo do investigador, suponto que este quer fazer investigação sobre estas três bases de dados, no entanto cada uma pode ter representações diferentes para o mesmo conceito.
+Por exemplo uma pode representar o sexo com uma letra, outra representar com números, etc.
+Assim, um metodo de analise constriudo para uma bases de dados não pode ser reutilizado para outra.
+Portanto, um dos objetivos do projeto EHDEN é migar uma rede de bases de dados europeia para um modelo comum para que metodos de investigação possam ser facilmente aplicados a diferentes bases de dados.
+
+Até agora, já está resolvido o problema de dar informação sobre as bases de dados os investigadores.
 Agora, como é que estes metadados são atualizados?
-Atualemente isto é feito manualmente, o que lava a que este metadados facilmente fiquem desatualizados.
+Atualemente isto é tudo feito manualmente, o que lava a que este metadados facilmente fiquem desatualizados.
 
 }}}
 {{{ objectives
@@ -41,32 +47,24 @@ Para isso é necessário existir uma ferramenta capaz de extrair os metadata de 
 }}}
 {{{ background
 
-Para além do MONTRA fizemos um levantamento do que soluções semelhantes têm.
+Para além do MONTRA fizemos um levantamento de soluções semelhantes.
 Fizemos uma avaliação comparativa com vários fatores como:
-- se seguem uma filosofia de codigo aberto, permitindo possiveis alterações;
-- se contêm mecanismos de proteção de dados já que estas lidam com dados pessoais;
-- e se permitem a interação facil com os dados tanto para os humanos como para as maquinas;
+- se seguem uma filosofia de codigo aberto, permitindo assim possiveis alterações;
+- se contêm mecanismos de proteção de dados, já que estas lidam com dados pessoais;
+- e se permitem a interação facil com os dados tanto para os humanos como para as maquinas, ou seja se seguem as diretrizes FAIR;
 
-O objetivo era perceber se podiamos tirar partido de funcionalidades presente em outras soluções ou eventualmente até mesmo mudar para uma plataforma diferente se chegassemos à conclusão que tinhamos ferramentas open source melhores da que a usada atualmente.
+O objetivo era perceber se podiamos tirar partido de funcionalidades presente em outras soluções ou eventualmente até mesmo mudar para uma plataforma diferente se chegassemos à conclusão que tinhamos ferramentas open source melhores da que esta a ser usada atualmente.
 
-Foram também consideradas outras ferramentas tendo em conta as suas funcionalidades de extração de metadados e também da sua possiblidadde de criação de redes metadados de bases de dados.
+Foram também consideradas outras ferramentas tendo em conta as suas funcionalidades de extração de metadados e também da sua possiblidadde de criação de redes de metadados de bases de dados.
 
 No fim não encontramos uma plataform que atingise todos os requisitos portanto teriamos de ou desenvolver uma solução ou fazer a intergração de soluções existentes.
-
-}}}
-{{{ montra
-
-MONTRA was proposed as a flexible base architecture for building biomedical data integration platforms, allowing to centralize and share data from heterogeneous sources.
-This last point is achievable, by requiring the definition of a metadata skeleton, which describes the original data.
-Whi this, different data sources following the same skeleton will have a common representation.
-Then, the framework allows users to view, search, modify and delete information, where access is controlled via a Role-Based Access Control system.
 
 }}}
 {{{ metadata visualization
 
 Agora passamos à descrição da plataforma usada capaz de armazenar e expor metadados.
 Decidimos continuar com o MONTRA, principalmente devido ao seu design centrado em volta de bases de dados.
-Para alem disso, como permite expor os dados atraves de um API, tanto humanos como máquinas podem facilmente interagir com a plataforma, por outras palavras, segue as directrizes FAIR, que mencionamos no background e que procuravamos numa plataforma deste tipo.
+Para alem disso, como permite expor os dados atraves de um API, consegue obedecer às diretrizes FAIR, que mencionámos anteriormente e que procuravamos numa plataforma deste tipo.
 O MONTRA foi desenvolvida em Django, uma web framework de alto nivel contruida em Python, que permite o facil desenvolvimento de aplicações web criando abstrações em cima de conceitos mais dificis de manter e/ou desenhar.
 
 Antes de entrar em mais detalhes sobre o que foi feito nesta ferramenta, primeiro é importante falar em alguns conceitos chave da plataforma:
@@ -85,7 +83,7 @@ As interfaces são as seguintes:
 - procura
 - e de consulta
 
-Estas diferentes interfaces foram desenvolvidos de uma forma que não tirampartido do sistema de formulários integrado do Django, com isso, toda a validação de dados é feita do lado do cliente através de código javascript, sendo esta facilmente contornada fazendo chamadas diretamente à API do MONTRA.
+Estas diferentes interfaces foram desenvolvidos de uma forma em que não tiram partido do sistema de formulários integrado do Django, com isso, toda a validação de dados é feita do lado do cliente através de código javascript, sendo esta facilmente contornada fazendo chamadas diretamente à API do MONTRA.
 
 }}}
 {{{ fingerprint views retangulos
@@ -95,14 +93,14 @@ Além disso, para além das diferentes variantes da interface de manipulação d
 }}}
 {{{ fingerprint schema
 
-Os questionários são definidos através de um ficheiro Excel, onde o gestor gestor de uma comunidade deve detalhar cada pergunta e secções do questionário.
-Aqui podemos ver um exemplo simples de um grupo de perguntas que aceitam texto aberto.
+Os questionários são definidos através de um ficheiro Excel, onde o gestor de uma comunidade deve detalhar cada pergunta e as várias secções do questionário.
+Aqui podemos ver um exemplo simples de um grupo de perguntas que aceitam texto aberto e como isso é defenido no excel.
 
 }}}
 {{{ fingerprint schema multiple choice
 
-Mas a estrutura deste excel sofre de clutter, sendo dificil lerinformação presente em algumas celulas.
-Por exemplo, para definir uma questão de escolha múltipla, todas as escolhas são definidas numa coluna de "Value list" separada por uma barra vertical.
+Mas a estrutura deste excel sofre de clutter, sendo dificil ler informação presente em algumas celulas.
+Por exemplo, para definir uma questão de escolha múltipla, todas as escolhas são definidas numa coluna "Value list" separada por uma barra vertical.
 Depois, se uma escolha específica suporta um texto adicional, temos de acrescentar esta três pontos.
 Como é evidente, de imediato é difícil de ver quais são as escolhas e qual será o resultado final a partir desta configuração específica.
 
@@ -123,7 +121,7 @@ A estrutura do questionário, é armazenada utilizando apenas 4 modelos de dados
 }}}
 {{{ data models 2
 
-Em outros modelos podemos ver duplicação de dados, tais como os dados de respostas são armazenados tanto num modelo de resposta como num modelo de mudança de resposta, uma vez que MONTRA contém o histório de respostas para uma dada fingerprint.
+Em outros modelos podemos ver duplicação de dados, tais como os dados de respostas são armazenados tanto num modelo Answer como num modelo de AnswerChange, uma vez que o MONTRA contém o histório de respostas para uma dada fingerprint.
 
 Em vários modelos podem também ser encontrados alguns tipos incorrectos a serem utilizados.
 Tal como no modelo de dados do questionário, o campo "disable" utiliza um campo tipo caractere em vez de um campo booleano.
@@ -133,17 +131,16 @@ Tal como no modelo de dados do questionário, o campo "disable" utiliza um campo
 
 Com todas estas falhas detectadas, decidimos realizar um processo de refactoring na plataforma, com o objectivo de não alterar a forma como os casos de uso são executados, mas sim melhorar o desempenho e a capacidade de manutenção do sistema.
 
-Relativamente aos modelos de dados, criámos novos modelos para armazenar dados de respostas específicas do tipo.
-Portanto temos o modelo principal, Answer, e depois os próprios dados são armazenados em resposta de texto ou resposta de datas e assim por diante.
+Relativamente aos modelos de dados, criámos novos modelos para armazenar os dados de differentes tipos respostas.
+Portanto temos o modelo principal, Answer, e depois os próprios dados são armazenados nos modelos do tipo especifico, por exemplo TextAnswer para guardar texto, DateAnswer para guardar datas, etc
 
 Houve algumas outras correcções, sendo uma delas a remoção de vários campos do modelo de dados Question que definiam configurações extras relacionadas com especificos tipos de perguntas e criamos mais modelos para armazenar essas configurações extra, tais como o Label, a Choice-tabular Question e entre outros.
 
 }}}
 {{{ Refactoring views
 
-As interfaces de manipulação das fingerprints, marcados com retangulos amarelos, foram divididas em componentes reutilizáveis, marcados a azul, que foram depois utilizados para construir um único modelo da interface de uma fingerprint.
+As interfaces de manipulação das fingerprints, principalmente o que está marcado com retangulos amarelos, foram divididas em componentes reutilizáveis, marcados a azul, que foram depois utilizados para construir um único modelo da interface de uma fingerprint.
 Com isto, uma alteração feita a um componente partilhado, terá efeito nas várias variações da interface da fingerprint.
-Isto foi concretizado devido à funcionalidade de renderização condicional do Django, podendo um determinado componente ser renderizado apenas numa determinada variante.
 
 }}}
 {{{ Refactoring data manipulation
@@ -166,7 +163,7 @@ Por aplicação estamos apenas a considerar uma aplicação web que espera dados
 Aqui temos uma arhitectura de alto nível do sistema desejado.
 Agentes são um software que corre no ambiente de produção dos donos dos dados, com o papel de extrair metadados e enviá-los para as aplicações.
 
-Como os proprietários dos dados podem não querer ou legalmente não poder fornecer acesso directo aos dados, decidimos dividir a extracção e envio de metadados em dois componentes.
+Como os proprietários dos dados podem não querer fornecer acesso directo aos dados, decidimos dividir a extracção e envio de metadados em dois componentes.
 
 }}}
 {{{ extraction & update 2
@@ -174,78 +171,77 @@ Como os proprietários dos dados podem não querer ou legalmente não poder forn
 Os agentes agora só enviam dados para as aplicações e o processo de extracção é tratado pelos dono dos dados.
 
 No entanto, ainda temos de pensar em como os dados chegarão às aplicações.
-Uma possível abordagem seria criar uma rede peer-to-peer de agentes, e estes armazenariam a informação sobre aplicações para depois lhes enviarem dados.
+Uma possível abordagem seria criar uma rede ponto-a-ponto de agentes, e estes armazenariam a informação sobre aplicações para depois lhes enviarem dados.
 
 }}}
 {{{ extraction & update 3
 
-Contudo, os donos dos dados podem não querer gastar os seus recursos na manutenção de uma rede peer-to-peer.
+Contudo, os donos dos dados podem não querer gastar os seus recursos na manutenção de uma rede ponto-a-ponto.
 Para isso, decidimos que uma melhor abordagem é ter uma componente central que receba os dados dos agentes e os envie para as aplicações.
 
 }}}
 {{{ extraction
 
-# NO LER a variante do EHDEN do achilles apresenta ainda mais sumarios, arredondando os valores para multiplos de 100 por exemplo, para anonimizar ainda mais os dados
+Para o processo de extracção, decidimos utilizar um software chamado ACHILLES, que pode produzir metadados de bases de dados que seguem o OMOP CDM, os quais permitem a caracterização e avaliação da qualidade das bases de dados.
+É implementado como um pacote escrito em R, que executa uma série de queries SQL sobre a base de dados original CDM para calcular todos os metadados específicos.
+Como esta parte do sistema tem acesso directo aos dados, deixamos a configuração e o processo de automatização para os donos das bases de dado.
 
+Agora em relação aos agentes, na literatura vimos algumas soluções interessantes onde era possível ter feedback sobre que agentes estavam activos, permitindo ver o estado global da rede de agentes.
+Para isso, é necessário que haja comunicação desde o componente central até agentes.
+No entanto, para evitar pedir ao donos das bases de dados para ter portas abertas no seu sistema de produção, levando a que tivessem de fazer alterações nas suas regras de firewall, fizemos uso de um sistema de mensagens assíncrono, chamado Kafka.
+Com este sistema, os agentes irão pedir, ou fazer um pull de  mensagens do Kafka em vez de os dados serem enviados ou pushed por uma porta aberta.
 
-For the extraction process, we decided to use a software called ACHILLES, which can produce summaries and metadata of databases conforming to the OMOP CDM.
-These allow for characterization and quality assessment of observational health databases.
-It is implemented as a package written in R, which executes a series of SQL queries over the original CDM database to calculate all the specific summaries.
-The resulting summaries can be used by researchers to evaluate if the contents of databases can be used on studies that they intend to perform.
-As this part of the sytem has direct acess to data we left the setup of it to the data owners.
+No entanto, devido a todo o ecossistema de plugins do kafka e frameworks desenvolvidas em cima dele e também devido às suas capacidades de processamento de fluxo de dados, também o utilizámos para transportar metadados dos agentes para o componente central.
 
-To have communication between the central component and the agents and to avoid requesting the data owner to have open ports on their production system, we made use of an asynchronous message system, named Kafka.
-With this agents will pull information from kafka instead of data being pushed by an open port.
-
-Due to Kafka's entire ecosystem and its capabilities for data stream processing we also used it to transport metadta from the agents to the central componet.
-
-With data we had to insert extracted metadta into kafka.
-This was done using Kafka connect, which allows to easily stream data between Kafka and external systems.
-
-The agent is distributed as a docker image, to simplify deployment by the data owner, which contains two internal components.
-A health check handler that is used by the central component to check if a certain agent is active.
-And then a kafka connector that loads metadata stored in a file, provided by the extraction tool.
+Portanto, o agente é distribuído como uma imagem de docker, para simplificar a instalação ao dono da bases de dados, que contém dois componentes internos:
+Um que responderá aos pedidos do componente central para verificar se o agente está activo.
+E depois um kafka connector, um dos muitos plugins de kafka disponíveis para carregar dados de sistemas externos para o kafka, que irá carregar o ficheiro resultante da ferramenta de extracção.
 
 }}}
 {{{ metadata update
 
-With data in kafka, there are some other connectors that can send kafka messages through http requests.
-However, these do not offer any type of customization to build the http request, which is important since different application expect the data in different formats.
+Com os dados no kafka pederiamos fazer uso de um outro plugin kafka connector para enviar os dados do kafka até as aplicações.
+No entato, os plugins disponiveis não permitem customizar o formato como os dados são enviados, o que é importante pois diferentes aplicaçoes podem querer receber os dados em differentes formatos.
+E para além disso o kafka foi desenhado assumindo que não existe um inicio e fim num conjunto de mensagens, no entanto nós carregamos os metadados no kafka em várias mensagens, portanto é necessário que haja algum sistema que funcione em cima de kafka para corrigir estes problemas.
 
-Also as data in kafka is treated as an unbounded data flow, and data is uploaded into kafka in several messages by the agent, there needs to be some system that works on top of kafka to fix these problems.
-
-This system is composes by 5 componetns.
+A este sistema chamamos-lhe metadata manager que é composto por 5 componentes.
 
 }}}
 {{{ filter worker
 
-As the destionation application might not require all the metadta that is extract, is is important to first first the data.
+Um dos componentes é o Filter worker.
 
-For this we have this component that can have several filters running over the data uploaded from an agent.
+Dado que as aplicações de destino poderão não necessitar de todos os metadados que são extraídos, é importante filtrar primeiro os dados.
 
-A single filter worker components can handle data from one agent at the time.
-To handle multiple, several instances of this components can be deployed.
+Para tal, temos este componente que pode ter vários filtros a correr sobre os dados carregados a partir de um agente.
+
+Um único componente Filter Worker processa os dados de um unico agente de cada vez.
+Para lidar com vários, podem ser lançadas várias instâncias deste componente.
 
 }}}
 {{{ orchestrator
 
-With this, a orchestrator component exists to distrube the data from the agent acrros the exsiting filter worker instances.
+Com isto, existe o componente orquestrador para distribuir os dados do agente através das instâncias existentes do componente Filter worker.
+
+Mais uma vez, cada componente Orchestrator apenas lida com dados de um agente de cada vez, portanto para lidar com vários ao mesmo tempo, várias intancias deste componente podem ser lançadas para alcançar isso.
 
 }}}
 {{{ sender
 
-once data is filtered, the sender component is in charge of sending the data to the applications.
-It allows the system admin to customize the http request by requiring a template with placeholders, where the sender will then fill with data once it recives data from the filter worker component.
+Uma vez filtrados os dados, o componente Sender está encarrege de enviar os dados para as aplicações.
+Principalmente é este que possibilita a customização do formato dos dados a serem enviados para as aplicações.
 
 }}}
 {{{ admin protal
 
-The admin portal component provides a web interface to the system admin to interact with the system, mainly to register new databases and applications and also to get feedback on data that is flowing on the system.
+O componente de Admin Portal fornece uma interface web ao administrador do sistema para interagir com o mesmo, principalmente para registar novas bases de dados, novos filtros e aplicações e obter feedback sobre os dados que estão a fluir no sistema.
+
+É também aqui é onde o administrator define um template do formato dos dados a serem enviados para cada aplicação.
 
 }}}
 {{{ stastics recorder
 
-Finally the statistics recorder component, captures messages flowing through the system and stores them in a relational database so they can be consulted on the admin area.
+Finalmente o componente Statistics Recorder, captura mensagens que fluem no sistema e armazena estatisticas numa base de dados para que possam ser consultadas no Admin Portal, podendo assim o administrador do sistema ter feedback sobre o estado do sistema.
 
 }}}
 {{{ Demo
@@ -275,17 +271,22 @@ As we can see both the data on the MONTRA installation and on the network dashbo
 }}}
 {{{ results
 
-As results with built  a system capable of achieving the objectives of metadata extraction, mediation, and visualization.
+Como resultados, construiu-se um sistema capaz de alcançar os objectivos de extracção de metadados, mediação, e visualização dos mesmos.
 
-Several improvements were done to a fully-fedge metadta visualization, which are in a pull request waiting for review.
+Foram feitos vários melhoramentos ao MONTRA, os quais já estão presentes num Pull Request do repositoro Github da ferramenta à espera de revisão.
 
-It was proposed a tool able to extract metadata from a database conforming to the OMOP CDM, taking into account restrict data privacy concerns of data owners.
+Foi proposta uma ferramenta capaz de extrair metadados de uma base de dados em conformidade com o OMOP CDM, tendo em conta as preocupações restritas dos donos dos dados relacionadas com a privacidade dos dados.
 
-Finally it was developed a system capable of both gathering and sending metadata to applications, maintaining them with data up-to-date.
+Finalmente, foi desenvolvido um sistema capaz de recolher e enviar metadados para aplicações, mantendo-as com os dados actualizados.
 
 }}}
 {{{ conclusion
 
+Para além do sistema desenvolvido e apresentado, eu tive também a oportunidade de colaborar num projeto europeu, EHDEN, nemeadamente na Work Package 4, que é a Work package tecnologica, na qual eu contribui e participei em algumas reunioes.
 
+Fui também um colaborador ativo no repositório desta plataforma, a qual é basiada na framework MONTRA.
+
+E finalmente em paralelo com este trabalho eu desenvolvi um sistema baseado numa ferramenta da apache, chamada Superset, para apresentar informação agregado duma forma visual a qual já se encontra integrada na plataforma mencionada anterioriormente.
+Associado a isto, acabei também por fazer algumas contribuições diretamente para a ferramente Apache Superset.
 
 }}}
