@@ -1,0 +1,72 @@
+[
+    {
+        "model": "models.community",
+        "pk": 1,
+        "fields": {
+            "name": "EHDEN"
+        }
+    },
+    {
+        "model": "models.database",
+        "pk": 1,
+        "fields": {
+            "community": 1,
+            "name": "Hospital of Aveiro",
+            "database_identifier": "f5a5c4f56b7e4dcf1db008cbad1ca9ef"
+        }
+    },
+    {
+        "model": "models.filter",
+        "pk": 1,
+        "fields": {
+            "name": "count",
+            "filter": "analysis_id = 0",
+            "status": "STOPPED",
+            "communities": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "models.filter",
+        "pk": 2,
+        "fields": {
+            "name": "all",
+            "filter": null,
+            "status": "STOPPED",
+            "communities": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "models.filterselection",
+        "pk": 1,
+        "fields": {
+            "filter": 1,
+            "column": "count_value"
+        }
+    },
+    {
+        "model": "models.application",
+        "pk": 1,
+        "fields": {
+            "community": 1,
+            "filter": 1,
+            "name": "montra",
+            "request_template": "{\n\"method\": \"PUT\",\n\"url\": \"http://catalogue:8181/api/fingerprints/{{ database_identifier }}/answers/patient_count/\",\n\"json\": {\"data\": \"{{ filtered_data[\"count_value\"][0] }}\"},\n\"auth\": (\"admin\", \"emif\"),\n}",
+            "status": "STOPPED"
+        }
+    },
+    {
+        "model": "models.application",
+        "pk": 2,
+        "fields": {
+            "community": 1,
+            "filter": 2,
+            "name": "dashboards",
+            "request_template": "{\n\"method\": \"POST\",\n\"url\": \"http://nginx-dashboards/uploader/{{ database_identifier }}/\",\n\"files\": {\"results_file\": data_file},\n}",
+            "status": "STOPPED"
+        }
+    }
+]
