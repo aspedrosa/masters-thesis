@@ -1,0 +1,247 @@
+version: '3'
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:6.2.1
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - kafka_zookeeper:/var/lib/zookeeper/data
+      - kafka_zookeeper_log:/var/lib/zookeeper/log
+    networks:
+      - all
+
+  broker:
+    image: confluentinc/cp-kafka:6.2.1
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    volumes:
+      - kafka_broker:/var/lib/kafka/data
+    networks:
+      - all
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:6.2.1
+    depends_on:
+      - broker
+      - zookeeper
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://broker:9092
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+    networks:
+      - all
+
+  ui:
+    image: provectuslabs/kafka-ui:latest
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: schema-registry:8081
+    depends_on:
+      - broker
+      - zookeeper
+      - schema-registry
+    ports:
+      - "8080:8080"
+    networks:
+      - all
+
+  ksqldb-server:
+    image: confluentinc/cp-ksqldb-server:6.2.1
+    depends_on:
+      - broker
+      - schema-registry
+    ports:
+      - "8088:8088"
+    environment:
+      KSQL_LISTENERS: http://0.0.0.0:8088
+      KSQL_BOOTSTRAP_SERVERS: broker:9092
+      KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
+      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
+      KSQL_KSQL_SERVICE_ID: "ksqldb-server"
+    networks:
+      - all
+
+  ksqldb-cli:
+    image: confluentinc/cp-ksqldb-cli:6.2.1
+    depends_on:
+      - broker
+      - schema-registry
+      - ksqldb-server
+    entrypoint: /bin/sh
+    tty: true
+    networks:
+      - all
+
+  orchestrator:
+    build: ../MetadataOrchestrator
+    depends_on:
+      - broker
+      - schema-registry
+    environment:
+      BOOTSTRAP_SERVERS: broker:9092
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+    networks:
+      - all
+
+  filter-worker:
+    build: ../FilterWorker
+    depends_on:
+      - broker
+      - ksqldb-server
+      - schema-registry
+      - admin-portal-backend
+    environment:
+      KSQLDB_HOST: ksqldb-server
+      KSQLDB_PORT: 8088
+      ADMIN_PORTAL_HOST: admin-portal-backend
+      ADMIN_PORTAL_PORT: 8000
+      ADMIN_PORTAL_USER: admin
+      ADMIN_PORTAL_PASSWORD: admin
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      BOOTSTRAP_SERVERS: broker:9092
+    networks:
+      - all
+
+  sender:
+    build: ../MetadataSender
+    depends_on:
+      - broker
+      - schema-registry
+      - admin-portal-backend
+    environment:
+      ADMIN_PORTAL_HOST: admin-portal-backend
+      ADMIN_PORTAL_PORT: 8000
+      ADMIN_PORTAL_USER: admin
+      ADMIN_PORTAL_PASSWORD: admin
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      BOOTSTRAP_SERVERS: broker:9092
+    networks:
+      - applications
+      - all
+
+  admin-portal-backend:
+    build: ../AdminPortal/backend
+    depends_on:
+      - broker
+      - schema-registry
+      - ksqldb-server
+      - db
+    ports:
+      - 8000:8000
+    environment:
+      ALLOWED_HOSTS: localhost,admin-portal-backend
+      DEBUG: "false"
+      POSTGRES_DB: adminrest
+      POSTGRES_USER: adminrest
+      POSTGRES_PASSWORD: adminrest
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      KSQLDB_HOST: ksqldb-server
+      KSQLDB_PORT: 8088
+      BOOTSTRAP_SERVERS: broker:9092
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+    networks:
+      - all
+
+  admin-portal-frontend:
+    build: ../AdminPortal/frontend
+    depends_on:
+      - admin-portal-backend
+    environment:
+      ADMIN_PORTAL_BACKEND_HOST: admin-portal-backend
+      ADMIN_PORTAL_BACKEND_PORT: 8000
+    ports:
+      - 80:80
+    networks:
+      - all
+
+  agent:
+    build: ./agent
+    depends_on:
+      - broker
+      - schema-registry
+    environment:
+      #AGENT_DELETE_CLEANUP_POLICY: y
+      AGENT_DATABASE_IDENTIFIER: hashhashhashhashhashhash
+    volumes:
+      - ./achilles_files:/app/catalogue_export_files
+    networks:
+      - all
+
+  db:
+    image: postgres:13.3
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: adminrest
+      POSTGRES_USER: adminrest
+      POSTGRES_PASSWORD: adminrest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - all
+
+  statistics-recorder:
+    build: ./statistics_recorder
+    depends_on:
+      - zookeeper
+      - broker
+      - schema-registry
+      - db
+    environment:
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      CONNECT_BOOTSTRAP_SERVERS: broker:9092
+      CONNECT_ZOOKEEPER_CONNECT: zookeeper:2181
+      DB_DATABASE: adminrest
+      DB_USER: adminrest
+      DB_PASSWORD: adminrest
+      DB_HOST: db
+      DB_PORT: 5432
+    networks:
+      - all
+
+  environment-initializer:
+    build: ./environment_initializer
+    depends_on:
+      - ksqldb-server
+    environment:
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      BOOTSTRAP_SERVERS: broker:9092
+      KSQLDB_HOST: ksqldb-server
+      KSQLDB_PORT: 8088
+    networks:
+      - all
+
+volumes:
+  kafka_zookeeper:
+  kafka_zookeeper_log:
+  kafka_broker:
+  postgres_data:
+
+networks:
+  all:
+  applications:
+    external: true
