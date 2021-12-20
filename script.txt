@@ -1,0 +1,266 @@
+ vim: fdm=marker nonumber norelativenumber noshowmode noshowcmd laststatus=0 noruler
+
+{{{
+
+Boa tarde, vou apresentar a minha dissertação de mestrado com o título "Desenvolvimento de uma arquitectura escalável para extrair metadados de bases de dados médicas distribuídas", que foi feita com a supervisão do professor José Luís Oliveira.
+
+}}}
+{{{ context 1
+
+É muito comum investigadores quererem fazer investigação sobre registos eletronicos de pacientes, os chamados EHR, para, por exemplo, saberem qual o impacto de um determinado farmaco em diferentes faixas etarias, que tipos de medicamentos são percritos em determinadas situações, etc.
+
+No entando devido ao elevado número de registos numa base de dados EHR, é necessario primeiro saber se a bases de dados tem pacientes que pertencem à determinada populção que se quer estudar, como por exemplo, saber se tem registos de pacientes com COVID, ou pacientes com Diabetes, se tem prescições, etc.
+
+No entanto, esta analise muitas vezes não pode ser feito pelos investigadores porque os donos das bases de dados não querem, ou mesmo legalmente não podem dar acesso direto à base de dados.
+
+}}}
+{{{ context 2
+
+Portanto, com isto como pode ser transmitida informação confidencial das bases de dados para os investigadores?
+
+Uma solução é Database profiling, em que o objetivo é transmitir o máximo de informação transmitindo o minimo de informação.
+Com este metodo, associado a cada base de dados, são expostos metadados, que é informação resumida da base de dados sem ser com uma granilidade muito fina.
+Os investigadores podem depois usar estes metadados para saber se uma determinada base de dados contem registos que podem ser uteis para a sua investigação.
+
+}}}
+{{{ context 3
+
+No departamento existe já um historial de soluçoes que permitem isto, nomeadamente a plataforma chamada MONTRA, que já servio como base para desenvolver catalogos de bases de dados para projetos de nivel europeu como o EHDEN.
+
+Em que o objetivo deste projeto é harmonizar os dados de uma rede de bases de dados para um modelo de dados commum chamado OMOP CDM, inicialmente devenvolvido pela OMOP e atualmente mantido e desenvolvido pela organização OHDSI.
+Voltando ao exemplo do investigador, suponto que este quer fazer investigação sobre estas três bases de dados, no entanto cada uma pode ter representações diferentes para o mesmo conceito.
+Por exemplo uma pode representar o sexo com uma letra, outra representar com números, etc.
+Assim, um metodo de analise constriudo para uma bases de dados dificilmente pode ser reutilizado para outra.
+Portanto, um dos objetivos do projeto EHDEN é migar uma rede de bases de dados europeia para um modelo comum para que metodos de investigação possam ser facilmente aplicados a diferentes bases de dados.
+
+Até agora, já está resolvido o problema de dar informação sobre as bases de dados os investigadores.
+Agora, como é que estes metadados são atualizados?
+Atualemente isto é tudo feito manualmente, o que lava a que este metadados facilmente fiquem desatualizados.
+
+}}}
+{{{ objectives
+
+Com isto, o objetivo desta dissertação é por um lado melhorar e otimizar a framework MONTRA de forma a apresentar e a gerir os metadados de forma correta e por outro lado automatizar o processo de atualização dos metadados presentes no MONTRA.
+
+Para isso é necessário existir uma ferramenta capaz de extrair os metadata de bases de dados clinicas e tembém ter um sistema que faça chegar estes metadados extraidos a aplicações, como o MONTRA, para que se mantanham atualizadas.
+
+}}}
+{{{ background
+
+Para além do MONTRA fizemos um levantamento de soluções semelhantes, fazendo uma avaliação comparativa com vários fatores como:
+- se seguem uma filosofia de codigo aberto, permitindo assim possiveis alterações;
+- se contêm mecanismos de proteção de dados, já que estas lidam com dados pessoais;
+- e se permitem a interação facil com os dados tanto para os humanos como para as maquinas, ou seja se seguem as diretrizes FAIR;
+
+O objetivo era perceber se podiamos tirar partido de funcionalidades presente em outras soluções ou eventualmente até mesmo mudar para uma plataforma diferente se chegassemos à conclusão que tinhamos ferramentas open source melhores da que esta a ser usada atualmente.
+
+Foram também consideradas outras ferramentas tendo em conta as suas funcionalidades de extração de metadados e também da sua possiblidadde de criação de redes de metadados de bases de dados.
+
+No fim não encontramos uma plataform que atingise todos os requisitos portanto teriamos de ou desenvolver uma solução nova ou fazer a intergração de soluções existentes.
+
+}}}
+{{{ metadata visualization
+
+Agora passamos à descrição da plataforma usada capaz de armazenar e expor metadados.
+Decidimos continuar com o MONTRA, principalmente devido ao seu design centrado em volta de bases de dados.
+Para alem disso, como permite expor os dados atraves de um API, consegue obedecer às diretrizes FAIR, que mencionámos anteriormente e que procuravamos numa plataforma deste tipo.
+O MONTRA foi desenvolvida em Django, uma web framework de alto nivel contruida em Python, que permite o facil desenvolvimento de aplicações web criando abstrações em cima de conceitos mais dificis de manter e/ou desenhar.
+
+Antes de entrar em mais detalhes sobre o que foi feito nesta ferramenta, primeiro é importante falar em alguns conceitos chave da plataforma:
+- esta pode ser dividida em várias comunidades, sendo uma forma de criar redes ou groupos dde bases de dados no mesmo portal.
+- Depois, associado a cada comunidade, ao esqueleto que descreve o conteúdo original de uma base de dados, chama-se questionário, que permite definir uma série de perguntas que os donos das bases de dados devem responder para descrever os dados da sua base de dados.
+- Uma fingerprint é o nome dado ao conjunto de respostas a um questionário.
+  Por outras palavras, são os metadados que descrevem a fonte original dos dados.
+
+}}}
+{{{ fingerprint views
+
+O MONTRA apresenta um conjunto de interfaces semelhantes para manipular os dados de uma fingerprint.
+As interfaces são as seguintes:
+- de criação
+- edição
+- procura
+- e de consulta
+
+Estas diferentes interfaces foram desenvolvidos de uma forma em que não tiram partido do sistema de formulários integrado do Django, com isso, toda a validação de dados é feita do lado do cliente através de código javascript, sendo esta facilmente contornada fazendo chamadas diretamente à API do MONTRA.
+
+}}}
+{{{ fingerprint views retangulos
+
+Além disso, para além das diferentes variantes da interface de manipulação da fingerprint terem um aspecto semelhante, todas utilizam um template diferente, assim, se for feita uma alteração a um componente comum, essa alteração tem que ser aplicada ao mesmo componente nas outras variantes.
+
+}}}
+{{{ fingerprint schema
+
+Os questionários são definidos através de um ficheiro Excel, onde o gestor de uma comunidade deve detalhar cada pergunta e as várias secções do questionário.
+Aqui podemos ver um exemplo simples de um grupo de perguntas que aceitam texto aberto e como isso é defenido no excel.
+
+}}}
+{{{ fingerprint schema multiple choice
+
+Mas a estrutura deste excel sofre de clutter, sendo dificil ler informação presente em algumas celulas.
+Por exemplo, para definir uma questão de escolha múltipla, todas as escolhas são definidas numa coluna "Value list" separada por uma barra vertical.
+Depois, se uma escolha específica suporta um texto adicional, temos de acrescentar esta três pontos.
+Como é evidente, de imediato é difícil de ver quais são as escolhas e qual será o resultado final a partir desta configuração específica.
+
+}}}
+{{{ fingerprint schema choice tabular
+
+Mas isto torna-se pior para tipos de pergunta mais complexos, como este que permite ter uma tabela, onde o utilizador tem de definir as colunas, linhas e o tipo de input fornecido pelo utilizador.
+Assim, aqui na coluna "Value list" temos colunas separadas por barras laterais, depois este separador de dois backslashes, depois linhas, depois novamente este seprador e o tipo de input.
+
+}}}
+{{{ data models
+
+Relativamente aos modelos de dados que armazenaram tanto a estrutura do questionário como os dados das respostas das fingerprints.
+Todos os dados das respostas são armazenados em texto, portanto, se houver uma pergunta do tipo numérica no questionário, em vez de ser armazenada como um número é armazenada em texto, ou seja o espaço da base de dados não é otimizado.
+
+A estrutura do questionário, é armazenada utilizando apenas 4 modelos de dados, o que leva a que o modelo que guarda informação sobre perguntas tenha um elevado número de campos, principalmente para especificar as configurações para tipos de perguntas mais complexas.
+
+}}}
+{{{ data models 2
+
+Em outros modelos podemos ver duplicação de dados, tais como os dados de respostas são armazenados tanto num modelo Answer como num modelo de AnswerChange, uma vez que o MONTRA contém o histório de respostas para uma dada fingerprint.
+
+Em vários modelos podem também ser encontrados alguns tipos incorrectos a serem utilizados.
+Tal como no modelo de dados do questionário, o campo "disable" utiliza um campo tipo caractere em vez de um campo booleano.
+
+}}}
+{{{ Refactoring models
+
+Com todas estas falhas detectadas, decidimos realizar um processo de refactoring na plataforma, com o objectivo de não alterar a forma como os casos de uso são executados, mas sim melhorar o desempenho e a capacidade de manutenção do sistema.
+
+Relativamente aos modelos de dados, criámos novos modelos para armazenar os dados de differentes tipos respostas.
+Portanto temos o modelo principal, Answer, e depois os próprios dados são armazenados nos modelos do tipo especifico, por exemplo TextAnswer para guardar texto, DateAnswer para guardar datas, etc
+
+Houve algumas outras correcções, sendo uma delas a remoção de vários campos do modelo de dados Question que definiam configurações extras relacionadas com especificos tipos de perguntas e criamos mais modelos para armazenar essas configurações extra, tais como o Label, a Choice-tabular Question e entre outros.
+
+}}}
+{{{ Refactoring views
+
+As interfaces de manipulação das fingerprints, principalmente o que está marcado com retangulos amarelos, foram divididas em componentes reutilizáveis, marcados a azul, que foram depois utilizados para construir um único template da interface de uma fingerprint.
+Com isto, uma alteração feita a um componente partilhado, terá efeito nas várias variantes da interface da fingerprint.
+
+}}}
+{{{ Refactoring data manipulation
+
+Quanto à api que enviava os dados das respostas para o back end, foi refeita, fazendo uso do sistema de formulários integrado do Django, com isso, toda a validação de dados é agora efectuada no back end.
+
+}}}
+{{{ refactoring excel
+
+Finalmente, a estrutura do excel que é utilizada para definir um questionário foi melhorada para resolver o problema de clutter.
+Aqui está um exemplo de como um tipo de pergunta era, e como é agora definido.
+Principalmente os dados estão agora espalhados por mais linhas, e para isso criámos mais tipos de linhas, em vez de termos apenas 3 tipos básicos, evitando assim ter celulas com demasiada informação.
+
+}}}
+{{{ Metadata extraction update 1
+
+Agora passamos à parte do sistema que extrai metadados das bases de dados e envia-os para aplicações, para que estas se mantenham actualizadas.
+Por aplicação estamos apenas a considerar uma aplicação web que espera dados através de pedidos HTTP.
+
+Aqui temos uma arhitectura de alto nível do sistema desejado.
+Agentes são um software que corre no ambiente de produção dos donos dos dados, com o papel de extrair metadados e enviá-los para as aplicações.
+
+Como os proprietários dos dados podem não querer fornecer acesso directo aos dados, decidimos dividir a extracção e envio de metadados em dois componentes.
+
+}}}
+{{{ extraction & update 2
+
+Os agentes agora só enviam dados para as aplicações e o processo de extracção é tratado pelos dono dos dados.
+
+No entanto, ainda temos de pensar em como os dados chegarão às aplicações.
+Uma possível abordagem seria criar uma rede ponto-a-ponto de agentes, e estes armazenariam a informação sobre as aplicações para depois lhes enviarem dados.
+
+}}}
+{{{ extraction & update 3
+
+Contudo, os donos dos dados podem não querer gastar os seus recursos na manutenção de uma rede ponto-a-ponto.
+Para isso, decidimos que uma melhor abordagem é ter uma componente central que receba os dados dos agentes e os envie para as aplicações.
+
+}}}
+{{{ extraction
+
+Para o processo de extracção, decidimos utilizar um software chamado ACHILLES, que pode produzir metadados de bases de dados que seguem o OMOP CDM.
+É implementado como um pacote escrito em R, que executa uma série de queries SQL sobre a base de dados original CDM para calcular todos os metadados específicos.
+Como esta parte do sistema tem acesso directo aos dados, deixamos a configuração e o processo de automatização para os donos das bases de dado.
+
+Agora em relação aos agentes, na literatura vimos algumas soluções interessantes onde era possível ter feedback sobre que agentes estavam activos, permitindo ver o estado global da rede de agentes.
+Para isso, é necessário que haja comunicação desde o componente central até agentes.
+No entanto, para evitar pedir ao donos das bases de dados para ter portas abertas no seu sistema de produção, levando a que tivessem de fazer alterações nas suas regras de firewall, fizemos uso de um sistema de mensagens assíncrono, chamado Kafka.
+Com este sistema, os agentes irão pedir, ou fazer um pull de  mensagens do Kafka em vez de os dados serem enviados ou pushed por uma porta aberta.
+
+No entanto, devido a todo o ecossistema de plugins do kafka e frameworks desenvolvidas em cima dele e também devido às suas capacidades de processamento de fluxo de dados, também o utilizámos para transportar metadados dos agentes para o componente central.
+
+Portanto, o agente é distribuído como uma imagem de docker, para simplificar a instalação ao dono da bases de dados, que contém dois componentes internos:
+Um que responderá aos pedidos do componente central para verificar se o agente está activo.
+E depois um kafka connector, um dos muitos plugins de kafka disponíveis para carregar dados de sistemas externos para o kafka, que irá carregar o ficheiro resultante da ferramenta de extracção.
+
+}}}
+{{{ metadata update
+
+Com os dados no kafka pederiamos fazer uso de um outro plugin kafka connector para enviar os dados do kafka até as aplicações, usando o kafka como componente central deste sistema.
+No entato, os plugins disponiveis não permitem customizar o formato como os dados são enviados, o que é importante pois diferentes aplicaçoes podem querer receber os dados em differentes formatos.
+E para além disso o kafka foi desenhado assumindo que não existe um inicio e fim num conjunto de mensagens, no entanto nós carregamos os metadados no kafka em várias mensagens, portanto é necessário que haja algum sistema que funcione em cima de kafka para corrigir estes problemas.
+
+A este sistema chamamos-lhe metadata manager que é composto por 5 componentes.
+
+}}}
+{{{ filter worker
+
+Um dos componentes é o Filter worker.
+
+Dado que as aplicações de destino poderão não necessitar de todos os metadados que são extraídos, é importante filtrar primeiro os dados.
+
+Para tal, temos este componente que pode ter vários filtros a correr sobre os dados carregados a partir de um agente.
+
+Um único componente Filter Worker processa os dados de um unico agente de cada vez.
+Para lidar com vários, podem ser lançadas várias instâncias deste componente.
+
+}}}
+{{{ orchestrator
+
+Com isto, existe o componente orquestrador para distribuir os dados do agente através das instâncias existentes do componente Filter worker.
+
+Mais uma vez, cada componente Orchestrator apenas lida com dados de um agente de cada vez, portanto para lidar com vários ao mesmo tempo, várias intancias deste componente podem ser lançadas para alcançar isso.
+
+}}}
+{{{ sender
+
+Uma vez filtrados os dados, o componente Sender está encarrege de enviar os dados para as aplicações.
+Principalmente é este que possibilita a customização do formato dos dados a serem enviados para as aplicações.
+
+}}}
+{{{ admin protal
+
+O componente de Admin Portal fornece uma interface web ao administrador do sistema para interagir com o mesmo, principalmente para registar novas bases de dados, novos filtros e aplicações e obter feedback sobre os dados que estão a fluir no sistema.
+
+É também aqui é onde o administrator define um template do formato dos dados a serem enviados para cada aplicação.
+
+}}}
+{{{ stastics recorder
+
+Finalmente o componente Statistics Recorder, captura mensagens que fluem no sistema e armazena estatisticas numa base de dados para que possam ser consultadas no Admin Portal, podendo assim o administrador do sistema ter feedback sobre o estado do sistema.
+
+}}}
+{{{ results
+
+Como resultados, construiu-se um sistema capaz de alcançar os objectivos de extracção de metadados, mediação, e visualização dos mesmos.
+
+Foram feitos vários melhoramentos ao MONTRA, os quais já estão presentes num Pull Request do repositoro Github da ferramenta à espera de revisão.
+
+Foi proposta uma ferramenta capaz de extrair metadados de uma base de dados em conformidade com o OMOP CDM, tendo em conta as preocupações restritas dos donos dos dados relacionadas com a privacidade dos dados.
+
+Finalmente, foi desenvolvido um sistema capaz de recolher e enviar metadados para aplicações, mantendo-as com os dados actualizados.
+
+}}}
+{{{ conclusion
+
+Para além do sistema desenvolvido e apresentado, eu tive também a oportunidade de colaborar num projeto europeu, EHDEN, nemeadamente na Work Package 4, que é a Work package tecnologica, na qual eu contribui e participei em algumas reunioes.
+
+Fui também um colaborador ativo no repositório desta plataforma, a qual é basiada na framework MONTRA.
+
+E finalmente em paralelo com este trabalho eu desenvolvi um sistema baseado numa ferramenta da apache, chamada Superset, para apresentar informação agregado duma forma visual a qual já se encontra integrada na plataforma mencionada anterioriormente.
+Associado a isto, acabei também por fazer algumas contribuições diretamente para a ferramente Apache Superset.
+
+}}}
