@@ -1,4 +1,4 @@
- vim: fdm=marker
+ vim: fdm=marker nonumber norelativenumber noshowmode noshowcmd laststatus=0 noruler
 
 {{{
 
@@ -47,8 +47,7 @@ Para isso é necessário existir uma ferramenta capaz de extrair os metadata de 
 }}}
 {{{ background
 
-Para além do MONTRA fizemos um levantamento de soluções semelhantes.
-Fizemos uma avaliação comparativa com vários fatores como:
+Para além do MONTRA fizemos um levantamento de soluções semelhantes, fazendo uma avaliação comparativa com vários fatores como:
 - se seguem uma filosofia de codigo aberto, permitindo assim possiveis alterações;
 - se contêm mecanismos de proteção de dados, já que estas lidam com dados pessoais;
 - e se permitem a interação facil com os dados tanto para os humanos como para as maquinas, ou seja se seguem as diretrizes FAIR;
@@ -88,7 +87,7 @@ Estas diferentes interfaces foram desenvolvidos de uma forma em que não tiram p
 }}}
 {{{ fingerprint views retangulos
 
-Além disso, para além das diferentes variantes da interface de manipulação da fingerprint terem um aspecto semelhante, todas utilizam um modelo diferente, assim, se for feita uma alteração a um componente comum, essa alteração tem que ser aplicada ao mesmo componente nas outras variantes.
+Além disso, para além das diferentes variantes da interface de manipulação da fingerprint terem um aspecto semelhante, todas utilizam um template diferente, assim, se for feita uma alteração a um componente comum, essa alteração tem que ser aplicada ao mesmo componente nas outras variantes.
 
 }}}
 {{{ fingerprint schema
@@ -139,7 +138,7 @@ Houve algumas outras correcções, sendo uma delas a remoção de vários campos
 }}}
 {{{ Refactoring views
 
-As interfaces de manipulação das fingerprints, principalmente o que está marcado com retangulos amarelos, foram divididas em componentes reutilizáveis, marcados a azul, que foram depois utilizados para construir um único modelo da interface de uma fingerprint.
+As interfaces de manipulação das fingerprints, principalmente o que está marcado com retangulos amarelos, foram divididas em componentes reutilizáveis, marcados a azul, que foram depois utilizados para construir um único template da interface de uma fingerprint.
 Com isto, uma alteração feita a um componente partilhado, terá efeito nas várias variantes da interface da fingerprint.
 
 }}}
@@ -171,7 +170,7 @@ Como os proprietários dos dados podem não querer fornecer acesso directo aos d
 Os agentes agora só enviam dados para as aplicações e o processo de extracção é tratado pelos dono dos dados.
 
 No entanto, ainda temos de pensar em como os dados chegarão às aplicações.
-Uma possível abordagem seria criar uma rede ponto-a-ponto de agentes, e estes armazenariam a informação sobre aplicações para depois lhes enviarem dados.
+Uma possível abordagem seria criar uma rede ponto-a-ponto de agentes, e estes armazenariam a informação sobre as aplicações para depois lhes enviarem dados.
 
 }}}
 {{{ extraction & update 3
@@ -182,7 +181,7 @@ Para isso, decidimos que uma melhor abordagem é ter uma componente central que 
 }}}
 {{{ extraction
 
-Para o processo de extracção, decidimos utilizar um software chamado ACHILLES, que pode produzir metadados de bases de dados que seguem o OMOP CDM, os quais permitem a caracterização e avaliação da qualidade das bases de dados.
+Para o processo de extracção, decidimos utilizar um software chamado ACHILLES, que pode produzir metadados de bases de dados que seguem o OMOP CDM.
 É implementado como um pacote escrito em R, que executa uma série de queries SQL sobre a base de dados original CDM para calcular todos os metadados específicos.
 Como esta parte do sistema tem acesso directo aos dados, deixamos a configuração e o processo de automatização para os donos das bases de dado.
 
@@ -200,7 +199,7 @@ E depois um kafka connector, um dos muitos plugins de kafka disponíveis para ca
 }}}
 {{{ metadata update
 
-Com os dados no kafka pederiamos fazer uso de um outro plugin kafka connector para enviar os dados do kafka até as aplicações.
+Com os dados no kafka pederiamos fazer uso de um outro plugin kafka connector para enviar os dados do kafka até as aplicações, usando o kafka como componente central deste sistema.
 No entato, os plugins disponiveis não permitem customizar o formato como os dados são enviados, o que é importante pois diferentes aplicaçoes podem querer receber os dados em differentes formatos.
 E para além disso o kafka foi desenhado assumindo que não existe um inicio e fim num conjunto de mensagens, no entanto nós carregamos os metadados no kafka em várias mensagens, portanto é necessário que haja algum sistema que funcione em cima de kafka para corrigir estes problemas.
 
