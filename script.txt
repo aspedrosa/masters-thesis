@@ -1,10 +1,5 @@
  vim: fdm=marker nonumber norelativenumber noshowmode noshowcmd laststatus=0 noruler
 
-{{{
-
-Boa tarde, vou apresentar a minha dissertação de mestrado com o título "Desenvolvimento de uma arquitectura escalável para extrair metadados de bases de dados médicas distribuídas", que foi feita com a supervisão do professor José Luís Oliveira.
-
-}}}
 {{{ context 1
 
 É muito comum investigadores quererem fazer investigação sobre registos eletronicos de pacientes, os chamados EHR, para, por exemplo, saberem qual o impacto de um determinado farmaco em diferentes faixas etarias, que tipos de medicamentos são percritos em determinadas situações, etc.
