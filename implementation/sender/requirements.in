@@ -1,0 +1,8 @@
+aiokafka==0.7.1
+aiorwlock==1.1.0
+avro==1.10.2
+Jinja2==3.0.1
+kafka-python==2.0.2
+pandas==1.2.5
+python-schema-registry-client==1.8.2
+requests==2.25.1
